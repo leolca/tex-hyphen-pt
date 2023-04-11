@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Leonardo Araújo" />
+  <title>Improving the portuguese hyphenation rules</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    div.abstract {
+      margin: 2em 2em 2em 2em;
+      text-align: left;
+      font-size: 85%;
+    }
+    div.abstract-title {
+      font-weight: bold;
+      text-align: center;
+      padding: 0;
+      margin-bottom: 0.5em;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Improving the portuguese hyphenation rules</h1>
+<p class="author">Leonardo Araújo</p>
+<div class="abstract">
+<div class="abstract-title">Abstract</div>
+<p>Portuguese hyphenation rules are available for more than 35 years and
+have done a good job. Nonetheless they still make mistakes and leave
+some hyphenation points unmarked. Although most undetected hyphenation
+points are located near word boundaries, what will be irrelevant for TeX
+typographic purposes, they are still useful to hyphenate proper nouns,
+new words or pseudoword, and for usage in other applications, such as
+text-to-speech conversion. A list of hyphenated words acquired from
+online dictionaries was used along <em>patgen</em> to create improved
+rules, leading to better hyphenation of Portuguese words.</p>
+</div>
+</header>
+<h1 id="introduction">Introduction</h1>
+<p>Hyphenation in text wrapping was not used for a long time. Words
+should fit entirely in a line, or they would be broken in arbitrary
+places. First no marker at all was used to sign the wrapping of a word,
+what could create confusion and undesirable meaning. Therefore,
+ortographers advocated for the use of a sign to indicate this break.
+Portuguese faced the same gradual introduction of a hyphenation sign to
+mark words wrapping across lines. Even though the usage of a hyphenation
+sign (<span class="math inline">=</span>) was advocated by orthographers
+<span class="citation" data-cites="gandavo1574"></span>, few documents
+used such sign until the end of the 18th century <span class="citation"
+data-cites="araujo2015"></span>.</p>
+<p>In some cases, hyphenation hinders smooth reading and should be
+avoided in child literature, for example. In opposition, large or small
+spaces between words also impose difficulty in the reading process,
+making hyphenation fundamental when texts use short line lengths. As a
+line gets shorter, the number of breaking candidates between words
+decreases, leading to awkward spaces between words and among letters.
+For that matter, automatic hyphenation plays an important role in good
+typesetting.</p>
+<p>TeX is a typesetting system which carefully deals with these issues,
+automatically arranging text on a page to create a good reading
+experience. Automatic hyphenation is an important part on this process,
+promoting an even-tempered distribution of elements on the page. Line
+height and length, paragraph length, font size and typeface, letter and
+word-spacing, are some factors which influence the text legibility and
+readability. Space between words should not be too long creating lakes
+and rivers in the text, nor too tight, impairing the legibility and
+readability.</p>
+<p>Another important matter to consider is ambiguities that might be
+created when a word is partitioned during the hyphenation process. In
+English we should avoid hyphenations such as re-cover, re-form, re-sign,
+the-rapist, depart-mental and mans-laughter (in Portuguese, some
+examples are: <em>de-putada</em>, <em>fede-ração</em>,
+<em>acu-mula</em>, <em>após-tolo</em>, <em>cú-bico</em>). Hyphenations
+that might lead the reader to pronounce a word incorrectly should also
+be prevented. That is the case of <em>considera-tion</em>, in Enslish
+(and <em>pe-rigo</em> in Portuguese).</p>
+<p>In some situations, hyphenation is also a matter of style. Some
+partitioning choices sound better than others. These conflicting
+alternatives typically arises when a words has many possible hyphenation
+points. Consider ar-chae-ol-o-gist (or ar-che-ol-o-gist), which is
+preferably partitioned as archae-ologist (or arche-ologist) in
+opposition to archaeol-ogist (or archeol-ogist) or archaeolo-gist (or
+archeolo-gist). It is preferable to keep whole morphemes together. In
+the previous example: archae (or arche, meaning ancient, primitive) and
+-ologist (one who studies the topic). In Portuguese, it is also more
+elegant to avoid splits between double consonants or vowels, even if an
+hyphenation point do exists between those letters. For example,
+<em>pressu-rizar</em> is preferable over <em>pres-surizar</em> and
+<em>empreen-dedor</em> is preferable over <em>empre-endedor</em>. Even
+so, exceptions exists, it is preferable to partition
+<em>micro-organismo</em> rather than <em>microor-ganismo</em> (keeping
+morphemes together is favored over splitting a double vowel).</p>
+<p>The general rule for Portuguese hyphenation is to split a word into
+its syllables. A syllable is made of a mandatory nucleus, filled by a
+vowel, and optional peripheral consonants (before or after the nucleus).
+In some situations, the syllabic division does not respect the
+ethnologic constituents. The usage of the prefixes <em>bis-</em> and
+<em>in-</em> are examples of this circumstance. The correct
+syllabifications are <em>bi-sa-vô</em>, <em>i-na-ti-vo</em> and
+<em>i-nobs-tan-te</em><a href="#fn1" class="footnote-ref" id="fnref1"
+role="doc-noteref"><sup>1</sup></a>, where the prefixes are split into
+two syllables. But, as pointed previously, it is preferable to keep
+morphemes together rather than splitting them apart, therefore the we
+should favor the hyphenation <em>bisa-vô</em> over <em>bi-savô</em> and
+<em>ina-tivo</em> over <em>i-nativo</em>. This last example could also
+lead to a misunderstanding since the word <em>nativo</em>
+(<em>native</em> in English) emerges from this word break.</p>
+<p>Each language has its own hyphenation rules. They might be grouped
+into two groups: those which hyphenation is driven by morphology
+(etymology) and those driven by pronunciation. An algorithmic approach
+might use a logic system to analyse words and apply the hyphenation
+rules of a given language. An algorithm must be written for each
+language, as hyphenation rules vary extensively. Although a logic system
+might be fast and compact, inevitably it will have to deal with
+exceptions through hard-coded rules.</p>
+<p>The automation of this process might use a dictionary based approach,
+which will restrict the hyphenation possibilities to those entries in
+the dictionary, an algorithmic base approach, which might be applied to
+whatever sequence found in a text, or a mix of bothe approaches. An
+algorithmic approach might use a logic system to analyse words and apply
+the hyphenation rules of a given language. A rule base model might
+include the recognition of prefixes, suffixes, morphemes, or some
+sequences suitable for the inclusion of a break. Another approach is the
+usage of pattern matching. Given a corpus of hyphenation examples in a
+language, it is necessary to identify those sequence of letters that
+define a point where hyphenation is suitable or not. Patterns might
+include prefixes, suffixes, exceptions and special hyphenation rules of
+a given language. Such approach might be used for different languages,
+by providing hyphenation examples in a target language to extract
+patterns and rules.</p>
+<p>Only the analysis of immediate surrounding might not be enough to
+determine a potential break point. For example, consider
+<em>dem-o-crat</em> and <em>de-moc-ra-cy</em>, where immediate
+surrounding of <em>e</em> does not suffice to determine the break
+location. Even after chosen patterns that makes hyphenation pretty
+straightforward, there might be exceptions. Consider the sequence
+<em>tion</em>. It seems safe to always place a break before this
+pattern. However, the word <em>cation</em> is hyphenated as
+<em>cat-ion</em>, making is etymology determinant to the way this word
+will be split.</p>
+<p>A word with different meanings may be hyphenated differently
+according to its meaning. ‘For instance, the Swedish word form
+<em>glassko</em> has three different meanings, and can be hyphenated as
+<em>glas-sko</em> (glass shoe), <em>glass-ko</em> (ice cream cow) and in
+the non-standard way, <em>glass-sko</em> (ice cream shoe).’ <span
+class="citation" data-cites="nemeth2006"></span>. In Portuguese, the
+word <em>sublinha</em> might be hiphenated in two different forms:
+<em>su-bli-nha</em> when representing the inflected form of verb
+<em>sublinhar</em> (underline as a verb) or <em>sub-li-nha</em> when
+refering to the line under (underline as a noun).</p>
+<p>Machine learning approach was used by to hyphenate Norwegian text
+<span class="citation" data-cites="kristensen2001"></span>. It was found
+that the TeX approach, in general, performed better then a neural
+network. Both approaches had similar performance on finding the correct
+hyphenation points and avoiding wrong hyphenation points on a small word
+list (the neural network performed slightly better on finding the
+correct hyphenation points). Nonetheless, TeX approach overcame the
+neural network on a large word list, regarding the avoidance of wrong
+hyphenations.</p>
+<p>The original TeX hyphenation algorithm was introduced by Knuth 1977
+<span class="citation" data-cites="knuth1977"></span>. It was focused on
+the English language and used three main rules:(1) suffix removal; (2)
+prefix removal; and (3) vowel-consonant-consonant-vowel (vccv) breaking.
+Tests showed it could find 40% of the allowed hyphen locations <span
+class="citation" data-cites="liang1983"></span>. The hyphenation
+algorithm proposed by Frank M. Liang and adopted in TeX uses the notion
+of competing patterns. A database of hyphenated words is swept, looking
+for hyphenating and inhibiting patterns. The algorithm introduced in
+TeX82 uses five alternating levels of hyphenating and inhibiting
+patterns. The program for patten generation, based on a corpus, PATGEN
+was created Liang <span class="citation"
+data-cites="liangbreitenlohner1999"></span> and was used to create
+hyphenating patterns for many languages <span class="citation"
+data-cites="sojka1995 sojka1995a sojka2005thesis sojka2003 scannell2003"></span>.</p>
+<p>The effective hyphenation of words by TeX will actually depends on
+the following factors:</p>
+<div class="enumerate*">
+<p>document language, which will determine which set of patterns to
+apply;</p>
+<p>characters used, since some might block hyphenation at their
+edges;</p>
+<p>the value of the internal variables <code>lefthyphenmin</code> and
+<code>righthyphenmin</code>, which defines the minimum sequence length
+of characters at the left and right borders before any hyphenation is
+allowed.</p>
+</div>
+<h1 id="patterns-for-tex-hyphenation">Patterns for TeX hyphenation</h1>
+<p>The patterns used in TeX hyphenation are of the form:
+<code>4z1z2</code>. Each pattern is made of a sequence of letters and
+numbers. Odd numbers indicate a good hyphenation point, whereas even
+numbers indicate a bad place to break. The given example states that the
+sequence has a good breaking point between the first and the second
+<em>z</em> and an hyphenation should be inhibited before the first
+<em>z</em> and after the second <em>z</em>. For example, the hyphenation
+of the word <em>piz-za</em>, <em>fiz-zle</em> and <em>mezzanine</em> use
+this rule, where we see the hyphen placed between the two <em>z</em>’s
+and no hyphen before, nor after the <em>z</em>’s. The pattern may also
+use period symbol (<em>.</em>) to indicate word boundaries. The pattern
+<code>.s2h2</code> applies to beginning of words, implying that the
+<em>s</em> and the <em>h</em> should stick together in beginning of a
+word and an hyphenation should also be inhibited after the <em>h</em>.
+For example, this pattern is used in <em>Sher-lock</em>.</p>
+<p>Hyphenation rules are organized in levels, from 1 to 9, where odd
+numbers represent hyphenating levels and even numbers represent
+inhibiting levels. Each level works as an exception level of it
+predecessor. For example, the rule <code>sh1er</code> indicate a good
+hyphenation point between the <em>h</em> and the <em>e</em> in the
+sequence <em>sher</em>. A rule at a higher level, as <code>.s2h2</code>,
+implies an exception to the lower level rule. When we see <em>sher</em>,
+in the beginning of a word, the rule <code>.s2h2</code> applies and
+hyphenation proposed by the lower level rule <code>sh1er</code> should
+be hindered. That is the case in the hyphenation of the word
+<em>Sher-lock</em>. The full example is provided in , where we might see
+all English rules that takes place in the hyphenation of
+<em>Sher-lock</em>.</p>
+<pre id="sherlockhyphenation" class="" data-language=""
+data-caption="Example of rules applyied in the
+hyphenation of the word \emph{Sherlock}. Example done using a port of \TeX{}&#39;s
+hyphenation algorithm to Go provided at
+\url{https://github.com/speedata/hyphenation}."
+label="sherlockhyphenation"><code>.   s   h   e   r   l   o   c   k   .
+     0   0   2   |   |   |   |   |   |    .sh2
+     0   2   0   |   |   |   |   |   |    s2h
+     0   0   1   0   0   |   |   |   |    sh1er
+     |   |   |   0   1   0   |   |   |    r1l
+     |   |   |   0   3   0   4   |   |    r3lo4
+     |   |   |   |   |   |   0   0   1    ck1
+max: 0   2   2   0   3   0   4   0   1
+final: s   h   e   r - l   o   c   k -</code></pre>
+<p>A pattern will consist of a string made of characters (from the
+language alphabet) possibly with a number in between, expressing the
+hyphenation/inhibition level and possibly word boundaries marker (the
+period) at the pattern edges. When there is no number between characters
+in a pattern, a zero is assumed, which means <em>undefined</em> and no
+hyphenation point will be suggest at that location.</p>
+<h1 id="patgen">PATGEN</h1>
+<p>PATGEN uses a list of hyphenated words to define rules at different
+levels and lengths, based on the patterns found in the data. It start
+with short patterns and increases until a maximum pattern length,
+allowed by the user, is reached. As it advances, creating longer
+patterns, it also establishes exceptions. In some cases, the analysis of
+long patterns might be necessary, since some hyphenation points might
+depend on characters far away from the breaking point<a href="#fn2"
+class="footnote-ref" id="fnref2"
+role="doc-noteref"><sup>2</sup></a>.</p>
+<p>PATEGEN works on glyph indices rather than character codes. Each
+glyph is represented by a single byte. That amount to 256 indices, where
+13 of them are reserved for the digits 0-9 and the characters ‘.’, ‘-’
+and ‘*’. The remaining 243 are used to represent symbols of the given
+language. To run PATGEN, it is required a translation file, which
+defines the values of some language specific parameters (in the first
+line) and defines the many forms in which language symbols might appear
+(all following lines). In the first line, positions 1 and 2 are used to
+set the value of <code>lefthyphenmin</code>, positions 3 and 4 are for
+<code>righthyphenmin</code>. These values defines the shortest length of
+a string that might be generated by an hyphenation procedure. In order
+to set a single digit value, leave the first position blank, that is,
+put a blank space in position 1 and 3 for <code>lefthyphenmin</code> and
+<code>righthyphenmin</code> respectively. Positions 5, 6 and 7 are used
+to define alternative values for the special characters ‘.’, ‘-’ and
+‘*’. The following lines uses a delimiter to surround each ‘letter’ of
+the desired language alphabet and also its alternative representations.
+The first position of the line defines the delimiter and each symbol of
+the language may use as many positions as necessary, since not using the
+value reserved for the delimiter. Consider the example for defining the
+letter ‘e’ in Portuguese:</p>
+<pre><code>XeXEXéXêXÉXÊX\&#39;{e}X\^{e}X\&#39;{E}X\^{E}XX </code></pre>
+<p>It represents the many ways in which it might be found: lowercase,
+uppercase, with or without acute or circumflex accents. In this
+definition, we have assumed that the many forms in which we may find the
+character <em>e</em> and <em>e</em> will be equivalent for hyphenation
+(pattern matching) purpose. As another example, see the line defining
+the character <span class="math inline"><em>π</em></span> (taken from
+<span class="citation" data-cites="haralambous2021"></span>):</p>
+<pre><code> #p#P#\varpi ## </code></pre>
+<p>The translate file and the dictionary file should use the same
+encoding. Even if it is a multi byte encoding, the translation file
+express how to deal with a sequence of bytes representing a glyph and
+PATGEN will work fine as long as there are at most 243 symbols in the
+given language. The dictionary file is a list of already hyphenated
+words from which PATGEN will look for patterns and create hyphenation
+rules.</p>
+<p>Those rules are organized in different levels, from 1 to 9, where odd
+numbers represent hyphenating levels and even numbers represent
+inhibiting levels. Each level works as an inhibiting level of it
+predecessor. A pattern will consist of a string made of characters (from
+the language alphabet) possibly with a number in between, expressing the
+hyphenation/inhibition level and possibly word boundaries marker (the
+period) at the pattern edges. When there is no number between characters
+in a pattern, a zero is assumed, which means <em>undefined</em> and no
+hyphenation point will be suggest at that location.</p>
+<h1 id="sec-tex-hyphen-pt">TeX hyphenation rules for portuguese</h1>
+<p><span class="citation" data-cites="rezende1987"></span> created the
+first patters for Portuguese hyphenation in TeX. It was lastly updated
+in 2015 with the contributions from José João Dias Almeida <span
+class="citation" data-cites="hyphpt"></span>. The set has rules<a
+href="#fn3" class="footnote-ref" id="fnref3"
+role="doc-noteref"><sup>3</sup></a> and are able to correctly hyphenate
+the majority of Portuguese words. We propose here to analyse the
+performance of the default rules and add new rules to improve
+hyphenation by correcting some issues and taking in account non-typical
+patterns.</p>
+<p>In order to apprise the performance of each set of rules, we need a
+list of correctly hyphenated words that are used in a language. We use
+the frequency of occurrence to avoid selecting really rare words. To
+build a large list with such information, we relied on data collected
+from online dictionaries and corpora of Portuguese. We also looked up
+Portuguese grammars to check on the hyphenation (translineation) rules
+and we made some manual corrections on the data.</p>
+<p>In 1990, Portuguese went under a Language Orthographic Agreement. The
+adopting transition period started in 2009 and ended as it turned
+mandatory in 2016. Even after the agreement, some words still hold
+different spellings in the participant countries. It is desirable to
+have hyphenation rules that might work properly, despite those
+idiosyncrasies. For example, the word <em>reception</em> might be
+written as <em>receção</em> (Portugal) or <em>recepção</em> (Brazil);
+the word <em>action</em> might be written as <em>acção</em> (Portugal)
+or <em>ação</em> (Brazil); and the word <em>project</em> might be
+written as <em>projecto</em> (Portugal) or <em>projeto</em>
+(Brazil).</p>
+<p>We started using <a
+href="https://www.linguateca.pt/cetenfolha/index_info.html">CETENFolha</a>
+as the source corpus. Using only this corpus led to two problems: many
+words were still missing and it was built on text from 1994, prior to
+the Orthographic Agreement. We decided to incorporate the list of words
+from <a href="https://www.palavras.net/">Palavras NET</a> and afterwards
+we also included words from the <a
+href="https://pt.wikipedia.org">Portuguese Wikipedia</a> dump. Although
+the list of words created was huge, we kept only those words we could
+find their hyphenation on at least one of the following online
+dictionaries: <a href="https://michaelis.uol.com.br/">Michaelis</a>, <a
+href="https://dicionario.priberam.org/">Priberam</a>, <a
+href="https://pt.wiktionary.org">Wikcionário</a>, <a
+href="https://aulete.com.br/">Aulete</a>, <a
+href="http://www.portaldalinguaportuguesa.org/">Portal da Língua
+Portuguesa</a> e <a href="https://www.dicio.com.br/">Dicio</a>. This
+leads to the creation of a dictionary with words.</p>
+<p>Table <a href="#tblstats" data-reference-type="ref"
+data-reference="tblstats">1</a> presents the number of words with a
+given number of hyphenation found the dictionaries. It also presents the
+number of words that have the highest agreed hyphenation. We will
+present some examples below. To reference the cells in the table we will
+not consider the header line and column. For example, the word
+<em>como</em> was hyphenated by the six dictionaries as <em>co-mo</em>.
+It will add one to the counts on both lines where the hyphenations
+number is 6 (first column). The word <em>sua</em> was hyphenated as
+<em>su-a</em> in 4 dictionaries and a <em>sua</em> in one dictionary. It
+will add one in the first line, second column (since hyphenations were
+found in 5 dictionaries). It will also add one on the second line, third
+column (since the most frequent hyphenation was found in 4
+dictionaries). It is clear now why we might have the number of same
+hyphenations (specially for small values) greater the number of
+hyphenations found.</p>
+<div id="tblstats">
+<table>
+<caption>Considering the six dictionaries used, the first line of this
+table presents the number words that a given number of hyphenations were
+found in the dictionaries. The second line presents the number of words
+that have a given number of hyphenation as its most frequent form found
+in the dictionaries.</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">hyphenations</th>
+<th style="text-align: left;">6</th>
+<th style="text-align: left;">5</th>
+<th style="text-align: left;">4</th>
+<th style="text-align: left;">3</th>
+<th style="text-align: left;">2</th>
+<th style="text-align: left;">1</th>
+<th style="text-align: left;">0</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">hyphenations found</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">same hyphenations</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">n/a</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h1 id="grammar-rules-for-hyphenation-in-portuguese">Grammar rules for
+hyphenation in Portuguese</h1>
+<p>When there is no space left in line for a whole word, it might be
+split in two using a hyphen as an indication of such procedure. In
+Portuguese, hyphenations are allowed on syllables boundaries. According
+to the Grammar <span class="citation"
+data-cites="cunha2016 bergstrom2011"></span>, some rules might still
+apply:</p>
+<ol>
+<li><p><span id="rule-di-triphthong" label="rule-di-triphthong"></span>
+diphthong or triphthong should not be split (e.g.
+<em>m<u><em>ui</em></u>-to</em>,
+<em>Pa-ra-g<u><em>uai</em></u></em>);</p></li>
+<li><p><span id="rule-unstressed" label="rule-unstressed"></span> the
+sequences <em>ia</em>, <em>ie</em>, <em>io</em>, <em>oa</em>,
+<em>ua</em>, <em>ue</em> and <em>uo</em>, when in final unstressed
+position, should not be split (e.g. <em>gló-r<u><em>ia</em></u></em>,
+<em>vi-tó-r<u><em>ia</em></u></em>, <em>cá-r<u><em>ie</em></u></em>,
+<em>es-pé-c<u><em>ie</em></u></em>, <em>Má-r<u><em>io</em></u></em>,
+<em>má-g<u><em>oa</em></u></em>, <em>ré-g<u><em>ua</em></u></em>,
+<em>tê-n<u><em>ue</em></u></em>, <em>con-tí-g<u><em>uo</em></u></em>,
+<em>am-bí-g<u><em>uo</em></u></em>);</p></li>
+<li><p><span id="rule-c-clusters" label="rule-c-clusters"></span>
+consonant clusters starting a syllable should not be split (e.g.
+<em><u><em>pn</em></u>eu-má-ti-co</em>,
+<em><u><em>ps</em></u>i-có-lo-go</em>,
+<em><u><em>mn</em></u>e-mô-ni-co</em>);</p></li>
+<li><p><span id="rules-digraphs-ns" label="rules-digraphs-ns"></span>
+the digraphs <em>ch</em>, <em>lh</em>, <em>nh</em>, <em>gu</em>,
+<em>qu</em> should not be split (e.g. <em>ra-<u><em>ch</em></u>ar</em>,
+<em>a-bro-<u><em>lh</em></u>os</em>, <em>ma-<u><em>nh</em></u>ã</em>,
+<em><u><em>gu</em></u>i-tar-ra</em>,
+<em><u><em>qu</em></u>in-to</em>);</p></li>
+<li><p><span id="rule-nasalization" label="rule-nasalization"></span> a
+vowel and its following nasalization marker (a graphic nasal consonant)
+should not be split (e.g. <em><u><em>am</em></u>-bição</em>,
+<em>m<u><em>an</em></u>-cha</em>);</p></li>
+<li><p><span id="rule-rising" label="rule-rising"></span> rising
+diphthong should not be split (e.g. <em>a-b<u><em>ai</em></u>-xo</em>;
+<em>c<u><em>au</em></u>-te-la</em>, <em>pa-p<u><em>éi</em></u>s</em>,
+<em>cha-p<u><em>éu</em></u></em>, <em>pre-f<u><em>ei</em></u>-to</em>,
+<em>r<u><em>eu</em></u>-nir</em>, <em>n<u><em>oi</em></u>-te</em>;
+<em>ca-la-b<u><em>ou</em></u>-ço</em>,
+<em>as-te-r<u><em>ói</em></u>-de</em>;
+<em>re-tri-b<u><em>ui</em></u></em>);</p>
+<p>to 5cm<span>to 10pt<span>. </span></span></p></li>
+<li><p><span id="rule-hiatus" label="rule-hiatus"></span> hiatus vowels
+and those vowel sequences where each vowel belongs to a different
+syllable should be split (e.g. <em>sa<u><em>-ú-</em></u>de</em>,
+<em>ra<u><em>-i-</em></u>nha</em>, <em>d<u><em>o-e</em></u>r</em>,
+<em>v<u><em>o-o</em></u>s</em>), the same procedure is used splitting
+diphthongs in different syllables (e.g.
+<em>c<u><em>ai-ai</em></u>s</em>) or diphthong and vowel in different
+syllables (e.g. <em>en-s<u><em>ai-o</em></u>s</em>);</p></li>
+<li><p><span id="rule-consonants" label="rule-consonants"></span>
+consonant sequences, when in different syllables, should be split (e.g.
+<em>a<u><em>f-t</em></u>a</em>, <em>a<u><em>b-d</em></u>i-car</em>,
+<em>re<u><em>s-c</em></u>i-são</em>,
+<em>a<u><em>b-s</em></u>o-lu-to</em>);</p></li>
+<li><p><span id="rule-digraphs" label="rule-digraphs"></span> the
+following consonant digraphs should be split: <em>rr</em>, <em>ss</em>,
+<em>mm</em>, <em>nn</em>, <em>sc</em>, <em>sç</em> and <em>xc</em> (e.g.
+<em>te<u><em>r-r</em></u>a</em>, <em>pro-fe<u><em>s-s</em></u>or</em>,
+<em>co-mu<u><em>m-m</em></u>en-te</em>,
+<em>co<u><em>n-n</em></u>os-co</em>, <em>de<u><em>s-c</em></u>er</em>,
+<em>cre<u><em>s-ç</em></u>a</em>,
+<em>e<u><em>x-c</em></u>e-der</em>).</p></li>
+</ol>
+<p>In some situations a hyphen should be repeated in the start of the
+following line:</p>
+<ol>
+<li><p>when a compound word using a hyphen is split across lines (e.g.
+<em>couve-/-flor</em>, <em>ex-/-presidente</em>);</p></li>
+<li><p>when a different meaning could be conveyed when splitting a
+pronoun (e.g. <em>prazer de ver-/-me</em><a href="#fn4"
+class="footnote-ref" id="fnref4"
+role="doc-noteref"><sup>4</sup></a>).</p></li>
+</ol>
+<p>It should be avoided to leave a single vowel in the end or start of a
+line (e.g. the word <em>san-guí-nea</em> should be split only on the
+hyphen gave in the example, avoiding the split that would leave the
+final vowel <em>a</em> left alone in the start of a new line:
+<em>sanguíne-a</em>). It is also considered a better approach to avoid
+splitting disyllables made of four letters (e.g. <em>para</em>,
+<em>como</em>, <em>cede</em>).</p>
+<p>... to continue</p>
+<p>Foi criado um conjunto de regras para aprimorar as hifenizações no
+português. Analisando um conjunto de 37798 palavras, as regras padrão
+apresentam 1368 erros (1273 pontos de hifenização não marcados e 125
+pontos marcados erroneamente)<a href="#fn5" class="footnote-ref"
+id="fnref5" role="doc-noteref"><sup>5</sup></a>, enquanto as novas
+regras apresentaram 132 erros (118 pontos de hifenização não marcados e
+35 pontos marcados erroneamente)<a href="#fn6" class="footnote-ref"
+id="fnref6" role="doc-noteref"><sup>6</sup></a>.</p>
+<p>Foi criado um conjunto de 37798 palavras obtidas do corpus <a
+href="https://www.linguateca.pt/cetenfolha/index_info.html">CETENFolha</a>,
+juntamente com palavras do <a href="https://www.palavras.net/">Palavras
+NET</a> e algumas palavras do corpus baseado na <a
+href="https://pt.wikipedia.org">Wikipedia</a>. Foram mantidas apenas as
+palavras para as quais encontrou-se a hifenização nos seguintes
+dicionários online: <a
+href="https://michaelis.uol.com.br/">Michaelis</a>, <a
+href="https://dicionario.priberam.org/">Priberam</a>, <a
+href="https://pt.wiktionary.org">Wikcionário</a>, <a
+href="https://aulete.com.br/">Aulete</a>, <a
+href="http://www.portaldalinguaportuguesa.org/">Portal da Língua
+Portuguesa</a> e <a href="https://www.dicio.com.br/">Dicio</a>. Adotamos
+como hifenização ‘correta’ aquela que ao menos 4 dicionários
+concordavam. Algumas hifenizações foram realizadas manualmente pelo
+autor. Considerando a frequência de ocorrência das palavras nos corpus,
+o conjuto de palavras escolhido representa 55% do total das ocorrências
+relativo ao Wikipedia e 58% em relação ao CETENFolha. Este percentual é
+relativamente baixo, mas deve-se ao fato de que não obtivemos sucesso em
+encontrar a hifenização de muitas palavras nos dicionários analisados e
+também por não observarmos um consenso de ao menos 4 dicionários com uma
+mesma hifenização.</p>
+<p>Analisando os erros resultantes da hifenização utilizando as regras
+padrão do TeX, foram estabelecidas algumas regras como forma de abarcar
+um conjunto maior de palavras. Tais regras são elencadas a seguir,
+expondo também as regras de exceção necessárias e um exemplo onde a
+regra será utilizada.</p>
+<ol>
+<li><p>regra: <code>p2si</code>, <code>p2sí</code> – psicologia,
+psíquico<br />
+exceção: <code>p3sia</code>, <code>p3sin</code> – epilepsia,
+rodopsina</p></li>
+<li><p>regra: <code>t2c</code> – tchau</p></li>
+<li><p>regra: <code>p2neu</code> – pneumonia</p></li>
+<li><p>regra: <code>.g2no</code>, <code>.g2nó</code> – gnomo,
+gnóstico</p></li>
+<li><p>regra: <code>.p2t</code> – ptose</p></li>
+<li><p>regra: <code>su2b3r</code>, <code>su2b3l</code> – sublunar,
+subrotina exceção: <code>su3b4li1nh</code>, <code>su3b4li1ma</code>,
+<code>su3b4li1me</code>, <code>su3b4li1mid</code> – sublinhar, sublimar,
+sublime, sublimidade</p></li>
+<li><p>regra: <code>1sô</code> – subsônico</p></li>
+<li><p>regra: <code>1p2seu1d</code> – pseudônimo</p></li>
+<li><p>regra: <code>c2za</code> – czar</p></li>
+<li><p>regra: <code>.s2</code> – stalinismo</p></li>
+<li><p>regra: <code>.t2</code> – tsunami</p></li>
+<li><p>regra: <code>a1â</code>, <code>a1ã</code>, <code>a1é</code>,
+<code>a1í</code>, <code>a1ó</code>, <code>a1ô</code>, <code>a1ú</code>,
+<code>e1á</code>, <code>e1â</code>, <code>e1ã</code>, <code>e1ê</code>,
+<code>e1í</code>, <code>e1ó</code>, <code>e1ô</code>, <code>e1ú</code>,
+<code>i1á</code>, <code>i1ã</code>, <code>i1ã</code>, <code>i1é</code>,
+<code>i1ó</code>, <code>i1ú</code>, <code>o1á</code>, <code>o1ã</code>,
+<code>o1é</code>, <code>o1ê</code>, <code>o1í</code>, <code>o1ó</code>,
+<code>u1á</code>, <code>u1ã</code>, <code>u1é</code>, <code>u1ê</code>,
+<code>u1í</code> – abraâmico, abraão, aéreo, país, caótico, faraônico,
+saúde, balneário, oceânico, campeã, veêm, veículo, teórico, napoleônico,
+conteúdo, diário, região, soviético, periódico, viúva, razoável, joão,
+poético, boêmia, heroísmo, alcoólico, usuário, itapuã, suécia, cauê,
+suíça<br />
+exceção: <code>1gu2é</code>, <code>1gu2ê</code>, <code>1gu2í</code>,
+<code>1qu2á</code>, <code>1qu2é</code>, <code>1qu2ê</code>,
+<code>1qu2í</code> – alguém, português, linguística, aquático,
+inquérito, sequência, química</p></li>
+<li><p>regra: <code>a1ir.</code>, <code>u1ir.</code> – sair,
+diminuir</p></li>
+<li><p>regra: <code>í1a</code> – baía</p></li>
+<li><p>regra: <code>1lô</code> – camelô</p></li>
+<li><p>regra: <code>1cô</code> – recôncavo</p></li>
+<li><p>regra: <code>e1in1c</code>, <code>e1in1f</code>,
+<code>e1in1g</code>, <code>e1in1s</code>, <code>e1in1t</code>,
+<code>e1in1v</code> – reincidência, reinfecção, reingressa, reinserção,
+reintegração, reinventar exceção: <code>e1in2st</code>,
+<code>e1in2sc</code> – reinstalado, reinscrever</p></li>
+<li><p>regra: <code>o1in</code> – coincidência, agroindustrial,
+bioinformática, amendoins, gastrointestinal exceção: <code>o1ina</code>
+– boina</p></li>
+<li><p>regra: <code>a1ind</code>, <code>a1i1nh</code> – ainda,
+rainha</p></li>
+<li><p>regra: <code>o1i1nh</code> – moinho</p></li>
+<li><p>regra: <code>1bô</code>, <code>1dô</code>, <code>1fô</code>,
+<code>1gô</code>, <code>1pô</code>, <code>1mô</code>, <code>1nô</code>,
+<code>1rô</code>, <code>1tô</code>, <code>1vô</code>, <code>1xô</code>,
+<code>1zô</code> – robô, judô, telefônica, xangô, capô, sumô, econômico,
+tarô, chatô, vovô, saxônia, amazônia</p></li>
+<li><p>regra: <code>e1im</code> – reimpresso, coimbra, coimperador
+exceção: <code>que2i</code>, <code>te2im</code> – queimar, queimadura,
+teimosia, tirateima</p></li>
+<li><p>regra: <code>au1i1c</code>, <code>du1i1c</code>,
+<code>u1i1ç</code>, <code>u1i1d</code>, <code>cu2i</code>,
+<code>dru2i</code>, <code>flu2id</code>, <code>bu1i1n</code>,
+<code>cu1i1n</code>, <code>fu1i1n</code>, <code>nu1i1n</code>,
+<code>ru1i1na</code>, <code>ru1i1no</code>, <code>su1i1ti</code>,
+<code>tu1i1ti</code>, <code>u1iz</code> – cacauicultor, sanduicheira,
+constituição, continuidade, cuidador, druida, fluido, tabuinha,
+picuinha, fuinha, genuinamente, arruinado, arruinou, jesuitismo,
+intuitivo, juizado exceção: <code>cu3i1da1de</code>,
+<code>bu1i2n1d</code>, <code>bu1i2n1t</code> – acuidade, contribuindo,
+contribuinte</p></li>
+<li><p>regra: <code>.m2n</code> – mnemônico</p></li>
+<li><p>regra: <code>1gu4á</code>, <code>1gu4ã</code>, <code>1qu4ã</code>
+– jaraguá, saguão, quão</p></li>
+<li><p>regra: <code>1çô</code> – maçônico</p></li>
+<li><p>regra: <code>i1ur</code> – diurno</p></li>
+<li><p>regra: <code>í1o</code> – íon</p></li>
+<li><p>regra: <code>pro1i1b</code> – proibição</p></li>
+<li><p>regra: <code>i1un</code> – triunfar</p></li>
+<li><p>regra: <code>1qu4ó</code>, <code>1qu4â</code> – quórum,
+equânime</p></li>
+<li><p>regra: <code>é3o</code> – alvéolo</p></li>
+<li><p>regra: <code>i4a.</code>, <code>i4e.</code>, <code>i4o.</code>,
+<code>o4a.</code>, <code>u4a.</code> – economia, espécie, vazio, destoa,
+institua</p></li>
+<li><p>regra: <code>z1z</code>, <code>p1p</code>, <code>z2z.</code> –
+pizza, shopping, jazz</p></li>
+</ol>
+<p>O conjunto de regras é apresentado a seguir:</p>
+<div class="multicols">
+<p><span>4</span></p>
+</div>
+<p>A Tabela <a href="#tab-resultados" data-reference-type="ref"
+data-reference="tab-resultados">2</a> apresenta os erros cometidos no
+conjunto das 37798 palavras analisadas. As palavras omitidas são aquelas
+que foram hifenizadas corretamente pelos dois conjuntos de regra.
+Utilizamos aqui a marcação adotada pelo <em>Patgen</em>: <code>*</code>
+para indicar pontos de hifenização corretamente marcados, <code>.</code>
+para indicar pontos de hifenização marcados erroneamente e
+<code>-</code> para indicar pontos de hifenização não encontrados. Os
+pontos marcados erroneamente e aqueles não encontrados são considerados
+erros. Quando ocorre algum erro de hifenização, marcaremos a palavra com
+. Quando não houver erro algum, marcaremos a palavra com . Ao final,
+podemos verificar que as regras padrão apresentaram 1368 erros (3,62%) e
+as novas regras 132 erros (0,35%).</p>
+<div id="tab-resultados">
+<table>
+<caption>Comparativo dos erros cometidos pelos dois conjuntos de regras
+de hifenização.</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">palavra</th>
+<th style="text-align: left;">regras padrão</th>
+<th style="text-align: left;">regras adicionais</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">ainda &amp; a-in*da &amp; a*in*da</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<section class="footnotes footnotes-end-of-document"
+role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>The rule of syllable division could
+lead to two possible partitions: <em>i-nobs-tan-te</em> and
+<em>in-obs-tan-te</em>, but the first is preferable.<a href="#fnref1"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>Some examples of hyphenation
+dependency on characters far from the break point: <em>dem-o-crat</em>
+and <em>de-moc-ra-cy</em>; <em>as-pi-rin</em> and <em>aspir-ing</em>;
+<em>de-mon-stra-tive</em> and <em>dem-on-stra-tion</em>.<a
+href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3" role="doc-endnote"><p>The set of rules for Portuguese
+hyphenation is short when compared to rules in other languages. For
+example, English currently has 4938 rules, Russian has 7023 rules and
+German has 34011 rules.<a href="#fnref3" class="footnote-back"
+role="doc-backlink">↩︎</a></p></li>
+<li id="fn4" role="doc-endnote"><p>Possible conveyed meanings:
+<em>pleasure in seeing me</em> or <em>worm’s pleasure</em>.<a
+href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5" role="doc-endnote"><p>A soma não é 1368 pois temos 30 casos
+em que os dois tipos de erros ocorrem.<a href="#fnref5"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn6" role="doc-endnote"><p>35 palavras apresentam ambos tipos de
+erro.<a href="#fnref6" class="footnote-back"
+role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+</body>
+</html>
