@@ -332,6 +332,39 @@ edges;</p>
 of characters at the left and right borders before any hyphenation is
 allowed.</p>
 </div>
+<p>Despite the fact that TeX hyphenation algorithm and rules are old,
+they are, to these days, the most frequently used even outside the TeX’s
+world. For example, Hunspell is a spell checker and morphological
+analyzer that is adopted in may software (e.g. LibreOffice,
+OpenOffice.org, Mozilla Firefox, Mozilla Thunderbird, Google Chrome,
+macOS, InDesign, memoQ, Opera, Affinity Publisher, among others <span
+class="citation" data-cites="hunspell"></span>). Hunspell uses TeX
+hyphenation rules <span class="citation"
+data-cites="hunspellhyphen"></span>, making TeX hyphenation widespread
+in the computer world. That is a result of TeX approach simplicity and
+versatility. The algorithm works well, it is currently used in 66
+languages <span class="citation" data-cites="texhyphenrules"></span> and
+it is possible to design new rules for those missing languages.</p>
+<p>Unfortunately, some specific hyphenation rules are not possible to be
+implemented using the TeX hyphenation algorithm. In German, for example,
+there are no hyphens in compound words. Additionally, when words are
+hyphenated some letters might also change. Furthermore, the spelling
+reform made changes, making it necessary to create a different set of
+rules. For example, the German word <em>Schiffahrt</em> should be
+hyphenated as <em>Schiff-fahrt</em>, preserving the <em>f</em>s from
+each word that make this compound. The hyphenation should insert a
+<em>f</em> that is not part of the written form. That was not a problem
+for the old written form of the word: <em>Schifffahrt</em>. Also, the
+old hyphenating rules of German grammar stated the hyphenation
+<em>Bäk-ker</em> for the word <em>Bäcker</em>, <em>Zuk-ker</em> for the
+word <em>Zucker</em> and <em>pak-ken</em> for the word <em>packen</em>.
+Now those words are hyphenated as <em>Bä-cker</em>, <em>Zu-cker</em> and
+<em>pa-cken</em>, respectively. Some words have also changed their
+hyphenation point after the spelling reform. For example,
+<em>Fen-ster</em> became <em>Fens-ter</em>and <em>mei-stens</em> became
+<em>meis-tens</em>. Some problems in compound word hyphenation in TeX
+are discussed in <span class="citation"
+data-cites="sojka1995a"></span>.</p>
 <h1 id="patterns-for-tex-hyphenation">Patterns for TeX hyphenation</h1>
 <p>The patterns used in TeX hyphenation are of the form:
 <code>4z1z2</code>. Each pattern is made of a sequence of letters and
@@ -628,6 +661,10 @@ final vowel <em>a</em> left alone in the start of a new line:
 splitting disyllables made of four letters (e.g. <em>para</em>,
 <em>como</em>, <em>cede</em>).</p>
 <p>... to continue</p>
+<h1 id="creating-the-dictionary">Creating the dictionary</h1>
+<p>A <em>bash</em> script was created to crawl on six online
+dictionaries and extract a word hyphenation, when found.</p>
+<h1 id="old-text">Old Text</h1>
 <p>Foi criado um conjunto de regras para aprimorar as hifenizações no
 português. Analisando um conjunto de 37798 palavras, as regras padrão
 apresentam 1368 erros (1273 pontos de hifenização não marcados e 125
