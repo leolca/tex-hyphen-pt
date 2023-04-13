@@ -257,6 +257,19 @@ The effective hyphenation of words by \TeX{} will actually depends on the follow
         before any hyphenation is allowed.
 \end{enumerate*}
 
+Despite the fact that \TeX{} hyphenation algorithm and rules are old, they are,
+to these days, the most frequently used even outside the \TeX{}'s world. For
+example, Hunspell is a spell checker and morphological analyzer that is adopted
+in may software (e.g. LibreOffice, OpenOffice.org, Mozilla Firefox, Mozilla
+Thunderbird, Google Chrome, macOS, InDesign, memoQ, Opera, Affinity Publisher,
+among others \cite{hunspell}). Hunspell uses \TeX{} hyphenation rules
+\cite{hunspellhyphen}, making \TeX{} hyphenation widespread in the computer
+world. That is a result of \TeX{} approach simplicity and versatility. The
+algorithm works well, it is currently used in 66 languages
+\cite{texhyphenrules} and it is possible to design new rules for those missing
+languages.
+
+
 % Some hyphenation rules are not possible with TeX algorithm.
 % For example, the german word Schiffahrt should be hyphenated as Schiff-fahrt.
 % Although it is no longer the recommend written form, it was the most usual
@@ -275,6 +288,8 @@ The effective hyphenation of words by \TeX{} will actually depends on the follow
 
 %  HIFENIZAÇÃO EM PORTUGUÊS
 % Antonio Martins de ARAÚJO and Toru MARUYAMA
+
+
 
 \section{Patterns for \TeX{} hyphenation} 
 The patterns used in \TeX{} hyphenation are of the form: \texttt{4z1z2}. Each
@@ -558,6 +573,14 @@ to avoid splitting disyllables made of four letters (e.g. \emph{para},
 ... to continue
 \vspace{10ex}
 
+
+
+\section{Creating the dictionary}
+A \emph{bash} script was created to crawl on six online dictionaries and extract a word hyphenation, when found. 
+
+
+
+\section{Old Text}
 
 
 Foi criado um conjunto de \NumberOfNewRules{} regras para aprimorar as hifenizações no
