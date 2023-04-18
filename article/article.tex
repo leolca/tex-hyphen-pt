@@ -52,7 +52,7 @@
 
 
 \title{Improving the portuguese hyphenation rules}
-\author{Leonardo Araújo}
+\author{Leonardo Araújo \and Aline de Lima Benevides}
 \begin{document}
 \maketitle
 
@@ -176,8 +176,6 @@ over \emph{i-nativo}. This last example could also lead to a misunderstanding
 since the word \emph{nativo} (\emph{native} in English) emerges from this word
 break. 
 
-
-
 Each language has its own hyphenation rules. They might be grouped into two
 groups: those which hyphenation is driven by morphology (etymology) and those
 driven by pronunciation. An algorithmic approach might use a logic system to
@@ -201,7 +199,6 @@ given language. Such approach might be used for different languages, by
 providing hyphenation examples in a target language to extract patterns and
 rules.
 
-
 Only the analysis of immediate surrounding might not be enough to determine a
 potential break point. For example, consider \emph{dem-o-crat} and \emph{de-moc-ra-cy},
 where immediate surrounding of \emph{e} does not suffice to determine the break
@@ -220,7 +217,6 @@ word \emph{sublinha} might be hiphenated in two different forms:
 \emph{su-bli-nha} when representing the inflected form of verb
 \emph{sublinhar} (underline as a verb) or \emph{sub-li-nha} when refering
 to the line under (underline as a noun).
-
 
 % hyphenation might change with syntactic function
 % part of speech (PoS)
@@ -309,7 +305,6 @@ problems in compound word hyphenation in \TeX{} are discussed in
 
 %  HIFENIZAÇÃO EM PORTUGUÊS
 % Antonio Martins de ARAÚJO and Toru MARUYAMA
-
 
 
 \section{Patterns for \TeX{} hyphenation} 
@@ -522,11 +517,66 @@ dictionaries.}\label{tblstats}
 
 
 
-\section{Grammar rules for hyphenation in Portuguese}
-When there is no space left in line for a whole word, it might be split in two
-using a hyphen as an indication of such procedure. In Portuguese, hyphenations
-are allowed on syllables boundaries. According to the Grammar
-\cite{cunha2016,bergstrom2011}, some rules might still apply:
+\section{Grammar rules for hyphenation in Portuguese} 
+
+There is a wide range of writing systems, including logographic, syllabic, and
+alphabetic writing systems. We might group the writing systems into three
+cateories: alphabetic, phonemic and logographic. Although they are distinct
+categories, some writing systems be built on an interplay of these categories
+\cite{coulmas2003}. The principles that guide an alphabetic writing system or
+a phonemic writing system can vary significantly based on the specific language
+and its history, but we might highlight some of the key points: 
+\begin{enumerate*}[label=\arabic*)]
+    \item the most usual principle consists on representing the sounds of a
+	language with written symbols, using one or a combination of symbols to
+	represent each sound (e.g. the orthographic system of Portuguese uses
+	an alphabet of 27 letters that aim to represent different sounds of the
+	language); 
+    \item etymology also plays an important role, where the
+	spelling of a word reflects its origins and history (e.g. the French
+	language often reflects the Latin roots of words in its spelling);
+    \item morphology is used as a guide in structuring many languages, where
+	they use specific letters or symbols to indicate word endings,
+	prefixes, or suffixes (e.g. Russian uses different forms of the
+	Cyrillic alphabet to indicate gender and case in its nouns); 
+    \item the way a language has evolved over time also contribute (e.g. the 
+	spelling of many English words has changed over time to reflect changes 
+	in pronunciation);
+\end{enumerate*}
+The principles that guide orthographic systems for languages with logographic
+writing systems like Chinese ideograms, cuneiform writing, and Egyptian
+hieroglyphs differ significantly from those of alphabetic writing systems. In
+logographic writing systems, individual symbols or characters represent entire
+words or ideas rather than phonemes or sounds. As a result, the principles that
+guide their orthographic systems are based more on semantic and visual
+principles rather than phonemic principles.
+
+As a result of the alphabetical writing system of the Portuguese, its spelling
+is guided by phonological principles \cite{cagliari2015}. The fact that
+spelling reflects, to some extent, the way words are pronounced, means that the
+hyphenation of words is also influenced by the phonemic system, where words are
+divided into syllables. It is noteworthy that different languages divide words
+based on different principles, for example, English tends to be guided by
+morphological principles, such as \emph{walk-ing}, \emph{un-happy},
+\emph{work-s} and \emph{ear-ly}. Also, other factors affect word hyphenation in
+English, such as the presence of doubled consonants and digraphs. There are also 
+a myriad of exceptions that might be grasped into rules.
+% https://english.stackexchange.com/questions/385/what-are-the-rules-for-splitting-words-at-the-end-of-a-line
+
+Merely stating that an orthographic system is guided by phonological issues
+does not necessarily mean that its hyphenation rules directly reflect the way a
+word is pronounced. This is because the orthographic system operates according
+to its own specific rules. For instance, although vowel clusters that produce a
+single sound (i.e., digraphs) are pronounced within a single syllable in words
+like \emph{chave}, \emph{ilha}, \emph{shampoo}, \emph{carro}, and \emph{bird},
+their representation in writing determines how they are separated.
+Specifically, different consonants within a digraph must remain together, while
+different consonants are separated. As a result, we have \emph{i-lha} but \emph{car}.
+
+%When there is no space left in line for a whole word, it might be split in two
+%using a hyphen as an indication of such procedure. 
+In Portuguese, hyphenations are allowed on syllables boundaries. According to
+the Grammar \cite{cunha2016,bergstrom2011}, some rules might still apply:
 \begin{enumerate}
     \item\label{rule-di-triphthong} diphthong or triphthong should not be split
 	(e.g. \emph{m\underline{\emph{ui}}-to}, \emph{Pa-ra-g\underline{\emph{uai}}});
@@ -599,6 +649,15 @@ to avoid splitting disyllables made of four letters (e.g. \emph{para},
 \section{Creating the dictionary}
 A \emph{bash} script was created to crawl on six online dictionaries and extract a word hyphenation, when found. 
 
+
+
+\section{Updating the rules}
+
+
+\section{Creating a new set of rules using Patgen}
+
+
+\section{Comparing the set of rules}
 
 
 \section{Old Text}
