@@ -5,6 +5,7 @@
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <meta name="author" content="Leonardo Araújo" />
+  <meta name="author" content="Aline de Lima Benevides" />
   <title>Improving the portuguese hyphenation rules</title>
   <style>
     html {
@@ -171,6 +172,7 @@
 <header id="title-block-header">
 <h1 class="title">Improving the portuguese hyphenation rules</h1>
 <p class="author">Leonardo Araújo</p>
+<p class="author">Aline de Lima Benevides</p>
 <div class="abstract">
 <div class="abstract-title">Abstract</div>
 <p>Portuguese hyphenation rules are available for more than 35 years and
@@ -334,37 +336,40 @@ allowed.</p>
 </div>
 <p>Despite the fact that TeX hyphenation algorithm and rules are old,
 they are, to these days, the most frequently used even outside the TeX’s
-world. For example, Hunspell is a spell checker and morphological
-analyzer that is adopted in may software (e.g. LibreOffice,
-OpenOffice.org, Mozilla Firefox, Mozilla Thunderbird, Google Chrome,
-macOS, InDesign, memoQ, Opera, Affinity Publisher, among others <span
-class="citation" data-cites="hunspell"></span>). Hunspell uses TeX
-hyphenation rules <span class="citation"
-data-cites="hunspellhyphen"></span>, making TeX hyphenation widespread
-in the computer world. That is a result of TeX approach simplicity and
-versatility. The algorithm works well, it is currently used in 66
-languages <span class="citation" data-cites="texhyphenrules"></span> and
-it is possible to design new rules for those missing languages.</p>
+world. The grounds for this is Hunspell, a spell checker and
+morphological analyzer that is adopted in may software (e.g.
+LibreOffice, OpenOffice.org, Mozilla Firefox, Mozilla Thunderbird,
+Google Chrome, macOS, InDesign, memoQ, Opera, Affinity Publisher, among
+others <span class="citation" data-cites="hunspell"></span>). Hunspell
+uses TeX hyphenation rules <span class="citation"
+data-cites="hunspellhyphen levien1998"></span>, making TeX hyphenation
+widespread in the computer world. That is a result of TeX approach
+simplicity and versatility. The algorithm works well, it currently has
+rules for 66 languages <span class="citation"
+data-cites="texhyphenrules"></span> and it is possible to design new
+rules for those still missing.</p>
 <p>Unfortunately, some specific hyphenation rules are not possible to be
 implemented using the TeX hyphenation algorithm. In German, for example,
-there are no hyphens in compound words. Additionally, when words are
-hyphenated some letters might also change. Furthermore, the spelling
-reform made changes, making it necessary to create a different set of
-rules. For example, the German word <em>Schiffahrt</em> should be
-hyphenated as <em>Schiff-fahrt</em>, preserving the <em>f</em>s from
-each word that make this compound. The hyphenation should insert a
-<em>f</em> that is not part of the written form. That was not a problem
-for the old written form of the word: <em>Schifffahrt</em>. Also, the
-old hyphenating rules of German grammar stated the hyphenation
-<em>Bäk-ker</em> for the word <em>Bäcker</em>, <em>Zuk-ker</em> for the
-word <em>Zucker</em> and <em>pak-ken</em> for the word <em>packen</em>.
-Now those words are hyphenated as <em>Bä-cker</em>, <em>Zu-cker</em> and
-<em>pa-cken</em>, respectively. Some words have also changed their
-hyphenation point after the spelling reform. For example,
-<em>Fen-ster</em> became <em>Fens-ter</em>and <em>mei-stens</em> became
-<em>meis-tens</em>. Some problems in compound word hyphenation in TeX
-are discussed in <span class="citation"
-data-cites="sojka1995a"></span>.</p>
+when words are hyphenated, some letters might change or a letter might
+be inserted. Compound words have no hyphens, leading to long sequences
+of letters with no visible separation and even repetitions of a same
+letter, such as in <em>Wasserrinne</em> and <em>Schifffahrt</em>.
+Furthermore, the German spelling reform made some changes, making it
+necessary to create a different set of rules for German hyphenation. For
+example, the word <em>Schiffahrt</em> should be hyphenated as
+<em>Schiff-fahrt</em>, preserving the <em>f</em>s from each word that
+makes this compound. The hyphenation should insert a <em>f</em> that is
+not part of the written form. That was not a problem for the old written
+form of the word: <em>Schifffahrt</em>. Also, the old hyphenating rules
+of German grammar stated the hyphenation <em>Bäk-ker</em> for the word
+<em>Bäcker</em>, <em>Zuk-ker</em> for the word <em>Zucker</em> and
+<em>pak-ken</em> for the word <em>packen</em>. Now those words are
+hyphenated as <em>Bä-cker</em>, <em>Zu-cker</em> and <em>pa-cken</em>,
+respectively. Some words have also changed their hyphenation point after
+the spelling reform. For example, <em>Fen-ster</em> became
+<em>Fens-ter</em>and <em>mei-stens</em> became <em>meis-tens</em>. Some
+problems in compound word hyphenation in TeX are discussed in <span
+class="citation" data-cites="sojka1995a"></span>.</p>
 <h1 id="patterns-for-tex-hyphenation">Patterns for TeX hyphenation</h1>
 <p>The patterns used in TeX hyphenation are of the form:
 <code>4z1z2</code>. Each pattern is made of a sequence of letters and
@@ -477,35 +482,41 @@ in 2015 with the contributions from José João Dias Almeida <span
 class="citation" data-cites="hyphpt"></span>. The set has rules<a
 href="#fn3" class="footnote-ref" id="fnref3"
 role="doc-noteref"><sup>3</sup></a> and are able to correctly hyphenate
-the majority of Portuguese words. We propose here to analyse the
-performance of the default rules and add new rules to improve
-hyphenation by correcting some issues and taking in account non-typical
-patterns.</p>
+the majority of Portuguese words.</p>
+<p>In front of these cases, we propose here to analyse the performance
+of the default rules in order to add new rules to improve hyphenation by
+correcting some issues and taking in account non-typical patterns. We
+describe the methodology used in the section <a href="#sec-methodology"
+data-reference-type="ref" data-reference="sec-methodology">5</a>.</p>
+<h1 id="sec-methodology">Methodology</h1>
 <p>In order to apprise the performance of each set of rules, we need a
-list of correctly hyphenated words that are used in a language. We use
-the frequency of occurrence to avoid selecting really rare words. To
-build a large list with such information, we relied on data collected
-from online dictionaries and corpora of Portuguese. We also looked up
-Portuguese grammars to check on the hyphenation (translineation) rules
-and we made some manual corrections on the data.</p>
-<p>In 1990, Portuguese went under a Language Orthographic Agreement. The
-adopting transition period started in 2009 and ended as it turned
-mandatory in 2016. Even after the agreement, some words still hold
-different spellings in the participant countries. It is desirable to
-have hyphenation rules that might work properly, despite those
-idiosyncrasies. For example, the word <em>reception</em> might be
+list of correctly hyphenated words that are used in Portuguese. For
+that, we use the frequency of occurrence to avoid selecting really rare
+words. To build a large list with such information, we relied on data
+collected from online dictionaries and corpora of Portuguese. We also
+looked up Portuguese grammars to check on the hyphenation
+(<em>translineation</em>) rules and we made some manual corrections on
+the data.</p>
+<h2 id="sec-data-coll">Data collection</h2>
+<p>Initially we selected <a
+href="https://www.linguateca.pt/cetenfolha/index_info.html">CETENFolha</a>
+as the source corpus. Using only this corpus led to two problems: many
+words were still missing and it was built on text from 1994, prior to
+the Orthographic Agreement. This problem is a result of the Orthographic
+Agreement of the Portuguese Language, carried out in 1990.</p>
+<p>The Agreement’s adopting transition period started in 2009 and ended
+as it turned mandatory in 2016. Even after the agreement, some words
+still hold different spellings in the participant countries. It is
+desirable to have hyphenation rules that might work properly, despite
+those idiosyncrasies. For example, the word <em>reception</em> might be
 written as <em>receção</em> (Portugal) or <em>recepção</em> (Brazil);
 the word <em>action</em> might be written as <em>acção</em> (Portugal)
 or <em>ação</em> (Brazil); and the word <em>project</em> might be
 written as <em>projecto</em> (Portugal) or <em>projeto</em>
 (Brazil).</p>
-<p>We started using <a
-href="https://www.linguateca.pt/cetenfolha/index_info.html">CETENFolha</a>
-as the source corpus. Using only this corpus led to two problems: many
-words were still missing and it was built on text from 1994, prior to
-the Orthographic Agreement. We decided to incorporate the list of words
-from <a href="https://www.palavras.net/">Palavras NET</a> and afterwards
-we also included words from the <a
+<p>Because of these idiosyncrasies, we decided to incorporate the list
+of words from <a href="https://www.palavras.net/">Palavras NET</a> and
+afterwards we also included words from the <a
 href="https://pt.wikipedia.org">Portuguese Wikipedia</a> dump. Although
 the list of words created was huge, we kept only those words we could
 find their hyphenation on at least one of the following online
@@ -518,18 +529,17 @@ Portuguesa</a> e <a href="https://www.dicio.com.br/">Dicio</a>. This
 leads to the creation of a dictionary with words.</p>
 <p>Table <a href="#tblstats" data-reference-type="ref"
 data-reference="tblstats">1</a> presents the number of words with a
-given number of hyphenation found the dictionaries. It also presents the
-number of words that have the highest agreed hyphenation. We will
-present some examples below. To reference the cells in the table we will
-not consider the header line and column. For example, the word
-<em>como</em> was hyphenated by the six dictionaries as <em>co-mo</em>.
-It will add one to the counts on both lines where the hyphenations
-number is 6 (first column). The word <em>sua</em> was hyphenated as
-<em>su-a</em> in 4 dictionaries and a <em>sua</em> in one dictionary. It
-will add one in the first line, second column (since hyphenations were
-found in 5 dictionaries). It will also add one on the second line, third
-column (since the most frequent hyphenation was found in 4
-dictionaries). It is clear now why we might have the number of same
+given number of hyphenation found in the dictionaries. It also presents
+the number of words that have the highest agreed hyphenation. For
+example, the word <em>como</em> was hyphenated by the six dictionaries
+as <em>co-mo</em>. It will add one to the counts on both lines where the
+hyphenations number is 6 (first column). The word <em>sua</em> was
+hyphenated as <em>su-a</em> in 4 dictionaries, <em>sua</em> in one
+dictionary and one dictionary did not provide its hyphenation.
+Therefore, it will add one in the first line, second column (since
+hyphenations were found in 5 dictionaries). It will also add one on the
+second line, third column (since the most frequent hyphenation was found
+in 4 dictionaries). It is clear now why we might have the number of same
 hyphenations (specially for small values) greater the number of
 hyphenations found.</p>
 <div id="tblstats">
@@ -575,14 +585,76 @@ in the dictionaries.</caption>
 </tbody>
 </table>
 </div>
+<p>In summary, data from <em>CETENFolha</em> and <em>Palavras NET</em>
+were compiled. Their words were hyphenated based on the hyphenation
+orignal TeX rules and contrasted with the dictionary results. The
+performance was appraised and the errors systematized, in order to find
+in the literature possible rules that could complement and improve
+it.</p>
 <h1 id="grammar-rules-for-hyphenation-in-portuguese">Grammar rules for
 hyphenation in Portuguese</h1>
-<p>When there is no space left in line for a whole word, it might be
-split in two using a hyphen as an indication of such procedure. In
-Portuguese, hyphenations are allowed on syllables boundaries. According
-to the Grammar <span class="citation"
-data-cites="cunha2016 bergstrom2011"></span>, some rules might still
-apply:</p>
+<p>There is a wide range of writing systems, including logographic,
+syllabic, and alphabetic writing systems. We might group the writing
+systems into three cateories: alphabetic, phonemic and logographic.
+Although they are distinct categories, some writing systems be built on
+an interplay of these categories <span class="citation"
+data-cites="coulmas2003"></span>. The principles that guide an
+alphabetic writing system or a phonemic writing system can vary
+significantly based on the specific language and its history, but we
+might highlight some of the key points:</p>
+<div class="enumerate*">
+<p>the most usual principle consists on representing the sounds of a
+language with written symbols, using one or a combination of symbols to
+represent each sound (e.g. the orthographic system of Portuguese uses an
+alphabet of 27 letters that aim to represent different sounds of the
+language);</p>
+<p>etymology also plays an important role, where the spelling of a word
+reflects its origins and history (e.g. the French language often
+reflects the Latin roots of words in its spelling);</p>
+<p>morphology is used as a guide in structuring many languages, where
+they use specific letters or symbols to indicate word endings, prefixes,
+or suffixes (e.g. Russian uses different forms of the Cyrillic alphabet
+to indicate gender and case in its nouns);</p>
+<p>the way a language has evolved over time also contribute (e.g. the
+spelling of many English words has changed over time to reflect changes
+in pronunciation);</p>
+</div>
+<p>The principles that guide orthographic systems for languages with
+logographic writing systems like Chinese ideograms, cuneiform writing,
+and Egyptian hieroglyphs differ significantly from those of alphabetic
+writing systems. In logographic writing systems, individual symbols or
+characters represent entire words or ideas rather than phonemes or
+sounds. As a result, the principles that guide their orthographic
+systems are based more on semantic and visual principles rather than
+phonemic principles.</p>
+<p>As a result of the alphabetical writing system of the Portuguese, its
+spelling is guided by phonological principles <span class="citation"
+data-cites="cagliari2015"></span>. The fact that spelling reflects, to
+some extent, the way words are pronounced, means that the hyphenation of
+words is also influenced by the phonemic system, where words are divided
+into syllables. It is noteworthy that different languages divide words
+based on different principles, for example, English tends to be guided
+by morphological principles, such as <em>walk-ing</em>,
+<em>un-happy</em>, <em>work-s</em> and <em>ear-ly</em>. Also, other
+factors affect word hyphenation in English, such as the presence of
+doubled consonants and digraphs. There are also a myriad of exceptions
+that might be grasped into rules.</p>
+<p>Merely stating that an orthographic system is guided by phonological
+issues does not necessarily mean that its hyphenation rules directly
+reflect the way a word is pronounced. This is because the orthographic
+system operates according to its own specific rules. For instance,
+although vowel clusters that produce a single sound (i.e., digraphs) are
+pronounced within a single syllable in words like <em>chave</em>,
+<em>ilha</em>, <em>shampoo</em>, <em>carro</em>, and <em>bird</em>,
+their representation in writing determines how they are separated.
+Specifically, different consonants within a digraph must remain
+together, while different consonants are separated. As a result, we have
+<em>i-lha</em> but <em>car</em>.</p>
+<p>In Portuguese, hyphenations are allowed on syllables boundaries and,
+in general, follow phonological principles. According to the Grammar
+<span class="citation"
+data-cites="cunha2016 bergstrom2011 cegalla2008"></span>, some rules
+might still apply:</p>
 <ol>
 <li><p><span id="rule-di-triphthong" label="rule-di-triphthong"></span>
 diphthong or triphthong should not be split (e.g.
@@ -603,15 +675,26 @@ consonant clusters starting a syllable should not be split (e.g.
 <em><u><em>ps</em></u>i-có-lo-go</em>,
 <em><u><em>mn</em></u>e-mô-ni-co</em>);</p></li>
 <li><p><span id="rules-digraphs-ns" label="rules-digraphs-ns"></span>
-the digraphs <em>ch</em>, <em>lh</em>, <em>nh</em>, <em>gu</em>,
-<em>qu</em> should not be split (e.g. <em>ra-<u><em>ch</em></u>ar</em>,
-<em>a-bro-<u><em>lh</em></u>os</em>, <em>ma-<u><em>nh</em></u>ã</em>,
-<em><u><em>gu</em></u>i-tar-ra</em>,
+the digraphs<a href="#fn4" class="footnote-ref" id="fnref4"
+role="doc-noteref"><sup>4</sup></a> <em>ch</em>, <em>lh</em>,
+<em>nh</em>, <em>gu</em>, <em>qu</em> should not be split (e.g.
+<em>ra-<u><em>ch</em></u>ar</em>, <em>a-bro-<u><em>lh</em></u>os</em>,
+<em>ma-<u><em>nh</em></u>ã</em>, <em><u><em>gu</em></u>i-tar-ra</em>,
 <em><u><em>qu</em></u>in-to</em>);</p></li>
-<li><p><span id="rule-nasalization" label="rule-nasalization"></span> a
-vowel and its following nasalization marker (a graphic nasal consonant)
-should not be split (e.g. <em><u><em>am</em></u>-bição</em>,
+<li><p><span id="rule-guqu" label="rule-guqu"></span> bigrams like
+<em>gu</em> and <em>qu</em> whose vowel <em>u</em> is not pronounced are
+never separated from the vowel or diphthong that follows it (e.g.
+<em>ne-<u><em>gu</em>e</u></em>,
+<em>pe-<u><em>qu</em>e</u></em>);</p></li>
+<li><p><span id="rule-nasalization" label="rule-nasalization"></span>
+since they are digraphs, a vowel and its following nasalization marker
+(a graphic nasal consonant) should not be split (e.g.
+<em><u><em>am</em></u>-bição</em>,
 <em>m<u><em>an</em></u>-cha</em>);</p></li>
+<li><p><span id="rule-decreasing" label="rule-decreasing"></span>
+decreasing diphthongs should not be split (e.g.
+<em><u><em>ai</em></u>-ro-so</em>, <em>ca-d<u><em>ei</em></u>-ra</em>,
+<em>o-ra-ç<u><em>ão</em></u></em>);</p></li>
 <li><p><span id="rule-rising" label="rule-rising"></span> rising
 diphthong should not be split (e.g. <em>a-b<u><em>ai</em></u>-xo</em>;
 <em>c<u><em>au</em></u>-te-la</em>, <em>pa-p<u><em>éi</em></u>s</em>,
@@ -619,7 +702,15 @@ diphthong should not be split (e.g. <em>a-b<u><em>ai</em></u>-xo</em>;
 <em>r<u><em>eu</em></u>-nir</em>, <em>n<u><em>oi</em></u>-te</em>;
 <em>ca-la-b<u><em>ou</em></u>-ço</em>,
 <em>as-te-r<u><em>ói</em></u>-de</em>;
-<em>re-tri-b<u><em>ui</em></u></em>);</p>
+<em>re-tri-b<u><em>ui</em></u></em>);</p></li>
+<li><p><span id="rule-singlev" label="rule-singlev"></span> disyllables
+whose syllable has a single vowel should not be split (e.g.
+<em><u><em>a</em></u>to</em>, <em>ru<u><em>a</em></u></em>,
+<em><u><em>ó</em></u>dio</em>, <em><u><em>u</em></u>nha</em>);</p></li>
+<li><p><span id="rule-orphan" label="rule-orphan"></span> words with
+more than two syllables, when divided, cannot isolate a syllable
+composed of a single vowel (e.g. <em><u><em>a</em></u>gos-to</em>,
+<em>la-go<u><em>a</em></u></em>, <em><u><em>i</em></u>da-de</em>);</p>
 <p>to 5cm<span>to 10pt<span>. </span></span></p></li>
 <li><p><span id="rule-hiatus" label="rule-hiatus"></span> hiatus vowels
 and those vowel sequences where each vowel belongs to a different
@@ -649,9 +740,9 @@ following line:</p>
 <li><p>when a compound word using a hyphen is split across lines (e.g.
 <em>couve-/-flor</em>, <em>ex-/-presidente</em>);</p></li>
 <li><p>when a different meaning could be conveyed when splitting a
-pronoun (e.g. <em>prazer de ver-/-me</em><a href="#fn4"
-class="footnote-ref" id="fnref4"
-role="doc-noteref"><sup>4</sup></a>).</p></li>
+pronoun (e.g. <em>prazer de ver-/-me</em><a href="#fn5"
+class="footnote-ref" id="fnref5"
+role="doc-noteref"><sup>5</sup></a>).</p></li>
 </ol>
 <p>It should be avoided to leave a single vowel in the end or start of a
 line (e.g. the word <em>san-guí-nea</em> should be split only on the
@@ -660,19 +751,28 @@ final vowel <em>a</em> left alone in the start of a new line:
 <em>sanguíne-a</em>). It is also considered a better approach to avoid
 splitting disyllables made of four letters (e.g. <em>para</em>,
 <em>como</em>, <em>cede</em>).</p>
+<p>Systematizing the rules that guide syllable boundarie and,
+consequently, hyphenation in Portuguese proved to be fundamental for the
+improvement of the TeX hyphenator rules, since they indicate the
+possible or prohibited contexts of hyphenation. Expomos, a seguir, uma
+análise comparativa...</p>
 <p>... to continue</p>
 <h1 id="creating-the-dictionary">Creating the dictionary</h1>
 <p>A <em>bash</em> script was created to crawl on six online
 dictionaries and extract a word hyphenation, when found.</p>
+<h1 id="updating-the-rules">Updating the rules</h1>
+<h1 id="creating-a-new-set-of-rules-using-patgen">Creating a new set of
+rules using Patgen</h1>
+<h1 id="comparing-the-set-of-rules">Comparing the set of rules</h1>
 <h1 id="old-text">Old Text</h1>
 <p>Foi criado um conjunto de regras para aprimorar as hifenizações no
 português. Analisando um conjunto de 37798 palavras, as regras padrão
 apresentam 1368 erros (1273 pontos de hifenização não marcados e 125
-pontos marcados erroneamente)<a href="#fn5" class="footnote-ref"
-id="fnref5" role="doc-noteref"><sup>5</sup></a>, enquanto as novas
+pontos marcados erroneamente)<a href="#fn6" class="footnote-ref"
+id="fnref6" role="doc-noteref"><sup>6</sup></a>, enquanto as novas
 regras apresentaram 132 erros (118 pontos de hifenização não marcados e
-35 pontos marcados erroneamente)<a href="#fn6" class="footnote-ref"
-id="fnref6" role="doc-noteref"><sup>6</sup></a>.</p>
+35 pontos marcados erroneamente)<a href="#fn7" class="footnote-ref"
+id="fnref7" role="doc-noteref"><sup>7</sup></a>.</p>
 <p>Foi criado um conjunto de 37798 palavras obtidas do corpus <a
 href="https://www.linguateca.pt/cetenfolha/index_info.html">CETENFolha</a>,
 juntamente com palavras do <a href="https://www.palavras.net/">Palavras
@@ -843,14 +943,18 @@ hyphenation is short when compared to rules in other languages. For
 example, English currently has 4938 rules, Russian has 7023 rules and
 German has 34011 rules.<a href="#fnref3" class="footnote-back"
 role="doc-backlink">↩︎</a></p></li>
-<li id="fn4" role="doc-endnote"><p>Possible conveyed meanings:
-<em>pleasure in seeing me</em> or <em>worm’s pleasure</em>.<a
-href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn5" role="doc-endnote"><p>A soma não é 1368 pois temos 30 casos
-em que os dois tipos de erros ocorrem.<a href="#fnref5"
+<li id="fn4" role="doc-endnote"><p>One should not confuse consonant
+clusters with digraphs, since the latter represent only one sound, while
+the former represent two or more sounds.<a href="#fnref4"
 class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn6" role="doc-endnote"><p>35 palavras apresentam ambos tipos de
-erro.<a href="#fnref6" class="footnote-back"
+<li id="fn5" role="doc-endnote"><p>Possible conveyed meanings:
+<em>pleasure in seeing me</em> or <em>worm’s pleasure</em>.<a
+href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn6" role="doc-endnote"><p>A soma não é 1368 pois temos 30 casos
+em que os dois tipos de erros ocorrem.<a href="#fnref6"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn7" role="doc-endnote"><p>35 palavras apresentam ambos tipos de
+erro.<a href="#fnref7" class="footnote-back"
 role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>

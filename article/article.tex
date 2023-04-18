@@ -429,28 +429,42 @@ Dias Almeida \cite{hyphpt}. The set has \NumberOfDefaultRules{}
 rules\footnote{The set of rules for Portuguese hyphenation is short when
 compared to rules in other languages. For example, English currently has 4938
 rules, Russian has 7023 rules and German has 34011 rules.} and are able to
-correctly hyphenate the majority of Portuguese words. We propose here to
-analyse the performance of the default rules and add new rules to improve
+correctly hyphenate the majority of Portuguese words. 
+% - detalhar as regras de Rezende e Dias 
+% - contabilizar a quantidade de palavras que não são contempladas pela proposta do autor
+% - analisar a necessidade de excluir alguma regra (ao invés de apenas acrescentar novas)
+
+In front of these cases, we propose here to analyse the performance of the default rules in order to add new rules to improve
 hyphenation by correcting some issues and taking in account non-typical
-patterns.
+patterns. We describe the methodology used in the section \ref{sec-methodology}.
+
+\section{Methodology}\label{sec-methodology}
 
 In order to apprise the performance of each set of rules, we need a list of
-correctly hyphenated words that are used in a language. We use the frequency of
-occurrence to avoid selecting really rare words. To build a large list with
-such information, we relied on data collected from online dictionaries and
-corpora of Portuguese. We also looked up Portuguese grammars to check on the
-hyphenation (translineation) rules and we made some manual corrections on the
-data.
+correctly hyphenated words that are used in Portuguese. For that, we use the
+frequency of occurrence to avoid selecting really rare words. To build a large
+list with such information, we relied on data collected from online
+dictionaries and corpora of Portuguese. We also looked up Portuguese grammars
+to check on the hyphenation (\emph{translineation}) rules and we made some manual
+corrections on the data.
 
-In 1990, Portuguese went under a Language Orthographic Agreement. The adopting
-transition period started in 2009 and ended as it turned mandatory in 2016.
-Even after the agreement, some words still hold different spellings in the
-participant countries. It is desirable to have hyphenation rules that might
-work properly, despite those idiosyncrasies.  For example, the word
-\emph{reception} might be written as \emph{receção} (Portugal) or
-\emph{recepção} (Brazil); the word \emph{action} might be written as
-\emph{acção} (Portugal) or \emph{ação} (Brazil); and the word \emph{project} might be
-written as \emph{projecto} (Portugal) or \emph{projeto} (Brazil).
+
+\subsection{Data collection}\label{sec-data-coll} 
+
+Initially we selected \href{https://www.linguateca.pt/cetenfolha/index_info.html}{CETENFolha} 
+as the source corpus. Using only this corpus led to two problems: many words
+were still missing and it was built on text from 1994, prior to the
+Orthographic Agreement. This problem is a result of the Orthographic Agreement
+of the Portuguese Language, carried out in 1990. 
+
+The Agreement's adopting transition period started in 2009 and ended as it
+turned mandatory in 2016.  Even after the agreement, some words still hold
+different spellings in the participant countries. It is desirable to have
+hyphenation rules that might work properly, despite those idiosyncrasies.  For
+example, the word \emph{reception} might be written as \emph{receção}
+(Portugal) or \emph{recepção} (Brazil); the word \emph{action} might be written
+as \emph{acção} (Portugal) or \emph{ação} (Brazil); and the word \emph{project}
+might be written as \emph{projecto} (Portugal) or \emph{projeto} (Brazil).
 
 % We have used the Portuguese Wikipedia dump as our Portuguese corpus. Texts in Wikipedia might be written by Brazilian or Portuguese contributors, the both spellings may appear.
 
@@ -460,11 +474,7 @@ written as \emph{projecto} (Portugal) or \emph{projeto} (Brazil).
 % cat /ms/downloads/samples/wikipedia/ptwiki-latest-pages-articles-multistream_wordlist.txt | awk '{CUMCOUNT+=$1; if(CUMCOUNT < 299204217) print;}' >/tmp/ptwikitop99.txt
 % cat /tmp/ptwikitop99.txt | tr -d "0-9 " |  while read -r word; do if ! grep -q "^${word}," hyphenations.csv; then echo $word; fi; done > /tmp/ptwikitop99_notinlist.txt
 
-We started using
-\href{https://www.linguateca.pt/cetenfolha/index_info.html}{CETENFolha} as the
-source corpus. Using only this corpus led to two problems: many words were
-still missing and it was built on text from 1994, prior to the Orthographic
-Agreement. We decided to incorporate the list of words from
+Because of these idiosyncrasies, we decided to incorporate the list of words from
 \href{https://www.palavras.net/}{Palavras NET} and afterwards we also included
 words from the \href{https://pt.wikipedia.org}{Portuguese Wikipedia} dump.
 Although the list of words created was huge, we kept only those words we could
@@ -478,18 +488,17 @@ find their hyphenation on at least one of the following online dictionaries:
 This leads to the creation of a dictionary with \DictionarySize{} words.
 
 Table \ref{tblstats} presents the number of words with a given number of
-hyphenation found the dictionaries. It also presents the number of words that
-have the highest agreed hyphenation. We will present some examples below. To
-reference the cells in the table we will not consider the header line and
-column. For example, the word \emph{como} was hyphenated by the six
-dictionaries as \emph{co-mo}. It will add one to the counts on both lines
-where the hyphenations number is 6 (first column). The word \emph{sua} was
-hyphenated as \emph{su-a} in 4 dictionaries and a \emph{sua} in one
-dictionary. It will add one in the first line, second column (since hyphenations
-were found in 5 dictionaries). It will also add one on the second line, third
-column (since the most frequent hyphenation was found in 4 dictionaries). It is
-clear now why we might have the number of same hyphenations (specially for
-small values) greater the number of hyphenations found. 
+hyphenation found in the dictionaries. It also presents the number of words
+that have the highest agreed hyphenation. For example, the word \emph{como}
+was hyphenated by the six dictionaries as \emph{co-mo}. It will add one to the
+counts on both lines where the hyphenations number is 6 (first column). The
+word \emph{sua} was hyphenated as \emph{su-a} in 4 dictionaries, \emph{sua} in
+one dictionary and one dictionary did not provide its hyphenation. Therefore,
+it will add one in the first line, second column (since hyphenations were found
+in 5 dictionaries). It will also add one on the second line, third column
+(since the most frequent hyphenation was found in 4 dictionaries). It is clear
+now why we might have the number of same hyphenations (specially for small
+values) greater the number of hyphenations found. 
 
 
 \begin{table}
@@ -513,7 +522,11 @@ dictionaries.}\label{tblstats}
 \end{tabular}
 \end{table}
 
-
+In summary, data from \emph{CETENFolha} and \emph{Palavras NET} were compiled.
+Their words were hyphenated based on the hyphenation orignal \TeX{} rules and
+contrasted with the dictionary results. The performance was appraised and the
+errors systematized, in order to find in the literature possible rules that
+could complement and improve it.
 
 
 
@@ -575,8 +588,9 @@ different consonants are separated. As a result, we have \emph{i-lha} but \emph{
 
 %When there is no space left in line for a whole word, it might be split in two
 %using a hyphen as an indication of such procedure. 
-In Portuguese, hyphenations are allowed on syllables boundaries. According to
-the Grammar \cite{cunha2016,bergstrom2011}, some rules might still apply:
+In Portuguese, hyphenations are allowed on syllables boundaries and, in general, follow phonological principles. 
+According to
+the Grammar \cite{cunha2016,bergstrom2011,cegalla2008}, some rules might still apply:
 \begin{enumerate}
     \item\label{rule-di-triphthong} diphthong or triphthong should not be split
 	(e.g. \emph{m\underline{\emph{ui}}-to}, \emph{Pa-ra-g\underline{\emph{uai}}});
@@ -590,13 +604,21 @@ the Grammar \cite{cunha2016,bergstrom2011}, some rules might still apply:
     \item\label{rule-c-clusters} consonant clusters starting a syllable should not be
 	split (e.g. \emph{\underline{\emph{pn}}eu-má-ti-co}, \emph{\underline{\emph{ps}}i-có-lo-go}, 
 	\emph{\underline{\emph{mn}}e-mô-ni-co});
-    \item\label{rules-digraphs-ns} the digraphs \emph{ch}, \emph{lh}, \emph{nh}, \emph{gu}, \emph{qu} 
+    \item\label{rules-digraphs-ns} the digraphs\footnote{One should not confuse consonant clusters 
+	with digraphs, since the latter represent only one sound, while the former represent two or more sounds.}
+	\emph{ch}, \emph{lh}, \emph{nh}, \emph{gu}, \emph{qu} 
 	should not be split (e.g. \emph{ra-\underline{\emph{ch}}ar},
 	\emph{a-bro-\underline{\emph{lh}}os}, \emph{ma-\underline{\emph{nh}}ã},
 	\emph{\underline{\emph{gu}}i-tar-ra}, \emph{\underline{\emph{qu}}in-to});
-    \item\label{rule-nasalization} a vowel and its following nasalization marker (a graphic
-	nasal consonant) should not be split (e.g. \emph{\underline{\emph{am}}-bição},
+    \item\label{rule-guqu} bigrams like \emph{gu} and \emph{qu} whose vowel \emph{u} is not 
+	pronounced are never separated from the vowel or diphthong that follows it 
+	(e.g. \emph{ne-\underline{\emph{gu}e}}, \emph{pe-\underline{\emph{qu}e}});
+    \item\label{rule-nasalization} since they are digraphs, a vowel and its following 
+	nasalization marker (a graphic nasal consonant) should not be split (e.g. \emph{\underline{\emph{am}}-bição},
 	\emph{m\underline{\emph{an}}-cha});
+    \item\label{rule-decreasing} decreasing diphthongs should not be split (e.g. 
+	\emph{\underline{\emph{ai}}-ro-so}, \emph{ca-d\underline{\emph{ei}}-ra}, 
+	\emph{o-ra-ç\underline{\emph{ão}}});
     \item\label{rule-rising} rising diphthong should not be split (e.g.
 	\emph{a-b\underline{\emph{ai}}-xo}; \emph{c\underline{\emph{au}}-te-la}, 
 	\emph{pa-p\underline{\emph{éi}}s}, \emph{cha-p\underline{\emph{éu}}}, 
@@ -604,6 +626,13 @@ the Grammar \cite{cunha2016,bergstrom2011}, some rules might still apply:
 	\emph{n\underline{\emph{oi}}-te}; \emph{ca-la-b\underline{\emph{ou}}-ço}, 
 	\emph{as-te-r\underline{\emph{ói}}-de}; 
 	\emph{re-tri-b\underline{\emph{ui}}});
+    \item\label{rule-singlev} disyllables whose syllable has a single vowel should 
+	not be split (e.g. \emph{\underline{\emph{a}}to}, \emph{ru\underline{\emph{a}}}, 
+	\emph{\underline{\emph{ó}}dio}, \emph{\underline{\emph{u}}nha});
+    \item\label{rule-orphan} words with more than two syllables, when divided, cannot 
+	isolate a syllable composed of a single vowel (e.g. \emph{\underline{\emph{a}}gos-to}, 
+	\emph{la-go\underline{\emph{a}}}, \emph{\underline{\emph{i}}da-de});
+
 
     \hspace{10em} \hbox to 5cm{\leaders\hbox to 10pt{\hss . \hss}\hfil} 
 
@@ -640,6 +669,12 @@ example, avoiding the split that would leave the final vowel \emph{a}
 left alone in the start of a new line: \emph{sanguíne-a}). It is also considered a better approach
 to avoid splitting disyllables made of four letters (e.g. \emph{para},
 \emph{como}, \emph{cede}).
+
+
+Systematizing the rules that guide syllable boundarie and, consequently,
+hyphenation in Portuguese proved to be fundamental for the improvement of the
+\TeX{} hyphenator rules, since they indicate the possible or prohibited contexts
+of hyphenation. Expomos, a seguir, uma análise comparativa...
 
 ... to continue
 \vspace{10ex}
