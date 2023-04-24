@@ -689,7 +689,52 @@ A \emph{bash} script was created to crawl on six online dictionaries and extract
 \section{Updating the rules}
 
 
+\subsection{Results from the new set of rules}
+Although the XXX erroneous words have some common characteristics, which would
+allow, to some extent, to reduce the amount of hyphenation errors, there is a
+limitation arising from the way \TeX{}'s rules are conceived. We present,
+below, the systematists found in these data that could be predicted by another
+structure of rules:
+
+\begin{description} 
+    \item[Morphological determination:] Prefixes such as \emph{re-},
+	\emph{sub-}, \emph{cyber-} and \emph{auto-} require separating the
+	prefix from its stem, what runs into phonological issues. For example,
+	\emph{reiniciar} and \emph{sublinhar}, as they contain prefixes, should
+	be hyphenated as \emph{re-i-ni-ci-ar} and \emph{sub-li-nhar},
+	respecting the morphological formation of the word. However,
+	considering that the Portuguese language hyphenates its words from
+	syllabic phonological correlates, words that require morphological
+	information, such as those, do not have their hyphenation performed
+	properly. They add up, in our corpus, to twelve words (eight words with
+	\emph{re-} and one case with \emph{auto-}, \emph{meta-}, \emph{sub-},
+	\emph{cyber-}, \emph{geo-} or \emph{neuro-}).
+
+    \item[Foreignness:] There is a group of 20 words in the corpus that are
+	terminologies or words that were incorporated into the Portuguese
+	language without full phonological adaptation, such as
+	\emph{darwinismo}, \emph{quilowatt} and \emph{esfiha}. The lack of
+	adaptation makes the phonological pattern very specific to the word,
+	making it impossible to incorporate in \TeX{}'s rules alongside the
+	other rules. The solution is to add them to the exception word list.
+
+    \item[Word-initial consonant clusters:] Portuguese has few cases of
+	consonant clusters at the beginning of a word. They, in general, are
+	etymological remnants and are currently unproductive in the language,
+	since there are no neologisms with this pattern. Encounters like
+	\emph{ps-} and \emph{pn-} are more frequent, as they are present in
+	words like \emph{psicologia} and \emph{pneu}, which have an average
+	frequency in the language. They might be predicted by rules, which
+	comprise XXX words. However, there are consonant clusters that are
+	found in very specific and low frequency words. Although possible, it
+	is not worth adding very specific rules using the consonant clusters
+	contained in the words \emph{dzeta}, \emph{gnu}, \emph{cnidário},
+	\emph{ftálico} and \emph{gnaisse} -- that is, just five words.
+\end{description}
+
+
 \section{Creating a new set of rules using Patgen}
+
 
 
 \section{Comparing the set of rules} 
