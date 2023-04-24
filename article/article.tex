@@ -590,9 +590,10 @@ different consonants are separated. As a result, we have \emph{i-lha} but \emph{
 
 %When there is no space left in line for a whole word, it might be split in two
 %using a hyphen as an indication of such procedure. 
-In Portuguese, hyphenations are allowed on syllables boundaries and, in general, follow phonological principles. 
-According to
-the Grammar \cite{cunha2016,bergstrom2011,cegalla2008}, some rules might still apply:
+
+In Portuguese, hyphenations are allowed on syllables boundaries and, in
+general, follow phonological principles.  According to the Grammar
+\cite{cunha2016,bergstrom2011,cegalla2008}, some rules might still apply:
 \begin{enumerate}
     \item\label{rule-di-triphthong} diphthong or triphthong should not be split
 	(e.g. \emph{m\underline{\emph{ui}}-to}, \emph{Pa-ra-g\underline{\emph{uai}}});
@@ -606,10 +607,9 @@ the Grammar \cite{cunha2016,bergstrom2011,cegalla2008}, some rules might still a
     \item\label{rule-c-clusters} consonant clusters starting a syllable should not be
 	split (e.g. \emph{\underline{\emph{pn}}eu-má-ti-co}, \emph{\underline{\emph{ps}}i-có-lo-go}, 
 	\emph{\underline{\emph{mn}}e-mô-ni-co});
-    \item\label{rules-digraphs-ns} the digraphs	\emph{ch}, \emph{lh}, \emph{nh}, \emph{gu}, \emph{qu} 
+    \item\label{rules-digraphs-ns} the digraphs	\emph{ch}, \emph{lh}, \emph{nh}
 	should not be split (e.g. \emph{ra-\underline{\emph{ch}}ar},
-	\emph{a-bro-\underline{\emph{lh}}os}, \emph{ma-\underline{\emph{nh}}ã},
-	\emph{bur-\underline{\emph{gu}}e-sa}, \emph{\underline{\emph{qu}}in-to});
+	\emph{a-bro-\underline{\emph{lh}}os}, \emph{ma-\underline{\emph{nh}}ã};
     \item\label{rule-guqu} bigrams like \emph{gu} and \emph{qu} whose vowel \emph{u} is not 
 	pronounced are never separated from the vowel or diphthong that follows it 
 	(e.g. \emph{ne-\underline{\emph{gu}e}}, \emph{pe-\underline{\emph{qu}e}});
@@ -692,8 +692,15 @@ A \emph{bash} script was created to crawl on six online dictionaries and extract
 \section{Creating a new set of rules using Patgen}
 
 
-\section{Comparing the set of rules}
-
+\section{Comparing the set of rules} 
+Let us remember that the standard \TeX{} hyphenation rules, proposed by
+\cite{hyphpt}, amount to XXX errors, in a set of XXXX words.  Among those, XXX
+correspond to places where the hyphenation was not carried out and XXX to
+mismarkings. Faced with the errors made by the standard hyphenator, a set of
+\NumberOfNewRules{} rules were established, which reduced the errors to XXXX,
+with XXXX unmarked hyphenation places and XXX mismarkings.  Such rules are
+presented and exemplified below, as well as the necessary exception rules and
+an example in which the application of the rule is demonstrated.
 
 \section{Old Text}
 
