@@ -17,6 +17,7 @@
 \usepackage{listings}
 \usepackage{hyperref}
 \usepackage{cleveref}
+\usepackage{fancyvrb}
 
 %%%%%%% https://tex.stackexchange.com/questions/16790/write18-capturing-shell-script-output-as-command-variable
 \usepackage{xparse}
@@ -54,6 +55,7 @@
 \title{Improving the portuguese hyphenation rules}
 \author{Leonardo Araújo \and Aline de Lima Benevides}
 \begin{document}
+\VerbatimFootnotes
 \maketitle
 
 \captureshell*[\NumberOfDefaultRules]{wc -l ../data/default.TeX.pt-br.patterns | cut -d' ' -f1}
@@ -95,7 +97,7 @@
     of Portuguese words.
 \end{abstract}
 
-\section{Introduction}
+\section{Introduction}\label{sec-intro}
 Hyphenation in text wrapping was not used for a long time. Words should fit
 entirely in a line, or they would be broken in arbitrary places. First no
 marker at all was used to sign the wrapping of a word, what could create
@@ -248,7 +250,17 @@ The effective hyphenation of words by \TeX{} will actually depends on the follow
 \begin{enumerate*}[label=\arabic*)]
     \item document language, which will determine which set of patterns to apply;
     \item characters used, since some might block hyphenation at their edges;
-    \item the value of the internal variables \verb|lefthyphenmin| and \verb|righthyphenmin|,
+    \item the value of the internal variables \verb|lefthyphenmin| and \verb|righthyphenmin|\footnote{
+	The variables \verb|lefthyphenmin| and \verb|righthyphenmin| are language dependant and
+	are defined in \emph{tlpobj} files (\verb|/usr/local/texlive/20XX/tlpkg/tlpobj/hyphen-xxxxxx.tlpobj|). 
+	Default values varies in the range from 1 to 3. 
+    	English and Portuguese, for example, use \verb|lefthyphenmin=2| and \verb|righthyphenmin=3|.},
+	% ls /usr/local/texlive/2023/tlpkg/tlpobj/*.tlpobj | while read -r filename; do grep -Po "lefthyphenmin=[0-9]\s+righthyphenmin=[0-9]" $filename; done | tr '\t' ' ' | tr -s ' ' | sort | uniq -c
+	%      17 lefthyphenmin=1 righthyphenmin=1
+        %       6 lefthyphenmin=1 righthyphenmin=2
+        %       1 lefthyphenmin=1 righthyphenmin=3
+        %      49 lefthyphenmin=2 righthyphenmin=2
+        %       9 lefthyphenmin=2 righthyphenmin=3
         which defines the minimum sequence length of characters at the left and right borders
         before any hyphenation is allowed.
 \end{enumerate*}
@@ -307,7 +319,7 @@ problems in compound word hyphenation in \TeX{} are discussed in
 % Antonio Martins de ARAÚJO and Toru MARUYAMA
 
 
-\section{Patterns for \TeX{} hyphenation} 
+\section{Patterns for \TeX{} hyphenation}\label{sec-patt4TeX} 
 The patterns used in \TeX{} hyphenation are of the form: \texttt{4z1z2}. Each
 pattern is made of a sequence of letters and numbers. Odd numbers indicate a
 good hyphenation point, whereas even numbers indicate a bad place to break.
@@ -359,7 +371,7 @@ be suggest at that location.
 
 
 
-\section{PATGEN}
+\section{PATGEN}\label{sec-patgen}
 PATGEN uses a list of hyphenated words to define rules at different
 levels and lengths, based on the patterns found in the data. It start with
 short patterns and increases until a maximum pattern length, allowed by the
@@ -652,6 +664,13 @@ general, follow phonological principles.  According to the Grammar
 	\emph{de\underline{\emph{s-c}}er}, \emph{cre\underline{\emph{s-ç}}a}, \emph{e\underline{\emph{x-c}}e-der}).
 \end{enumerate}
 
+Note that rules \ref{rule-singlev} and \ref{rule-orphan} are fiddling rules in \TeX{} hyphenation, 
+since \TeX{} already has directives to avoid hyphenated widows and orphans. 
+As mentioned in \Cref{sec-intro}, the variables \verb|lefthyphenmin| and \verb|righthyphenmin|
+are used to control the minimum length for fragments of hyphenated words.
+This is the ground why we will not consider rules \ref{rule-singlev} and \ref{rule-orphan}
+when analysing and elaborating the hyphenation rules.
+
 
 In some situations a hyphen should be repeated in the start of the following
 line: 
@@ -671,7 +690,7 @@ to avoid splitting disyllables made of four letters (e.g. \emph{para},
 \emph{como}, \emph{cede}).
 
 
-Systematizing the rules that guide syllable boundarie and, consequently,
+Systematizing the rules that guide syllable boundaries and, consequently,
 hyphenation in Portuguese proved to be fundamental for the improvement of the
 \TeX{} hyphenator rules, since they indicate the possible or prohibited contexts
 of hyphenation. Expomos, a seguir, uma análise comparativa...
