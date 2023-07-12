@@ -10,6 +10,14 @@
 #
 # files should have one word per line
 
+if ! command -v gawk &> /dev/null
+then
+    echo "gawk could not be found"
+    echo "please install GNU AWK"
+    exit
+fi
+
+
 INPUT=""
 if [[ -p /dev/stdin ]]; then # read from stdin
     INPUT="$(cat -)"
@@ -68,3 +76,6 @@ do
     fi
 done < <(echo "${INPUT}")
 
+# some dictionary entries might have a leading or tailing - (hyphen)
+# we use the following gawk script to remove it
+gawk -i inplace -F, 'BEGIN{OFS=FS} {for (i=1;i<=NF;i++) gsub(/^[ -]+|[ -]+$/,"",$i); print $0}' $OUTPUTFILE
