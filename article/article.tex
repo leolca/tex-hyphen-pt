@@ -1,4 +1,4 @@
-% xelatex --shell-escape compared.tex 
+% xelatex --shell-escape article.tex 
 % pandoc -s article.tex --pdf-engine=xelatex --pdf-engine-opt=-shell-escape -o article.html
 \documentclass{article}
 \usepackage[english]{babel}
@@ -552,7 +552,7 @@ categories \cite{coulmas2003}. The principles that guide an alphabetic writing
 system or a phonemic writing system can vary significantly based on the
 specific language and its history. Nevertheless, we might highlight here some
 of its key points:
-\begin{enumerate*}[label=\arabic*)]
+\begin{enumerate}[label=\arabic*)]
     \item the most usual principle consists on representing the sounds of a
 	language with written symbols, using one or a combination of symbols to
 	represent each sound (e.g. the orthographic system of Portuguese uses
@@ -568,7 +568,7 @@ of its key points:
     \item the way a language has evolved over time also contribute to its 
 	written form (e.g. the spelling of many English words have changed 
 	over time to reflect changes in pronunciation);
-\end{enumerate*}
+\end{enumerate}
 The principles that guide orthographic systems for languages with logographic
 writing systems like Chinese ideograms, cuneiform writing, and Egyptian
 hieroglyphs differ significantly from those of alphabetic writing systems. In
