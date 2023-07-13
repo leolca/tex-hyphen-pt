@@ -189,9 +189,10 @@ deal with exceptions through hard-coded rules.
 The automation of this process might use a dictionary based approach, which
 will restrict the hyphenation possibilities to those entries in the dictionary,
 an algorithmic base approach, which might be applied to whatever sequence found
-in a text, or a mix of bothe approaches. An algorithmic approach might use a
-logic system to analyse words and apply the hyphenation rules of a given
-language. A rule base model might include the recognition of prefixes,
+in a text, or a mix of both approaches. 
+%An algorithmic approach might use a logic system to analyse words and apply
+%the hyphenation rules of a given language. 
+A rule base model might include the recognition of prefixes,
 suffixes, morphemes, or some sequences suitable for the inclusion of a break.
 Another approach is the usage of pattern matching. Given a corpus of
 hyphenation examples in a language, it is necessary to identify those sequence
@@ -423,12 +424,13 @@ will look for patterns and create hyphenation rules.
 Those rules are organized
 in different levels, from 1 to 9, where odd numbers represent hyphenating
 levels and even numbers represent inhibiting levels. Each level works as an
-inhibiting level of it predecessor. A pattern will consist of a string made of
-characters (from the language alphabet) possibly with a number in between,
-expressing the hyphenation/inhibition level and possibly word boundaries marker
-(the period) at the pattern edges. When there is no number between characters
-in a pattern, a zero is assumed, which means \emph{undefined} and no
-hyphenation point will be suggest at that location.
+inhibiting level of it predecessor. 
+%A pattern will consist of a string made of
+%characters (from the language alphabet) possibly with a number in between,
+%expressing the hyphenation/inhibition level and possibly word boundaries marker
+%(the period) at the pattern edges. When there is no number between characters
+%in a pattern, a zero is assumed, which means \emph{undefined} and no
+%hyphenation point will be suggest at that location.
 
 
 
