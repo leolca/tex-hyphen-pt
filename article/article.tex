@@ -18,6 +18,7 @@
 \usepackage{hyperref}
 \usepackage{cleveref}
 \usepackage{fancyvrb}
+\usepackage{siunitx}
 
 %%%%%%% https://tex.stackexchange.com/questions/16790/write18-capturing-shell-script-output-as-command-variable
 \usepackage{xparse}
@@ -713,7 +714,16 @@ A \emph{bash} script was created to crawl on six online dictionaries and extract
 
 
 \section{Updating the rules}
-
+Let us remember that the standard \TeX{} hyphenation rules, proposed by
+\cite{rezende1987,hyphpt}, when tested against a set of \num{\DictionarySize}
+words, present 1,368 (????) errors, of which 1,273 (????) correspond to places
+where the hyphenation was not carried out and 125 (????) to erroneous markings.
+Faced with the errors made by the standard hyphenator, a set of \num{\NumberOfNewRules} rules were
+established, which reduced the errors to 132 (???), with 118 (????) places
+where the hyphenation was not marked and 35 (????) where there was erroneous
+marking. Such rules are presented and exemplified below, as well as the
+necessary exception rules and an example in which the application of the rule
+is demonstrated.
 
 \subsection{Results from the new set of rules}
 Although the XXX erroneous words have some common characteristics, which would
