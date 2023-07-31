@@ -4,6 +4,7 @@
 \usepackage[english]{babel}
 %\usepackage{testhyphens}
 \usepackage{multicol}
+\usepackage{multirow}
 \usepackage{verbatim}
 \usepackage{hyperref}
 \usepackage{amssymb}% http://ctan.org/pkg/amssymb
@@ -19,6 +20,12 @@
 \usepackage{cleveref}
 \usepackage{fancyvrb}
 \usepackage{siunitx}
+\sisetup{
+  group-separator = {\,},
+  group-minimum-digits = 3,
+  output-decimal-marker = {.},
+}
+\usepackage{booktabs}
 
 %%%%%%% https://tex.stackexchange.com/questions/16790/write18-capturing-shell-script-output-as-command-variable
 \usepackage{xparse}
@@ -63,11 +70,12 @@
 
 \captureshell*[\NumberOfNewRules]{wc -l ../data/patch.TeX.pt-br.patterns | cut -d' ' -f1}
 
-% 6 dictionaries --- 5 commas
-\captureshell*[\DictionarySize]{../scripts/dicstats.sh}
+\captureshell*[\DictionarySize]{../scripts/dicstats.sh} % number of words that have at least one hyphenation
+\captureshell*[\CorpusSize]{../scripts/dicstats.sh -1} % total number of words in the corpus used (same as $ wc -l ../data/hyphenatios.csv)
 
 % https://www.texdev.net/2009/10/06/what-does-write18-mean/
-\captureshell*[\NumberOfSixHyphens]{../scripts/dicstats.sh 6}
+% number of words that hyphenations were found in N online dictionaries
+\captureshell*[\NumberOfSixHyphens]{../scripts/dicstats.sh 6}  
 \captureshell*[\NumberOfFiveHyphens]{../scripts/dicstats.sh 5}
 \captureshell*[\NumberOfFourHyphen]{../scripts/dicstats.sh 4}
 \captureshell*[\NumberOfThreeHyphens]{../scripts/dicstats.sh 3}
@@ -94,7 +102,7 @@
     irrelevant for \TeX{} typographic purposes, they are still useful to
     hyphenate proper nouns, new words or pseudoword, and for usage in other
     applications, such as text-to-speech conversion. A list of
-    \DictionarySize{} hyphenated words acquired from online dictionaries was
+    \num{\DictionarySize} hyphenated words acquired from online dictionaries was
     used along \emph{patgen} to create improved rules, leading to better hyphenation
     of Portuguese words.
 \end{abstract}
@@ -522,9 +530,9 @@ needed.
 
 Initially, we selected
 \href{https://www.linguateca.pt/cetenfolha/index_info.html}{CETENFolha}
-CETENFolha as the source corpus, but this approach presented two issues: many
+as the source corpus, but this approach presented two issues: many
 words were still missing, and the corpus was based on text from 1994, prior to
-the implementation of the Orthographic Agreement.  The Orthographic Agreement
+the implementation of the Orthographic Agreement. The Orthographic Agreement
 of the Portuguese Language was conducted in 1990, and its transition period
 started in 2009, becoming mandatory in 2016. However, even after the agreement,
 some words continue to have different spellings in the participating countries.
@@ -541,34 +549,47 @@ word \emph{action} might be written as \emph{acção} (Portugal) or \emph{ação
 % 302226482
 % cat /ms/downloads/samples/wikipedia/ptwiki-latest-pages-articles-multistream_wordlist.txt | awk '{CUMCOUNT+=$1; if(CUMCOUNT < 287115158) print;}' >/tmp/ptwikitop95.txt
 % cat /ms/downloads/samples/wikipedia/ptwiki-latest-pages-articles-multistream_wordlist.txt | awk '{CUMCOUNT+=$1; if(CUMCOUNT < 299204217) print;}' >/tmp/ptwikitop99.txt
-% cat /tmp/ptwikitop99.txt | tr -d "0-9 " |  while read -r word; do if ! grep -q "^${word}," hyphenations.csv; then echo $word; fi; done > /tmp/ptwikitop99_notinlist.txt
+% cat /tmp/ptwikitop99.txt | tr -d "0-9 " |  while read -r word; do if ! grep -q "^${word}," ../data/hyphenations.csv; then echo $word; fi; done > /tmp/ptwikitop99_notinlist.txt
+% cat /home/leoca/ee/research/hyphenation/listapalavrasnet.txt | awk '{print tolower($0)}' | while read -r word; do if ! grep -qP "^\s*[0-9]+\s*${word}$" /ms/downloads/samples/wikipedia/ptwiki-latest-pages-articles-multistream_wordlist.txt; then echo $word; fi; done > /tmp/list_of_palavrasnet_not_in_wikipedia.txt
 
-Because of these idiosyncrasies, we decided to incorporate the list of words from
-\href{https://www.palavras.net/}{Palavras NET} and afterwards we also included
-words from the \href{https://pt.wikipedia.org}{Portuguese Wikipedia} dump.
-Although the list of words created was huge, we kept only those words we could
-find their hyphenation on at least one of the following online dictionaries: 
+% wc -l /ms/downloads/samples/wikipedia/ptwiki-latest-pages-articles-multistream_wordlist.txt
+% 1746947
+% wc -l /tmp/ptwikitop99_notinlist.txt
+% 42017
+% from 1746947 of wikipedia, only 42017 are not in list
+
+Due to the peculiarities mentioned, we made the decision to integrate the word
+list from \href{https://www.palavras.net/}{Palavras NET}, and subsequently, we
+augmented it with words sourced from the
+\href{https://pt.wikipedia.org}{Portuguese Wikipedia} dump. From the Wikipedia
+data, we narrowed down the selection to a subset of \num{50721} words,
+accounting for 95\% of occurrences in the corpus. This threshold was set to
+filter out typos and infrequent words. The initial word list became quite
+extensive, comprising \num{\CorpusSize} words. However, we refined the list by
+retaining only those words for which we could find hyphenation data in at least
+one of the following online dictionaries:
 \href{https://michaelis.uol.com.br/}{Michaelis},
 \href{https://dicionario.priberam.org/}{Priberam},
 \href{https://pt.wiktionary.org}{Wikcionário},
 \href{https://aulete.com.br/}{Aulete},
-\href{http://www.portaldalinguaportuguesa.org/}{Portal da Língua Portuguesa} e
+\href{http://www.portaldalinguaportuguesa.org/}{Portal da Língua Portuguesa}, and
 \href{https://www.dicio.com.br/}{Dicio}.
-This leads to the creation of a dictionary with \DictionarySize{} words.
+Consequently, this curation process resulted in a final dictionary containing
+\num{\DictionarySize} words.  
 
-Table \ref{tblstats} presents the number of words with a given number of
-hyphenation found in the dictionaries. It also presents the number of words
-that have the highest agreed hyphenation. For example, the word \emph{como}
-was hyphenated by the six dictionaries as \emph{co-mo}. It will add one to the
-counts on both lines where the hyphenations number is 6 (first column). The
-word \emph{sua} was hyphenated as \emph{su-a} in 4 dictionaries, \emph{sua} in
-one dictionary and one dictionary did not provide its hyphenation. Therefore,
-it will add one in the first line, second column (since hyphenations were found
-in 5 dictionaries). It will also add one on the second line, third column
-(since the most frequent hyphenation was found in 4 dictionaries). It is clear
-now why we might have the number of same hyphenations (specially for small
-values) greater the number of hyphenations found. 
-
+Table \ref{tblstats} presents the number of distinct words with a given number
+of hyphenations found in the dictionaries.  Additionally, it displays the
+number of words that received the highest agreed-upon hyphenation.  For
+instance, the word \emph{como} was consistently hyphenated as \emph{co-mo} in
+all six dictionaries.  Therefore, it contributes to both the counts in the
+column representing six hyphenations (first column).  On the other hand, the
+word \emph{sua} received different hyphenations: \emph{su-a} in four
+dictionaries, \emph{sua} in one dictionary, and one dictionary did not provide
+any hyphenation result.  This leads to an increment in the first line, second
+column (since hyphenations were found in five dictionaries) and the second
+line, third column (since the most frequent hyphenation was found in four
+dictionaries). It is evident now that the number of identical hyphenations can
+exceed the total number of hyphenations found, especially for smaller values.
 
 \begin{table}
 \centering
@@ -578,7 +599,7 @@ dictionaries. The second line presents the number of words that have a given
 number of hyphenation as its most frequent form found in the
 dictionaries.}\label{tblstats}
 \small
-\begin{tabular}{*{8}{l}}
+\begin{tabular}{@{ }l@{ } *{7}{@{ }S[table-format=6]@{ }}}
     hyphenations & 6 & 5 & 4 & 3 & 2 & 1 & 0 \\
     \hline
     hyphenations found & \NumberOfSixHyphens{} & \NumberOfFiveHyphens{} &
@@ -591,75 +612,75 @@ dictionaries.}\label{tblstats}
 \end{tabular}
 \end{table}
 
-In summary, data from \emph{CETENFolha} and \emph{Palavras NET} were compiled.
-Their words were hyphenated based on the hyphenation original \TeX{} rules and
-contrasted with the dictionary results. The performance was appraised and the
-errors systematized, in order to find in the literature possible rules that
-could complement and improve it.
+In summary, our data compilation involved \emph{CETENFolha}, \emph{Palavras
+NET}, and \emph{Wikipedia}, and hyphenated the words using the original \TeX{}
+TEX hyphenation rules.  Subsequently, we compared the hyphenated results with
+those obtained from the dictionary. By conducting a thorough performance
+appraisal, we systematized the errors and delved into the relevant literature
+to identify potential rules that could complement and enhance the existing
+hyphenation system.
 
 
 \section{Writing systems}\label{sec-writing-systems}
 
-There is a wide range of writing systems. They might be categorized into
-logographic, syllabic, and alphabetic writing systems.  Although they are
-distinct categories, writing systems might be built on an interplay of these
-categories \cite{coulmas2003}. The principles that guide an alphabetic writing
-system or a phonemic writing system can vary significantly based on the
-specific language and its history. Nevertheless, we might highlight here some
-of its key points:
+There is a diverse array of writing systems, categorized into logographic,
+syllabic, and alphabetic systems. Although distinct, these systems can be built
+on an interplay of these categories \cite{coulmas2003}. The principles guiding
+an alphabetic or phonemic writing system vary significantly based on the
+language and its history. Here are some key points worth highlighting:
 \begin{enumerate}[label=\arabic*)]
-    \item the most usual principle consists on representing the sounds of a
+    \item The most common principle involves representing the sounds of a
 	language with written symbols, using one or a combination of symbols to
-	represent each sound (e.g. the orthographic system of Portuguese uses
-	an alphabet of 27 letters that aim to represent different sounds of the
-	language); 
-    \item etymology also plays an important role, where the
-	spelling of a word reflects its origins and history (e.g. the French
-	language often reflects the Latin roots of words in its spelling);
-    \item morphology is used as a guide in structuring many languages, where
-	they use specific letters or symbols to indicate word endings,
-	prefixes, or suffixes (e.g. Russian uses different forms of the
-	Cyrillic alphabet to indicate gender and case in its nouns); 
-    \item the way a language has evolved over time also contribute to its 
-	written form (e.g. the spelling of many English words have changed 
-	over time to reflect changes in pronunciation);
+	represent each sound (e.g., the orthographic system of Portuguese uses
+	an alphabet of 27 letters to represent different sounds of the
+	language).
+    \item Etymology also plays a crucial role, where the spelling of a word
+	reflects its origins and historical development (e.g., the French
+	language often reflects the Latin roots of words in its spelling).
+    \item Morphology serves as a guide in structuring many languages, using
+	specific letters or symbols to indicate word endings, prefixes, or
+	suffixes (e.g., Russian uses different forms of the Cyrillic alphabet
+	to indicate gender and case in its nouns).
+    \item The evolution of a language over time also contributes to its written
+	form (e.g., the spelling of many English words has changed over time to
+	reflect changes in pronunciation).
 \end{enumerate}
-The principles that guide orthographic systems for languages with logographic
-writing systems like Chinese ideograms, cuneiform writing, and Egyptian
-hieroglyphs differ significantly from those of alphabetic writing systems. In
-logographic writing systems, individual symbols or characters represent entire
-words or ideas rather than phonemes or sounds. As a result, the principles that
-guide their orthographic systems are based more on semantic and visual
-principles rather than phonemic principles.
+Orthographic systems for languages with logographic writing systems, such as
+Chinese ideograms, cuneiform writing, and Egyptian hieroglyphs, differ
+significantly from alphabetic writing systems. In logographic systems,
+individual symbols or characters represent entire words or ideas, rather than
+phonemes or sounds. As a result, the principles guiding their orthographic
+systems are based more on semantic and visual principles than on phonemic
+principles.
+
 
 
 \section{Grammar rules for hyphenation in Portuguese}\label{sec-grammar-port}
 
-Portuguese uses an alphabetical writing system, ensuing that its spelling is
-guided by phonological principles \cite{cagliari2015}. The fact that spelling
-reflects, to some extent, the way words are pronounced, means that the
-hyphenation of words is also influenced by the phonemic system, where words are
-divided into syllables. It is noteworthy that different languages divide words
-based on different principles, for example, English tends to be guided by
-morphological principles, such as \emph{walk-ing}, \emph{un-happy},
-\emph{work-s}, and \emph{ear-ly}. Also, other factors affect word hyphenation in
-English, such as the presence of doubled consonants and digraphs\footnote{One
-should not confuse consonant clusters with digraphs, since the latter represent
-only one sound, while the former represent two or more sounds.}. There are also
-a myriad of exceptions that might be grasped into rules.
+Portuguese employs an alphabetical writing system, which means its spelling is
+guided by phonological principles \cite{cagliari2015}. The correlation between
+spelling and pronunciation influences word hyphenation, as words are divided
+into syllables based on the phonemic system. It is important to note that
+different languages follow diverse principles for word division. For example,
+English is primarily guided by morphological principles, evident in words like
+\emph{walk-ing}, \emph{un-happy}, \emph{work-s}, and \emph{ear-ly}.
+Additionally, other factors, such as the presence of doubled consonants and
+digraphs, also impact word hyphenation in English. Furthermore, there exist
+numerous exceptions that may be categorized into rules.
 % https://english.stackexchange.com/questions/385/what-are-the-rules-for-splitting-words-at-the-end-of-a-line
 
 Merely stating that an orthographic system is guided by phonological issues
-does not necessarily mean that its hyphenation rules directly reflect the way a
-word is pronounced -- this is because Portuguese does not have a direct
-letter-sound correspondence, and vice versa.  The orthographic system operates
-according to its own specific rules. For instance, although consonant clusters that
-produce a single sound (i.e., digraphs) are pronounced within a single syllable
-in words like \emph{chave}, \emph{ilha}, \emph{shampoo}, \emph{carro}, and
-\emph{pássaro}, their representation in writing determines how they are
-separated.  Specifically, different consonants within a digraph must remain
-together, while identical consonants are separated. As a result, we have
-\emph{cha-ve}, \emph{i-lha}, and \emph{sham-poo}, but \emph{car-ro}.
+does not necessarily mean that its hyphenation rules directly mirror the word's
+pronunciation. This is particularly evident in Portuguese, where there is not
+always a one-to-one letter-sound correspondence. The orthographic system
+operates based on its specific rules. For example, consider consonant clusters
+that create a single sound (digraphs) in words like \emph{chave}, \emph{ilha},
+\emph{shampoo}, \emph{carro}, and \emph{pássaro}. While these digraphs are
+pronounced as one sound within a single syllable, their representation in
+writing determines how they are divided. Specifically, different consonants
+within a digraph must remain together, whereas identical consonants are
+separated. As a result, we observe hyphenations like \emph{cha-ve},
+\emph{i-lha}, and \emph{sham-poo}, but \emph{car-ro}. 
 
 %When there is no space left in line for a whole word, it might be split in two
 %using a hyphen as an indication of such procedure. 
@@ -725,31 +746,33 @@ general, follow phonological principles.  According to the Grammar
 	\emph{de\underline{\emph{s-c}}er}, \emph{cre\underline{\emph{s-ç}}a}, \emph{e\underline{\emph{x-c}}e-der}).
 \end{enumerate}
 
-Note that rules \ref{rule-singlev} and \ref{rule-orphan} are fiddling rules in \TeX{} hyphenation, 
-since \TeX{} already has directives to avoid hyphenated widows and orphans. 
-As mentioned in \Cref{sec-intro}, the variables \verb|lefthyphenmin| and \verb|righthyphenmin|
-are used to control the minimum length for fragments of hyphenated words.
-This is the ground why we will not consider rules \ref{rule-singlev} and \ref{rule-orphan}
-when analysing and elaborating the hyphenation rules.
+Note that rules \ref{rule-singlev} and \ref{rule-orphan} are fiddling rules in
+\TeX{} hyphenation, since \TeX{} already has directives to avoid hyphenated
+widows and orphans.  As mentioned in \Cref{sec-intro}, the variables
+\verb|lefthyphenmin| and \verb|righthyphenmin| are used to control the minimum
+length for fragments of hyphenated words.  For this reason, we will not take
+into account rules \ref{rule-singlev} and \ref{rule-orphan} during the analysis
+and development of the hyphenation rules.
 
 
-In some situations a hyphen should be repeated in the start of the following
-line: 
+In some situations a hyphen should be repeated at the start of the following
+line. They are: 
 \begin{enumerate}
-\item when a compound word using a hyphen is split across lines (e.g.
-    \emph{couve-/-flor}, \emph{ex-/-presidente});
-\item when a different meaning could be conveyed when splitting a pronoun (e.g.
+\item cases where compound words using a hyphen are split across lines (e.g.,
+    \emph{couve-/-flor}, \emph{ex-/-presidente}); and
+\item cases where splitting a pronoun could result in a different meaning (e.g.,
     \emph{prazer de ver-/-me}\footnote{Possible conveyed meanings: 
     \emph{pleasure in seeing me} or \emph{worm's pleasure}.}). 
 \end{enumerate}
 
-It should be avoided to leave a single vowel in the end or start of a line (e.g.
-the word \emph{san-guí-nea} should be split only on the hyphen gave in the
-example, avoiding the split that would leave the final vowel \emph{a}
-left alone in the start of a new line: \emph{sanguíne-a}). It is also considered a better approach
-to avoid splitting disyllables made of four letters (e.g. \emph{para},
-\emph{como}, \emph{cede}).
-
+To ensure proper hyphenation and readability, certain guidelines should be
+followed. Avoiding a single vowel at the end or start of a line is crucial
+(e.g., \emph{san-guí-nea} should be split only on the provided hyphens,
+avoiding a split that leaves the final vowel \emph{a} alone at the start of a
+new line: \emph{sanguíne-a}). Additionally, it is advisable to refrain from
+splitting disyllables consisting of four letters (e.g., \emph{para},
+\emph{como}, \emph{cede}).  These considerations lead to more aesthetically
+pleasing and intelligible text.
 
 Systematizing the rules that guide syllable boundaries and, consequently,
 hyphenation in Portuguese proved to be fundamental for the improvement of the
@@ -762,9 +785,20 @@ of hyphenation. Expomos, a seguir, uma análise comparativa...
 
 
 \section{Creating the dictionary}
-A \emph{bash} script was created to crawl on six online dictionaries and extract a word hyphenation, when found. 
 
-
+A bash script, named \texttt{gethyphenations.sh}, was developed to crawl six
+online dictionaries and extract word hyphenations whenever available. The
+process involves launching parallel threads for each word in the list, querying
+a specific online dictionary, and retrieving the corresponding hyphenation. For
+this purpose, individual scripts were created for each dictionary:
+\texttt{getmichaelishyphenation.sh} for \href{https://michaelis.uol.com.br/}{Michaelis},
+\texttt{getpriberamhyphenation.sh} for \href{https://dicionario.priberam.org/}{Priberam},
+\texttt{getwiktionaryhyphenation.sh} for \href{https://pt.wiktionary.org}{Wikcionário},
+\texttt{getauletehyphenation.sh} for \href{https://aulete.com.br/}{Aulete},
+\texttt{getportalhyphenations.sh} for \href{http://www.portaldalinguaportuguesa.org/}{Portal da Língua Portuguesa}, and
+\texttt{getdiciohyphenation.sh} for \href{https://www.dicio.com.br/}{Dicio}.
+This systematic approach ensures efficient and accurate extraction of
+hyphenations from various online sources.
 
 \section{Updating the rules}
 Let us remember that the standard \TeX{} hyphenation rules, proposed by
@@ -797,7 +831,30 @@ structure of rules:
 	information, such as those, do not have their hyphenation performed
 	properly. They add up, in our corpus, to twelve words (eight words with
 	\emph{re-} and one case with \emph{auto-}, \emph{meta-}, \emph{sub-},
-	\emph{cyber-}, \emph{geo-} or \emph{neuro-}).
+	\emph{cyber-}, \emph{geo-} or \emph{neuro-}, those results are presented
+	in Table \ref{tab-mor-syl}).
+	% $ { head -n 1 ../data/hyphenations.csv; grep "^sublinhar," ../data/hyphenations.csv; } | column -t -s,
+	% su-bli-nhar (priberam, wiktionary, aulete)
+	% sub-li-nhar (michaelis, portal, dicio)
+
+	% $ { head -n 1 ../data/hyphenations.csv; grep "^auto[a-z]\+," ../data/hyphenations.csv | grep -v ",,,";} | column -t -s,
+
+	\begin{table}
+	\scriptsize
+	\caption{Hyphenation in the dictionaries of words having conflict between morphological and syllabic information.}
+	\label{tab-mor-syl}
+        \begin{tabular}{ll*{6}{c}}
+	\toprule
+	    word                   & hyphenation  & \multicolumn{6}{c}{dictionary} \\
+             &                                    & michaelis & priberam & wikitionary & aulete & portal & dicio \\
+	\midrule
+        \multirow{2}{*}{sublinhar} & su-bli-nhar  &           & x        & x           & x      &        &       \\
+				   & sub-li-nhar  & x         &          &             &        & x      &       \\
+	\multirow{2}{*}{reiniciar} & rei-ni-ci-ar &           &          & x           &        & x      &       \\
+				   & re-i-ni-ci-ar & x        & x        &             & x      &        & x     \\
+	\bottomrule
+	\end{tabular}
+	\end{table}
 
     \item[Foreignness:] There is a group of 20 words in the corpus that are
 	terminologies or words that were incorporated into the Portuguese
@@ -820,36 +877,41 @@ structure of rules:
 	contained in the words \emph{dzeta}, \emph{gnu}, \emph{cnidário},
 	\emph{ftálico}, and \emph{gnaisse} -- that is, just five words.
 
-    \item[Abbreviations, Acronyms, or Initialisms:] Whether for efficiency, 
-	convenience, clarity or jargon, it is usual the usage of a shortening 
-	version of a word or a phrase. 
-	Abbreviation a way to shorten a word of phrase. Some examples in our
-	Portuguese corpus are: 
-	\emph{etc.}\footnote{Latin expression \emph{et cetera}, meaning 
-	`and other similar things'.}, 
-	\emph{Dr.}\footnote{\emph{doutor} (doctor, person with PhD title, but popularly used to designate an erudite individual)}, 
-	\emph{Exmo.}\footnote{\emph{Excelentíssimo} (honourable)},
-	\emph{cap.}\footnote{\emph{capítulo} (chapter)}, \emph{Univ.}\footnote{Universidade (university)}, 
-	\emph{ed.}\footnote{\emph{edição} (edition)}, 
-	\emph{s.n.}\footnote{sine nomine, Latin expression meaning `without a name', 
-	mostly used in the context of publishing.}.
-	Initialism consists of a set of initial 
-	letters of words that form an shortened version. They are not always 
-	understood by the set of hyphenation rules described in this work, 
-	since they do not follow orthographic (or phonotactic) standards of 
-	the language. In the corpus, it is possible to find some abbreviations, 
-	such as \emph{SESC}\footnote{Serviço Social do Comércio}, 
-	\emph{INSS}\footnote{\emph{Instituto Nacional do Seguro Social} (National Institute of Social Security)}, 
-	\emph{PCdoB}\footnote{\emph{Partido Comunista do Brasil} (Communist Party of Brazil)},
-	\emph{PM}\footnote{\emph{Polícia Militar} (military police)}, and 
-	\emph{UFRJ}\footnote{Universidade Federal do Rio de Janeiro}.
-	Acronym is a type of abbreviation that shortens a phrase by combining
-	the first letter (or letters) of each word, creating a new pronounceable word.
-	Some example from the corpus are: 
-	\emph{Anatel}\footnote{\emph{Agência Nacional de Telecomunicações} (National Telecommunications Agency)},
-	\emph{Ovni}\footnote{\emph{Objeto voador não identificado} (unidentified flying object - UFO)},
-	\emph{Sida}\footnote{\emph{Síndrome da Imunodeficiência Adquirida} (acquired immunodeficiency syndrome - AIDS)} (in Portugal) and
-	\emph{Mercosul}\footnote{\emph{Mercado Comum do Sul} (Southern Common Market).}.
+    \item[Abbreviations, Acronyms, or Initialisms:] 
+       Whether for efficiency, convenience, clarity, or specialized jargon, 
+       it is common to use shortened versions of words or phrases. Abbreviation is a method employed to achieve this shortening. In our Portuguese corpus, we find examples such as 
+       \emph{etc.}\footnote{Latin expression \emph{et cetera}, meaning `and other similar things'.}, 
+       \emph{Dr.}\footnote{\emph{doutor} (doctor, person with PhD title, but popularly used to designate an erudite individual)}, 
+       \emph{Exmo.}\footnote{\emph{Excelentíssimo} (honourable)},
+       \emph{cap.}\footnote{\emph{capítulo} (chapter)}, \emph{Univ.}\footnote{Universidade (university)}, 
+       \emph{ed.}\footnote{\emph{edição} (edition)}, 
+       \emph{s.n.}\footnote{sine nomine, Latin expression meaning `without a name', mostly used in the context of publishing.}.
+
+       Another form of abbreviation is an initialism, which consists of using
+       the initial letters of words to create a shortened version. However,
+       initialisms may not always conform to the hyphenation rules described in
+       this work, as they do not necessarily follow the orthographic or
+       phonotactic standards of the language. Some abbreviations found in the
+       corpus include 
+       \emph{SESC}\footnote{Serviço Social do Comércio}, 
+       \emph{INSS}\footnote{\emph{Instituto Nacional do Seguro Social} (National Institute of Social Security)}, 
+       \emph{PCdoB}\footnote{\emph{Partido Comunista do Brasil} (Communist Party of Brazil)},
+       \emph{PM}\footnote{\emph{Polícia Militar} (military police)}, and 
+       \emph{UFRJ}\footnote{Universidade Federal do Rio de Janeiro}.
+
+       Acronyms are a specific type of abbreviation where the first letters (or
+       groups of letters) of each word are combined to form a new pronounceable
+       word. In the corpus, we encounter examples like 
+       \emph{Anatel}\footnote{\emph{Agência Nacional de Telecomunicações} (National Telecommunications Agency)},
+       \emph{Ovni}\footnote{\emph{Objeto voador não identificado} (unidentified flying object - UFO)},
+       \emph{Sida}\footnote{\emph{Síndrome da Imunodeficiência Adquirida} (acquired immunodeficiency syndrome - AIDS)} (in Portugal) and
+       \emph{Mercosul}\footnote{\emph{Mercado Comum do Sul} (Southern Common Market).}.
+
+       These various forms of abbreviation play an important role in written
+       language, providing concise ways to represent longer words or phrases.
+       It is important to note that abbreviations, acronyms, and initialisms
+       are generally treated as single units and are not hyphenated.
+
 \end{description}
 
 
@@ -862,7 +924,7 @@ Let us remember that the standard \TeX{} hyphenation rules, proposed by
 \cite{hyphpt}, amount to XXX errors, in a set of XXXX words.  Among those, XXX
 correspond to places where the hyphenation was not carried out and XXX to
 mismarkings. Faced with the errors made by the standard hyphenator, a set of
-\NumberOfNewRules{} rules were established, which reduced the errors to XXXX,
+\num{\NumberOfNewRules} rules were established, which reduced the errors to XXXX,
 with XXXX unmarked hyphenation places and XXX mismarkings.  Such rules are
 presented and exemplified below, as well as the necessary exception rules and
 an example in which the application of the rule is demonstrated.
@@ -870,8 +932,8 @@ an example in which the application of the rule is demonstrated.
 \section{Old Text}
 
 
-Foi criado um conjunto de \NumberOfNewRules{} regras para aprimorar as hifenizações no
-português. Analisando um conjunto de 37798 palavras, as regras padrão apresentam
+Foi criado um conjunto de \num{\NumberOfNewRules} regras para aprimorar as hifenizações no
+português. Analisando um conjunto de \num{37798} palavras, as regras padrão apresentam
 1368 erros (1273 pontos de hifenização não marcados e 125 pontos marcados
 erroneamente)\footnote{A soma não é 1368 pois temos 30 casos em que os dois
 tipos de erros ocorrem.}, enquanto as novas regras apresentaram 132 erros (118
@@ -1026,7 +1088,7 @@ general rules. This is because the Portuguese language has vowel encounters
 with the second vowel graphically marked that can be separated, forming
 hiatuses, such as \emph{caótico}, \emph{balneário} and \emph{razoável}, while
 there are also words with a similar structure that constitute a diphthong, such
-as português, \emph{alguém} and \emph{linguística}. It is remarkable, of
+as \emph{português}, \emph{alguém} and \emph{linguística}. It is remarkable, of
 course, that the latter are formed by the digraphs \emph{qu-} and \emph{gu-},
 while the former by vowels other than \emph{i} and \emph{u}. The fourth and
 last group, in turn, which comprises rules \ref{rulegrp_lo} to
