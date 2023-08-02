@@ -6,7 +6,7 @@
 patterns=(
     "^(?!.*-).*[aáeéêoóô]s?" # monosyllables
     "^(?=(.*-){1,}).*([áãéêóô]s?|é[iumn]s?|óis?|ão|ões) 0$" # oxytone
-    "^(?=(.*-){1,}).*([i]s?|u[mn]?s?|o[mn]s?|[rlxn]|ão?s?|ps|[aeou][iu]s?|i[eu]s?) 1$" # paroxytone
+    "^(?=(.*-){1,}).*([i]s?|u[mn]?s?|o[mn]s?|[rlxn]|ão?s?|ps|[aeo]is?|[ui][iu]s?|i[aeou]s?|u[ao]s?) 1$" # paroxytone 
     "^(?=(.*-){2,}).* 2$" # proparoxytone 
     "^([^íú]+-)?[íú]s?(-.*|\s)\d$" # hiatus with í or ú
     )
@@ -20,10 +20,9 @@ awk -F\- '
 ' "${1:-/dev/stdin}" |
     while read line;
     do
-	echo $line
 	for pattern in "${patterns[@]}"; do
-	    if grep -q "$pattern" <<< "$line"; then
-		echo "$line"
+	    if grep -qP "$pattern" <<< "$line"; then
+		cut -d' ' -f1 <<< "$line"
 		break
 	    fi
 	done
@@ -58,7 +57,7 @@ awk -F\- '
 #   terminadas em i/is"us, r, l, x, n, um/uns, ão/ãos, ã/ãs, ps, on/ons:
 #   júri/júris"vírus, caráter, têxtil, tórax, hífen (hifens não tem acento),
 #   fórum/fóruns"órgão/órgãos, ímã/ímãs, bíceps, próton/prótons.  Nas palavras
-#   paroxítonas terminadas em ditongo oral (ai"au, ei, eu, ie, iu, oi, ou, ui), 
+#   paroxítonas terminadas em ditongo oral (ai, ei, oi, ui, ia, ie, io, iu, au, eu, ou, iu)
 #   acentua-se a vogal da sílaba tônica: ágeis"imundície, lírio, túneis, tênue, 
 #   jóquei"nódoa, cerimônia, história.
 # 
