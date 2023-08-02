@@ -5,6 +5,7 @@
 #
 
 V="[aeiouáàãâéêíóõôú]" # vowel
+A="[áàãâéêíóõôú]" # accented vowel
 C="[^-aeiouáàãâéêíóõôú]" # consonant
 CH="[^-aeiouáàãâéêíóõôúh]" # consonant not h
 
@@ -28,7 +29,16 @@ pattern=$(join_by \| "${patterns[@]}")
 process_input() {
   while read line
   do
-   echo $line | grep -P "${pattern}"
+    errline=$(echo "$line" | grep -P "${pattern}")
+    if [[ -z "${errline// }" ]] && [[ "$line" =~ $A ]]; then
+	acc=$(echo "$line" | ./checkaccents.sh)
+	if [[ -z "$acc" ]]; then
+	    errline="$line"
+	fi
+    fi
+    if [[ ! -z "${errline// }" ]]; then
+	echo "$errline"
+    fi
   done
 }
 
