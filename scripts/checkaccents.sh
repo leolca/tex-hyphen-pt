@@ -5,8 +5,10 @@
 
 patterns=(
     "^(?!.*-).*[aáeéêoóô]s?" # monosyllables
-    "^(?=(.*-){1,}).*([áãéêóô]s?|é[iumn]s?|óis?|ão|ões) 0$" # oxytone
-    "^(?=(.*-){1,}).*([i]s?|u[mn]?s?|o[mn]s?|[rlxn]|ão?s?|ps|[aeo]is?|[ui][iu]s?|i[aeou]s?|u[ao]s?) 1$" # paroxytone 
+    "^(?=(.*-){1,}).*([áãéêóô]s?|é[iumn]s?|óis?|ães?|ãos?|ões) 0$" # oxytone
+    "^(?=(.*-){1,}).*([aio]s?|u[mn]?s?|[ao][mn]s?|[rlxn]|ão?s?|ps|[aeo]is?|[ui][iu]s?|i[aeou]s?|u[aoe]s?) 1$" # paroxytone 
+    "^(?=(.*-){1,}).*([éáó]i|éu)-([a-z]+) 1$" # paroxytone with open diphthong: ei, eu, oi or ai 
+    "^(?=(.*-){1,}).*(ê-em) 1$" # paroxytone ending with "ê-em" such as lê-em, crê-em, vê-em
     "^(?=(.*-){2,}).* 2$" # proparoxytone 
     "^([^íú]+-)?[íú]s?(-.*|\s)\d$" # hiatus with í or ú
     )
@@ -58,8 +60,9 @@ awk -F\- '
 #   júri/júris"vírus, caráter, têxtil, tórax, hífen (hifens não tem acento),
 #   fórum/fóruns"órgão/órgãos, ímã/ímãs, bíceps, próton/prótons.  Nas palavras
 #   paroxítonas terminadas em ditongo oral (ai, ei, oi, ui, ia, ie, io, iu, au, eu, ou, iu)
-#   acentua-se a vogal da sílaba tônica: ágeis"imundície, lírio, túneis, tênue, 
-#   jóquei"nódoa, cerimônia, história.
+#   acentua-se a vogal da sílaba tônica: ágeis, imundície, lírio, túneis, tênue, 
+#   jóquei, nódoa, cerimônia, história. Antes do acordo ortográfico, paroxítonas terminadas 
+#   em vogais “a” e “o” também eram acentuadas. Exemplos: idéia, heróico, assembléia.
 # 
 # Proparoxítonas
 #   Todas as palavras proparoxítonas (aquelas cuja sílaba tônica é a
