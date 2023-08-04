@@ -4,10 +4,10 @@
 #
 #
 
-V="[aeiouáàãâéêíóõôú]" # vowel
+V="[aeiouáàãâéêíóõôúy]" # vowel
 A="[áàãâéêíóõôú]" # accented vowel
-C="[^-aeiouáàãâéêíóõôú]" # consonant
-CH="[^-aeiouáàãâéêíóõôúh]" # consonant not h
+C="[^-aeiouáàãâéêíóõôúy]" # consonant
+CH="[^-aeiouáàãâéêíóõôúyh]" # consonant not h
 
 function join_by { local IFS="$1"; shift; echo "$*"; }
 

@@ -4,7 +4,7 @@
 #printf "%s\n" "${words[@]}" |
 
 patterns=(
-    "^(?!.*-).*[aáeéêoóô]s?" # monosyllables
+    "^(?!.*-).*[aáàãeéêoóô]s?" # monosyllables
     "^(?=(.*-){1,}).*([áãéêóô]s?|é[iumn]s?|óis?|ães?|ãos?|ões) 0$" # oxytone
     "^(?=(.*-){1,}).*([aio]s?|u[mn]?s?|[ao][mn]s?|[rlxn]|ão?s?|ps|[aeo]is?|[ui][iu]s?|i[aeou]s?|u[aoe]s?) 1$" # paroxytone 
     "^(?=(.*-){1,}).*([éáó]i|éu)-([a-z]+) 1$" # paroxytone with open diphthong: ei, eu, oi or ai 
