@@ -1,12 +1,29 @@
 #!/bin/bash
 
+input_source="${1:-/dev/stdin}"
+
+if [ "$input_source" != "/dev/stdin" ]; then
+    input_source=<(tail -n +2 "$input_source")
+fi
+
 # https://unix.stackexchange.com/questions/609866/regular-awk-easily-sort-array-indexes-to-output-them-in-the-chosen-order
-tail -n +2 ../data/hyphenations.csv | 
 awk '
    BEGIN {FS=OFS=","}
    {
    delete hyph_list; delete n_tuple;  
-   for(i=2; i<=NF; i++) if($i) hyph_list[$i]+=1;
+   for(i=2; i<=NF; i++)
+       # if($i) hyph_list[$i]+=1; 
+       if($i) {
+	   # apparent proparoxytone
+	   if ($i ~ /:/) {
+	       hiatus = gensub(":", "-", "g", $i);
+	       diphthong = gensub(":", "", "g", $i);
+	       hyph_list[hiatus]+=1;
+	       hyph_list[diphthong]+=1;
+	   }
+       	   else
+	       hyph_list[$i]+=1;
+       }
    #for(h in hyph_list) printf "%s(%d)\t",h,hyph_list[h]; if(length(h)>0) print ""
 
    #for(aa in a) xa[a[aa]]=aa;
@@ -27,5 +44,7 @@ awk '
    }
 
    } 
-   ' > ../data/hyphagreements
+   ' < "$input_source"
+
+   #> ../data/hyphagreements
 
