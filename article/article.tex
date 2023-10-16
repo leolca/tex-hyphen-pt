@@ -326,14 +326,14 @@ flexibility to create rules for any currently unsupported languages.
 
 Unfortunately, certain hyphenation rules cannot be implemented using the \TeX{}
 hyphenation algorithm. In languages like German, hyphenation can lead to letter
-changes or insertions. Additionally, compound words lack hyphens, resulting in
+change or insertion. Additionally, compound words lack hyphens, resulting in
 extended letter sequences without visible separation and even repetitions of
 the same letter, as seen in examples like \emph{Wasserrinne} and
 \emph{Schifffahrt}.  Furthermore, the German spelling reform made some changes,
 making it necessary to create a different set of rules for German hyphenation.
 For example, the word \emph{Schiffahrt} should be hyphenated as
 \emph{Schiff-fahrt}, preserving the \emph{f}s from each word that makes this
-compound. The hyphenation should insert a \emph{f} that is not part of the
+compound. The hyphenation should insert an \emph{f} that is not part of the
 written form. That was not a problem for the old written form of the word:
 \emph{Schifffahrt}. Also, the old hyphenating rules of German grammar stated
 the hyphenation \emph{Bäk-ker} for the word \emph{Bäcker}, \emph{Zuk-ker} for
@@ -374,7 +374,16 @@ it would necessitate case-by-case handling.
 
 
 \section{Patterns for \TeX{} hyphenation}\label{sec-patt4TeX} 
-The patterns used in \TeX{} hyphenation are of the form: \texttt{4z1z2}. Each
+If we consider only the Latin alphabet, with no diacritcs, the patterns used 
+in \TeX{} hyphenation are of the form: \texttt{\^{}\textbackslash{}.?[0-9]?([a-zA-Z]+[0-9]?)+\textbackslash{}.?\$},
+where we have described it using a regular expression\footnote{
+    Regular expressions (regex) are powerful search patterns used in text processing to find, match, and manipulate strings of text. They are a fundamental tool in programming and are supported in many programming languages.
+    The regex given here uses the Perl syntax and might be broken in the following
+    parts: \texttt{\^{}} and \texttt{\$} mark the start and end of the string;
+    \texttt{\textbackslash{}.?} specifies an optional period; \texttt{[0-9]?} allows for an optional single digit;
+    \texttt{([a-zA-Z]+[0-9]?)+} matches sequences of letters (both uppercase and lowercase) interleaved with optional digits.
+}. 
+One example of such pattern is \texttt{4z1z2}. Each
 pattern is made of a sequence of letters and numbers. Odd numbers indicate a
 good hyphenation point, whereas even numbers indicate a bad place to break.
 The given example states that the sequence has a good breaking point between
