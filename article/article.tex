@@ -569,29 +569,17 @@ hyphenation points before the consonants\footnote{The complete list of these
 252 patterns is given here: \ExceptionRulesCV{}.}. 
 It is worth noting that there might
 be other rules or exceptions in the hyphenation patterns not covered by these
-default rules.  To accommodate exceptions, 20 additional rules were created for
-cases involving consonants \verb|b|, \verb|c|, \verb|d|, \verb|f|, \verb|g|,
-\verb|k|, \verb|p|, \verb|t|, \verb|v|, or \verb|w| followed by \verb|l| or
-\verb|r|\footnote{The 20 additional rules are: \ExceptionRulesLR{}.}
-; and 3 additional rules for \verb|c|, \verb|l| or \verb|n| followed by \verb|h|\footnote{
-Those 3 rules are: \ExceptionRulesCLNH{}.}.
-%
-% FILE="../data/default.TeX.pt-br.patterns"; grep -v "^1..$" "$FILE" | grep "2" | awk '{print substr($0, 2, 1)}' | sort | uniq | while read line; doc=$(grep "^1${line}2.$" "$FILE" | tr -d '12' | awk '{print substr($0, 2, 1)}' | tr '\n' ' '); printf "$line $c\n"; done
-%
-Moreover, 23 distinct patterns were introduced to indicate hyphenation points
-between vowels or between \verb|c|'s, \verb|r|'s, and \verb|s|'s\footnote{
-Those patterns are: \ExceptionRulesThree{}.
-}. 
-%
-% FILE="../data/default.TeX.pt-br.patterns"; grep -v "^1..$" "$FILE" | grep -v "2" | grep "3" | wc -l
-%
-Additionally, 8 patterns adhere to the \verb|1[gq]u4V|, signaling beneficial
-hyphenation points before \verb|g| or \verb|q|, followed by a sequence of
-\verb|u| and a vowel, with an inhibiting point between the \verb|u| and the
-subsequent vowel\footnote{They are the following: \ExceptionRulesFour{}.}.
-%
-Lastly, there is a single pattern represented as \verb|1-|, denoting that a
-hyphen indeed serves as a beneficial hyphenation point."
+default rules.  To accommodate exceptions, \textcite{rezende1987} proposes the 
+following rules: 
+\begin{itemize}
+    \item 20 rules that created for cases involving consonants \verb|b|, \verb|c|, \verb|d|, \verb|f|, \verb|g|, \verb|k|, \verb|p|, \verb|t|, \verb|v|, or \verb|w| followed by \verb|l| or \verb|r|\footnote{The 20 additional rules are: \ExceptionRulesLR{}.};
+    \item 3 rules for \verb|c|, \verb|l| or \verb|n| followed by \verb|h|\footnote{Those 3 rules are: \ExceptionRulesCLNH{}.}.
+    % FILE="../data/default.TeX.pt-br.patterns"; grep -v "^1..$" "$FILE" | grep "2" | awk '{print substr($0, 2, 1)}' | sort | uniq | while read line; doc=$(grep "^1${line}2.$" "$FILE" | tr -d '12' | awk '{print substr($0, 2, 1)}' | tr '\n' ' '); printf "$line $c\n"; done
+    \item 23 distinct patterns were introduced to indicate hyphenation points between vowels or between \verb|c|'s, \verb|r|'s, and \verb|s|'s\footnote{Those patterns are: \ExceptionRulesThree{}.}. 
+    % FILE="../data/default.TeX.pt-br.patterns"; grep -v "^1..$" "$FILE" | grep -v "2" | grep "3" | wc -l
+    \item 8 patterns adhere to the \verb|1[gq]u4V|, signaling beneficial hyphenation points before \verb|g| or \verb|q|, followed by a sequence of \verb|u| and a vowel, with an inhibiting point between the \verb|u| and the subsequent vowel\footnote{They are the following: \ExceptionRulesFour{}.}.
+    \item 1 pattern represented as \verb|1-|, denoting that a hyphen indeed serves as a beneficial hyphenation point.
+\end{itemize}
 
 % - contabilizar a quantidade de palavras que não são contempladas pela proposta do autor
 % - analisar a necessidade de excluir alguma regra (ao invés de apenas acrescentar novas)
