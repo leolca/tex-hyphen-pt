@@ -942,8 +942,9 @@ The procedure to create the second list of hyphenated words was:
   \item select those hyphenations agreed by five dictionaries that have no other hyphenation proposal (5 to 0 votes);
   \item from those that have another proposal, check if it is an apparent proparoxytone,
       \begin{enumerate*}[label=\alph*)]
-	  \item if it has a diacritic, select the paroxytone option,
-	  \item if not, select the proparoxytone option.
+	  \item if it has a diacritic, select the paroxytone option (e.g. select \emph{po-lí-cia} instead of \emph{po-lí-ci-a} and \emph{pe-rí-neo} instead of \emph{pe-rí-ne-o}),
+	  \item if not, select the proparoxytone option (e.g. select \emph{au-to-ri-a} instead of \emph{au-to-ri-a} and \emph{mar-ce-nei-ro} instead of \emph{mar-ce-neiro})\footnote{We just have to make sure we are not selecting those cases where there is a sequence of the form \texttt{[gq]u-[aeio]} (using regex notation), as in \emph{a-pa-zi-gu-ar} and \emph{en-xa-gu-ar}.}.
+	      % [gq]u-[aeio]
       \end{enumerate*}
   \item if it is not an apparent proparoxytone case, select the hyphenation with five votes.
 \end{enumerate*}
