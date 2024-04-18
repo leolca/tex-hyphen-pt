@@ -30,10 +30,13 @@ contains_diacritics() {
     fi
 }
 
+# get those 5 x 0 votes
 grep "(5)" ../data/hyphagreements | grep -v "(1)" | grep -v "(2)" | tr -d '()0-9' > ../data/hyphenations5.dic
 
-grep "(5)" ../data/hyphagreements | 
-    grep "(1)\|(2)" | 
+#grep "(5)" ../data/hyphagreements | 
+#    grep "(1)\|(2)" | 
+# get those 5 x 1, 5 x 2 or 6 x 1 votes
+cat <(grep "(5)" ../data/hyphagreements | grep "(1)\|(2)") <(grep "(6)" ../data/hyphagreements | grep "(1)") |
 while read line; do 
   cline=$(echo $line | tr -d '()0-9')
   word1=$(echo $cline | cut -d, -f1); 
