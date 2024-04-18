@@ -28,7 +28,7 @@
 }
 \usepackage{booktabs}
 
-\usepackage[textsize=tiny,textwidth=3.5cm,color=blue!10]{todonotes}
+%\usepackage[textsize=tiny,textwidth=3.5cm,color=blue!10]{todonotes}
 
 %%%%%%% https://tex.stackexchange.com/questions/16790/write18-capturing-shell-script-output-as-command-variable
 \usepackage{xparse}
@@ -60,6 +60,9 @@
 \cs_generate_variant:Nn \sdaau_captureshell:Nn { Ne }
 \ExplSyntaxOff
 %%%%%%%
+
+\usepackage{rotating}
+\usepackage{bytefield}
 
 
 
@@ -221,7 +224,7 @@ Each language has its hyphenation rules, which can be categorized into two
 groups: those driven by morphology (etymology) and those driven by
 pronunciation.  An algorithmic approach employs a logical system to analyze
 words and apply the hyphenation rules of a specific language. Since hyphenation
-rules vary significantly between languages, a unique algorithm must be
+rules vary significantly between languages, an algorithm must be
 developed for each one. While a logic-based system can be efficient and
 compact, it still needs to address exceptions through hard-coded rules.
 
@@ -351,8 +354,8 @@ supports rules for 66 languages \parencite{texhyphenrules}, and offers the
 flexibility to create rules for any currently unsupported languages.
 
 Unfortunately, certain hyphenation rules cannot be implemented using the \TeX{}
-hyphenation algorithm. In languages like German, hyphenation can lead to letter
-change or insertion. Additionally, compound words lack hyphens, resulting in
+hyphenation algorithm. For example, in German, hyphenation can lead to letter
+change or insertion.  Additionally, compound words lack hyphens, resulting in
 extended letter sequences without visible separation and even repetitions of
 the same letter, as seen in examples like \emph{Wasserrinne} and
 \emph{Schifffahrt}.  Furthermore, the German spelling reform made some changes,
@@ -363,7 +366,7 @@ compound. The hyphenation should insert an \emph{f} that is not part of the
 written form. That was not a problem for the old written form of the word:
 \emph{Schifffahrt}. Also, the old hyphenating rules of German grammar stated
 the hyphenation \emph{Bäk-ker} for the word \emph{Bäcker}, \emph{Zuk-ker} for
-the word \emph{Zucker} and \emph{pak-ken} for the word \emph{packen}. Now those
+the word \emph{Zucker} and \emph{pak-ken} for the word \emph{packen}. Nowadays, those
 words are hyphenated as \emph{Bä-cker}, \emph{Zu-cker} and \emph{pa-cken},
 respectively. Some words have also changed their hyphenation point after the
 spelling reform. For example, \emph{Fen-ster} became \emph{Fens-ter} and
@@ -411,18 +414,20 @@ where we have described it using a regular expression\footnote{
     \texttt{([a-z]+[0-9]?)+} matches sequences of lowercase letters interleaved with optional digits.
 }.
 One example of such pattern is \texttt{4z1z2}, which is composed of a sequence
-of letters and numbers. Odd numbers indicate a
-good hyphenation point, whereas even numbers indicate a bad place to break.
-The given example states that the sequence has a good breaking point between
-the first and the second \emph{z} and an hyphenation should be inhibited before
-the first \emph{z} and after the second \emph{z}. For example, the hyphenation
-of the word \emph{piz-za}, \emph{fiz-zle} and \emph{mez-zanine} use this rule,
-where we see the hyphen placed between the two \emph{z}'s and no hyphen before,
-nor after the \emph{z}'s. Patterns may also use period symbol (\emph{.}) to
-indicate word boundaries. The pattern \texttt{.sh2} applies to beginning of
-words, implying that the \emph{s} and the \emph{h} should stick together in
-beginning of a word and an hyphenation should also be inhibited after the
-\emph{h}. For example, this pattern is used in \emph{Sher-lock}.
+of letters and numbers. In general, we use characters/symbols from the language
+alphabet, along with Hindu-Arabic numbers, to express either hyphenation
+facilitation or inhibition.  Odd numbers indicate a good hyphenation point,
+whereas even numbers indicate a bad place to break.  The given example states
+that the sequence has a good breaking point between the first and the second
+\emph{z} and an hyphenation should be inhibited before the first \emph{z} and
+after the second \emph{z}. For example, the hyphenation of the word
+\emph{piz-za}, \emph{fiz-zle} and \emph{mez-zanine} use this rule, where we see
+the hyphen placed between the two \emph{z}'s and no hyphen before, nor after
+the \emph{z}'s. Patterns may also use period symbol (\emph{.}) to indicate word
+boundaries. The pattern \texttt{.sh2} applies to beginning of words, implying
+that the \emph{s} and the \emph{h} should stick together in beginning of a word
+and an hyphenation should also be inhibited after the \emph{h}. For example,
+this pattern is used in \emph{Sher-lock}.
 
 Hyphenation rules are organized in levels, from 1 to 9, where odd numbers
 represent hyphenating levels and even numbers represent inhibiting levels. Each
@@ -434,7 +439,7 @@ level works as an exception level of it predecessor. For example, the rule
 hyphenation proposed by the lower level rule \texttt{sh1er} should be hindered.
 That is the case in the hyphenation of the word \emph{Sher-lock}. The full
 example is provided in \Cref{sherlockhyphenation}, where we might see all pertinent
-English rules taking place in the hyphenation of \emph{Sher-lock} and \emph{sher-iff}.
+English rules taking place in the hyphenation of \emph{Sher-lock}.
 
 \noindent\begin{minipage}{\linewidth}
 \begin{lstlisting}[language={}, caption={Example of rules applyied in the
@@ -453,10 +458,10 @@ final: s   h   e   r - l   o   c   k -
 \end{lstlisting}
 \end{minipage}
 
-A pattern will consist of a string made of characters (from the language
+In summary, a pattern will consist of a string made of characters (from the language
 alphabet) possibly with a number in between, expressing the
-hyphenation/inhibition level and possibly word boundaries marker (the period)
-at the pattern edges. When there is no number between characters in a pattern,
+hyphenation/inhibition level. Occasionally word boundaries marker (the period)
+is used at the pattern edges. When there is no number between characters in a pattern,
 a zero is assumed, which means \emph{undefined} and no hyphenation point will
 be suggest at that location.
 
@@ -464,8 +469,8 @@ be suggest at that location.
 
 \section{PATGEN}\label{sec-patgen} 
 
-PATGEN utilizes a list of hyphenated words to define rules at various levels
-and lengths, based on the patterns found in the data. It starts with short
+PATGEN utilizes a list of hyphenated words to extract patterns and use them to define rules at various levels and lengths.
+It starts with short
 patterns and incrementally increases their length until reaching the maximum
 pattern length allowed by the user.  The objective is to keep the patterns as
 concise as possible, as this enhances their generalizability.  As it advances
@@ -484,7 +489,7 @@ representation of a character or symbol, which can be the entire symbol or a
 distinct visual element within it.} indices rather than character codes. Each
 glyph is represented by a single byte. That amount to 256 indices, where 13 of
 them are reserved for the digits 0-9 and the characters `.', `-', and `*'. The
-remaining 243 are used to represent symbols of the given language.  To run
+remaining 243 are used to represent symbols of a given language.  To run
 PATGEN, a translation file is necessary. This file defines the values of
 certain language-specific parameters (in the first line) and enumerates the
 various forms in which language symbols may appear (all subsequent lines).  In
@@ -495,26 +500,64 @@ that may be generated by a hyphenation procedure. To set a single-digit value,
 leave the first position blank, i.e., place a space in position 1 and 3 for
 \verb|lefthyphenmin| and \verb|righthyphenmin|, respectively.  Positions 5, 6
 and 7 are used to define alternative values for the special characters `.', `-'
-and `*'.  The following lines use a delimiter to enclose each `letter' of the
+and `*'.  
+\begin{center}
+\begin{bytefield}[endianness=little,bitwidth=0.11111\linewidth,boxformatting={\centering}]{7}
+\bitheader[lsb=1]{1-7} \\
+\bitbox{2}{lefthyphenmin} & \bitbox{2}{righthyphenmin} & \bitbox{1}{.} & \bitbox{1}{-} & \bitbox{1}{*} \\
+\end{bytefield}
+\end{center}
+The following lines use a delimiter to enclose each `letter' of the
 desired language alphabet, including its alternative representations.  The
 first position of the line defines the delimiter, and each symbol of the
 language can occupy as many positions as necessary, as long as the reserved
-value for the delimiter is not used in the symbol's definition.  Consider the
-following example for defining the letter `e' in Portuguese: 
-\begin{verbatim}
-XeXEXéXêXÉXÊX\'{e}X\^{e}X\'{E}X\^{E}XX 
-\end{verbatim}
-It represents the many ways in which the letter `e' might be found: lowercase,
+value for the delimiter is not used in the symbol's definition. The defining lines ends
+when the delimiter appears twice in a roll. Consider the
+following example for defining the letter `e' in Portuguese:
+\verb|XeXEXéXêXÉXÊX\'{e}X\^{e}X\'{E}X\^{E}XX|.
+\newcommand{\bitlabel}[2]{%
+    \bitbox[]{#1}{%
+	\raisebox{0pt}[4ex][0pt]{%
+	    \turnbox{45}{\fontsize{7}{7}\selectfont#2}%
+	}%
+    }%
+}
+\vspace{5ex}
+\begin{center}
+\begin{bytefield}[bitwidth=1.9em,boxformatting={\centering\tiny}]{20}
+\bitlabel{1}{delimiter} & \bitlabel{1}{letter e} &
+\bitlabel{1}{delimiter} & \bitlabel{1}{letter E} &
+\bitlabel{1}{delimiter} & \bitlabel{1}{letter é} &
+\bitlabel{1}{delimiter} & \bitlabel{1}{letter ê} &
+\bitlabel{1}{delimiter} & \bitlabel{1}{letter É} &
+\bitlabel{1}{delimiter} & \bitlabel{1}{letter Ê} &
+\bitlabel{1}{delimiter} & \bitlabel{1}{TeX sequence for é} &
+\bitlabel{1}{delimiter} & \bitlabel{1}{TeX sequence for ê} &
+\bitlabel{1}{delimiter} & \bitlabel{1}{TeX sequence for É} &
+\bitlabel{1}{delimiter} & \bitlabel{1}{TeX sequence for Ê} \\
+\bitheader[lsb=1]{1-20} \\
+\bitbox{1}{X} & \bitbox{1}{e} & \bitbox{1}{X} & \bitbox{1}{E} &
+\bitbox{1}{X} & \bitbox{1}{é} & \bitbox{1}{X} & \bitbox{1}{ê} &
+\bitbox{1}{X} & \bitbox{1}{É} & \bitbox{1}{X} & \bitbox{1}{Ê} &
+\bitbox{1}{X} & \bitbox{1}{\textbackslash{}'\{e\}} & \bitbox{1}{X} & \bitbox{1}{\textbackslash{}\^{}\{e\}} &
+\bitbox{1}{X} & \bitbox{1}{\textbackslash{}'\{E\}} & \bitbox{1}{X} & \bitbox{1}{\textbackslash{}\^{}\{E\}}
+\end{bytefield}
+\end{center}
+%\begin{verbatim}
+%XeXEXéXêXÉXÊX\'{e}X\^{e}X\'{E}X\^{E}XX 
+%\end{verbatim}
+We have adopted \verb|X| as the delimiter. This line represents the many ways in which the letter `e' might be found: lowercase,
 uppercase, with or without acute or circumflex accents. Note that we have used
 the direct input (using UTF-8 or other encoding that support the accented `e'
-character) and also the compositional counterpart using the escape codes that
-define each accent.  In this definition, we have assumed that the many forms in
+character) and also the compositional counterpart using the appropriate \TeX{} control sequence that
+instructs \TeX{} to place accent on the letter.  In this definition, we have assumed that the many forms in
 which we may find the character \emph{e} will be equivalent for
 hyphenation (pattern matching) purpose. As another example, see the next line
 which defines the character $\pi$ (taken from \textcite{haralambous2021}):
-\begin{verbatim} 
-#p#P#\varpi ## 
-\end{verbatim}
+\verb|#p#P#\varpi ##|.
+%\begin{verbatim} 
+%#p#P#\varpi ## 
+%\end{verbatim}
 
 PATGEN also needs a dictionary file, which is a list of pre-hyphenated words
 from which PATGEN extracts patterns to create hyphenation rules. To ensure
@@ -572,12 +615,12 @@ be other rules or exceptions in the hyphenation patterns not covered by these
 default rules.  To accommodate exceptions, \textcite{rezende1987} proposes the 
 following rules: 
 \begin{itemize}
-    \item 20 rules that created for cases involving consonants \verb|b|, \verb|c|, \verb|d|, \verb|f|, \verb|g|, \verb|k|, \verb|p|, \verb|t|, \verb|v|, or \verb|w| followed by \verb|l| or \verb|r|\footnote{The 20 additional rules are: \ExceptionRulesLR{}.};
-    \item 3 rules for \verb|c|, \verb|l| or \verb|n| followed by \verb|h|\footnote{Those 3 rules are: \ExceptionRulesCLNH{}.}.
+    \item 20 rules created for cases involving consonants \verb|b|, \verb|c|, \verb|d|, \verb|f|, \verb|g|, \verb|k|, \verb|p|, \verb|t|, \verb|v|, or \verb|w| followed by \verb|l| or \verb|r|\footnote{The 20 additional rules are: \ExceptionRulesLR{}.};
+    \item 3 rules for \verb|c|, \verb|l| or \verb|n| followed by \verb|h|\footnote{Those 3 rules are: \ExceptionRulesCLNH{}.};
     % FILE="../data/default.TeX.pt-br.patterns"; grep -v "^1..$" "$FILE" | grep "2" | awk '{print substr($0, 2, 1)}' | sort | uniq | while read line; doc=$(grep "^1${line}2.$" "$FILE" | tr -d '12' | awk '{print substr($0, 2, 1)}' | tr '\n' ' '); printf "$line $c\n"; done
-    \item 23 distinct patterns were introduced to indicate hyphenation points between vowels or between \verb|c|'s, \verb|r|'s, and \verb|s|'s\footnote{Those patterns are: \ExceptionRulesThree{}.}. 
+    \item 23 distinct patterns were introduced to indicate hyphenation points between vowels or between \verb|c|'s, \verb|r|'s, and \verb|s|'s\footnote{Those patterns are: \ExceptionRulesThree{}.}; 
     % FILE="../data/default.TeX.pt-br.patterns"; grep -v "^1..$" "$FILE" | grep -v "2" | grep "3" | wc -l
-    \item 8 patterns adhere to the \verb|1[gq]u4V|, signaling beneficial hyphenation points before \verb|g| or \verb|q|, followed by a sequence of \verb|u| and a vowel, with an inhibiting point between the \verb|u| and the subsequent vowel\footnote{They are the following: \ExceptionRulesFour{}.}.
+    \item 8 patterns adhere to the \verb|1[gq]u4V| pattern, signaling beneficial hyphenation points before \verb|g| or \verb|q|, followed by a sequence of \verb|u| and a vowel, with an inhibiting point between the \verb|u| and the subsequent vowel\footnote{They are the following: \ExceptionRulesFour{}.};
     \item 1 pattern represented as \verb|1-|, denoting that a hyphen indeed serves as a beneficial hyphenation point.
 \end{itemize}
 
@@ -668,7 +711,7 @@ exceed the total number of hyphenations found, especially for smaller values.
 \begin{table}
 \centering
 \caption{Considering the six dictionaries used, the first line of this table
-presents the number words that a given number of hyphenations were found in the
+presents the number of words that a given number of hyphenations were found in the
 dictionaries. The second line presents the number of words that have a given
 number of hyphenation as its most frequent form found in the
 dictionaries.}\label{tblstats}
@@ -697,7 +740,7 @@ hyphenation system.
 
 \section{Writing systems}\label{sec-writing-systems}
 
-There is a diverse array of writing systems, categorized into logographic,
+There is a diverse collection of writing systems, categorized into logographic,
 syllabic, and alphabetic systems. Although distinct, these systems can be built
 on an interplay of these categories \parencite{coulmas2003,palmer2010}. 
 The principles guiding an alphabetic or phonemic writing system vary significantly 
@@ -745,9 +788,30 @@ English is primarily guided by morphological principles, evident in words like
 Additionally, other factors also impact word hyphenation in English, such as 
 the distinction between long and short vowels, which function within the context
 of open or closed syllable, respectively; and the presence of doubled consonants and
-digraphs \parencite{lin2011,yavas2020}. 
+digraphs \parencite{lin2011,yavas2020}.
+Although each language has its driving principles for the hyphenation process, 
+multiple factors come into play, leading to various solutions in certain scenarios.
+For instance, in Portuguese, the phonological principle would lead to \emph{hipe-rativo}, while 
+the morphological principle would lead to \emph{hiper-ativo}. Both approaches seem valid
+and are indeed found in online dictionaries\footnote{Looking at words with prefixes, 
+it seems that even on those words, the phonological approach was predominant on hyphenation,
+but we cannot tell if it is a byproduct of automatic hyphenation that might be used
+to hyphenate words on online dictionaries.}.
+Some rather rare words, such as \emph{hiperalgesia}, may not be subject to morphological 
+influences. Since it has a low frequency of occurrence, the individual may not be
+aware of its morphological components and therefore hyphenate it as \emph{hipe-ralgesia}.
+The form \emph{hiper-algesia} could also be accepted, emphasizing its morphological constituents. 
 Furthermore, there exist numerous exceptions that may be categorized into rules.
 % https://english.stackexchange.com/questions/385/what-are-the-rules-for-splitting-words-at-the-end-of-a-line
+
+% $ grep "^hiper[aeiou]" ../data/hyphenations.csv  | grep "-" | grep -o "hi-pe-r[aeiou]\|hi-per-[aeiou]" | sort | uniq -c
+% 16 hi-pe-ra
+%  1 hi-per-a
+% 29 hi-pe-re
+% 20 hi-pe-ri
+%  2 hi-per-i
+%  2 hi-pe-ro
+%  2 hi-pe-ru
 
 Merely stating that an orthographic system is guided by phonological issues
 does not necessarily mean that its hyphenation rules directly mirror the
@@ -755,12 +819,22 @@ phonetic counterpart. This is notably apparent in Portuguese, where a strict
 one-to-one correspondence between letters and sounds is not always observed.
 The orthographic system operates according to its specific rules. For example,
 consider consonant clusters that create a single sound (digraphs) in words like
-\emph{\underline{ch}ave}, \emph{i\underline{lh}a}, \emph{\underline{sh}ampoo}, \emph{ca\underline{rr}o}, and \emph{ma\underline{ss}a}.
+%\emph{\underline{ch}ave}, 
+\emph{a\underline{ch}ado},
+\emph{i\underline{lh}a}, 
+%\emph{\underline{sh}ampoo}, 
+\emph{su\underline{sh}i},
+\emph{ca\underline{rr}o}, and \emph{ma\underline{ss}a}.
 While these digraphs are pronounced as one sound within a single syllable,
 their representation in writing determines how they are divided. Specifically,
 different consonants within a digraph must remain together, whereas identical
 consonants are separated. As a result, we observe hyphenations like
-\emph{cha-ve}, \emph{i-lha}, and \emph{sham-poo}, but \emph{car-ro} and \emph{mas-sa}. 
+%\emph{cha-ve}, 
+\emph{a-cha-do},
+\emph{i-lha}, and 
+%\emph{sham-poo}, 
+\emph{su-shi},
+but \emph{car-ro} and \emph{mas-sa}. 
 
 %When there is no space left in line for a whole word, it might be split in two
 %using a hyphen as an indication of such procedure. 
@@ -768,6 +842,8 @@ consonants are separated. As a result, we observe hyphenations like
 In Portuguese, hyphenations are allowed on syllables boundaries and, in
 general, follow phonological principles.  According to the Grammar
 \parencite{cunha2016,bergstrom2011,cegalla2008}, some rules might still apply:
+\begin{itemize}
+    \item[Non-Splitting Rules:]
 \begin{enumerate}
     \item\label{rule-di-triphthong} diphthong or triphthong should not be split
 	(e.g. \emph{m\underline{ui}-to}, \emph{Pa-ra-g\underline{uai}});
@@ -806,10 +882,11 @@ general, follow phonological principles.  According to the Grammar
     \item\label{rule-orphan} words with more than two syllables, when divided, cannot 
 	isolate a syllable composed of a single vowel (e.g. \emph{\underline{a}gos-to}, 
 	\emph{la-go\underline{a}}, \emph{\underline{i}da-de});
+\end{enumerate}
 
-
-    \hspace{10em} \hbox to 5cm{\leaders\hbox to 10pt{\hss . \hss}\hfil} 
-
+\item[Splitting Rules:]
+%    \hspace{10em} \hbox to 5cm{\leaders\hbox to 10pt{\hss . \hss}\hfil} 
+\begin{enumerate}[resume]
     \item\label{rule-hiatus} hiatus vowels and those vowel sequences where each vowel
 	belongs to a different syllable should be split (e.g.
 	\emph{sa\underline{-ú-}de}, \emph{ra\underline{-i-}nha}, \emph{d\underline{o-e}r},
@@ -825,21 +902,23 @@ general, follow phonological principles.  According to the Grammar
 	\emph{co-mu\underline{\emph{m-m}}en-te}, \emph{co\underline{n-n}os-co},
 	\emph{de\underline{s-c}er}, \emph{cre\underline{s-ç}a}, \emph{e\underline{x-c}e-der}).
 \end{enumerate}
+\end{itemize}
 
 Rules \ref{rule-singlev} and \ref{rule-orphan} are primarily aimed at ensuring
 proper readability of the text, aligning with \TeX{} approach to deal with
 widows and orphans. As mentioned in \Cref{sec-intro}, the variables
-\verb|lefthyphenmin| and \verb|righthyphenmin| are used to control the minimum
-length for fragments of hyphenated words. For that reason, rules
-\ref{rule-singlev} and \ref{rule-orphan} are fiddling rules in \TeX{}
-hyphenation, and that is not reason to take than in account in our analysis to
-improve Portuguese hyphenation rules. Furthermore, get the full hyphenation of
-words might be useful for text-to-speech applications \parencite{libossek2000,trogkanis2010}.
+\verb|lefthyphenmin| and \verb|righthyphenmin| control the minimum length for
+fragments of hyphenated words.  When those variables are set to values greater
+than one, Rules \ref{rule-singlev} and \ref{rule-orphan} become fiddling rules
+in \TeX{} hyphenation, and they could be disregarded. Notwithstanding, the full
+hyphenation of words is useful, particularly in text-to-speech applications
+\parencite{libossek2000,trogkanis2010}.
 
 Additionally, it is advisable to refrain from
 splitting disyllables consisting of four letters (e.g., \emph{para},
 \emph{como}, \emph{cede}). This considerations also lead to more aesthetically
-pleasing and intelligible text, and \TeX{}'s control of isolated fragments already
+pleasing and intelligible text, and \TeX{}'s control of isolated fragments,
+through the variables \verb|\lefthyphenmin| and \verb|\righthyphenmin|, already
 address this issue.
 
 %Note that rules \ref{rule-singlev} and \ref{rule-orphan} are fiddling rules in
@@ -869,17 +948,26 @@ line. They are:
 %\emph{como}, \emph{cede}).  These considerations lead to more aesthetically
 %pleasing and intelligible text.
 
-Systematizing the rules that guide syllable boundaries and, consequently,
-hyphenation in Portuguese proved to be fundamental for the improvement of the
-\TeX{} hyphenator rules, since they indicate the possible or prohibited contexts
-of hyphenation. Expomos, a seguir, uma análise comparativa...
+Systematizing the rules that guide syllable boundaries and hyphenation in
+Portuguese is a fundamental step to understand and improve the \TeX{}
+hyphenation rules. To ensure the accuracy of hyphenation rules and effectively
+compare their results, a hyphenation spelling dictionary serves as an
+indispensable reference. This dictionary provides a comprehensive listing of
+correctly hyphenated words, enabling the computation of the correctness of each
+set of hyphenation rules. By consulting the hyphenation spelling dictionary,
+one can verify whether the hyphenation patterns generated by a set of rules
+align with established standards. This process involves analyzing how well the
+hyphenation rules adhere to the accepted conventions of the language, ensuring
+that they effectively segment words without compromising readability or
+consistency. Moreover, by comparing the results obtained from different sets of
+hyphenation rules against the entries in the spelling dictionary, we can assess
+the efficacy and reliability of each approach. In section \ref{sec-dictionay},
+we will define the specifications of this reference dictionary, outlining its
+role in subsequent rule updates and rules generation.
 
-... to continue
-\vspace{10ex}
 
 
-
-\section{Creating the dictionary}
+\section{Creating the dictionary}\label{sec-dictionay}
 
 A bash script, named \texttt{gethyphenations.sh}, was developed to crawl six
 online dictionaries and extract word hyphenations whenever available. The
@@ -905,55 +993,89 @@ hyphenations from various online sources. The resulting data is stored in a CSV\
 
 \subsection{Establishing a gold standard}
 
-To construct our gold standard for hyphenation, we will compare the
-hyphenations offered by all six dictionaries. We'll determine the total count
+To establish our gold standard for hyphenation, we will compare the
+hyphenations offered by all six dictionaries. First, we will determine the total count
 of unique hyphenations across these dictionaries using the script
-\texttt{hyphenationagreements.sh}.
+\texttt{hyphenation\-agreements.sh}.
+It's worth noting that certain dictionaries annotate words with a colon (`:') to
+indicate potential variations in pronunciation or production.
+Particularly, `apparent proparoxytones' might appear marked by this colon sign, indicating 
+the possibility of a diphthongs or hiatuses in the word ending.
+In Portuguese, words ending in \emph{ea}, \emph{eo}, \emph{ia}, \emph{ie},
+\emph{io}, \emph{ua}, \emph{ue}, or \emph{uo}, with the stressed syllable
+before these endings, can be considered either paroxytones ending in a rising
+diphthong or proparoxytones ending in a hiatus. For instance, words like \emph{his-tó-ri:a}
+and \emph{on-du-la-tó-ri:o} are examples of words marked as apparent
+proparoxytones, suggesting they could be regarded as paroxytones (\emph{his-tó-ria}
+and \emph{on-du-la-tó-rio}) or proparoxytones (\emph{his-tó-ri-a} and
+\emph{on-du-la-tó-ri-o}). The script \texttt{hyphenationagreements.sh} 
+offers four potential approaches to handle these apparent proparoxytones:
+retaining the hyphenations with the colon mark to indicate an apparent proparoxytone; 
+selecting only the paroxytone or only the proparoxytone counterpart; or counting both paroxytones and proparoxytones. 
+Given the lack of consensus in the literature, our initial approach involves 
+counting both hyphenations, and we will detail below how we resolve this issue. 
+In our hyphenation dictionary, we have identified \NumberOfAppProp{} words marked as apparent proparoxytones.
 
 As our initial hyphenation reference, we will consider those cases where all
-six dictionaries agree. This list comprises \num{\NumberOfSixAgrees} words,
-and their hyphenations are stored in \texttt{hyphenations6.dic}.
+six dictionaries are in agreement. This comprehensive list comprises
+\num{\NumberOfSixAgrees} words. Their corresponding hyphenations are
+meticulously compiled and stored in the file \texttt{hyphenations6.dic}. This
+curated list serves as a benchmark for evaluating the accuracy and
+effectiveness of hyphenation rules generated through computational methods. It
+will establish a reliable baseline for our hyphenation analysis, enabling us to
+assess and refine our methodologies effectively.
 
-
-For any disagreement, we must be cautious and examine each case.
-We might be tempted to chose the majority vote approach, selection
+In case of disagreement, we must exercise caution and examine each instance.
+We might be tempted to choose the majority vote approach, simply selecting
 those hyphenations that have the most supporters, but it is unclear 
-how the hyphenations on those online dictionaries were curated, 
-many might use algorithmic approach, leading to potential flaws shared
+how the hyphenations on those online dictionaries were curated; 
+many might use algorithmic approaches, leading to potential flaws shared
 among them. 
 For example, 5 dictionaries use the hyphenation 
-\emph{quart-zo} while just one uses the rightful one, \emph{quar-tzo}.
-The same happens with \emph{de-sem-ba-i-nhar} and \emph{de-sem-bai-nhar},
-the former one receiving the majority of the votes, despite being wrong.
-Some strings might accept more than one hyphenation. For example, 
-\emph{sub-li-nha} and \emph{su-bli-nha} represent two different words.
-The former is the substantive \emph{underline} and the latter is a flexed form of the verb \emph{to underline}.
-\todo{Aline, segue a lista dos casos duvidosos que encontrei com votos 5 a 1. Marquei em negrito aqueles
-    que considero ser a forma correta.
-    quart-zo(5), \textbf{quar-tzo}(1) (assim também trocar quart-zi-to por \textbf{quar-tzi-to)}; \textbf{sub-li-nha}(5), \textbf{su-bli-nha}(1); 
-    de-sem-ba-i-nhar(5), \textbf{de-sem-bai-nhar}(1); ap-nei-a(5), \textbf{a-pnei-a}(1); 
-    disp-nei-a(5), dispneia(1) (\textbf{dis-pnei-a}, forma não encontrada nos dicionários); 
-    hi-pe-ral-ge-si-a(5), \textbf{hi-per-al-ge-si-a}(1);
-    in-de-is-cen-te(5), \textbf{in-deis-cen-te}(1); jo-in-vi-len-se(5), \textbf{join-vi-len-se}(1); 
-    ne-er-lan-dês(5), \textbf{neer-lan-dês}(1). Os demais casos de 5 a 1 são proparoxítonas aparentes.
-}
-The procedure to create the second list of hyphenated words was:
+\emph{quart-zo} while the dictionary Aulete (originally from Portugal) favors the hyphenation \emph{quar-tzo},
+which can be explained by the lack of an epenthetic vowel in European Portuguese\footnote{
+The online dictionary Aulete has its origins on the printed version known as \emph{Dicionário Caldas Aulete}.
+It is a dictionary from Portugal, reflecting the European Portuguese dialect.} \parencite{mateus}.
+% Epêntese Vocálica e Restrições de Acento no Português do Sul do Brasil, Gisela COLLISCHONN  - Universidade Federal do Rio Grande do Sul (UFRGS)
+% https://core.ac.uk/download/pdf/293615216.pdf
+Similarly, \emph{ap-nei-a} or \emph{a-pnei-a} and \emph{disp-nei-a} or \emph{dis-pnei-a} should
+be accepted considering, since there could be an epenthetic vowel (Brazilian Portuguese) or not (European Portuguese).
+The same happens with \emph{hiperalgesia}, already mentioned in Section \ref{sec-grammar-port}.
+Among other examples, we might also highlight \emph{neerlandês}, which appears 
+hyphenated as \emph{ne-er-lan-dês} in five dictionaries and as \emph{neer-lan-dês} in one.
+If we consider its pronunciation, we would prefer the former hyphenation, but the
+first one conforms better to regular written syllables in Portuguese.
+%The same happens with \emph{de-sem-ba-i-nhar} and \emph{de-sem-bai-nhar},
+%the former one receiving the majority of the votes.
+Some strings might accept more than one hyphenation, since they represent different words. For example, 
+\emph{sub-li-nha} and \emph{su-bli-nha}, where the former is the substantive \emph{underline} and the latter is a flexed form of the verb \emph{to underline}.
+%\todo{Aline, segue a lista dos casos duvidosos que encontrei com votos 5 a 1. Marquei em negrito aqueles
+%    que considero ser a forma correta.
+%    quart-zo(5), \textbf{quar-tzo}(1) (assim também trocar quart-zi-to por \textbf{quar-tzi-to)}; \textbf{sub-li-nha}(5), \textbf{su-bli-nha}(1); 
+%    de-sem-ba-i-nhar(5), \textbf{de-sem-bai-nhar}(1); ap-nei-a(5), \textbf{a-pnei-a}(1); 
+%    disp-nei-a(5), dispneia(1) (\textbf{dis-pnei-a}, forma não encontrada nos dicionários); 
+%    hi-pe-ral-ge-si-a(5), \textbf{hi-per-al-ge-si-a}(1);
+%    in-de-is-cen-te(5), \textbf{in-deis-cen-te}(1); jo-in-vi-len-se(5), \textbf{join-vi-len-se}(1); 
+%    ne-er-lan-dês(5), \textbf{neer-lan-dês}(1). Os demais casos de 5 a 1 são proparoxítonas aparentes.
+%}
+
+The procedure to create the second list of hyphenated words involved several steps:
 \begin{enumerate*}[label=\arabic*)]
-  \item select those hyphenations agreed by five dictionaries that have no other hyphenation proposal (5 to 0 votes);
-  \item from those that have another proposal, check if it is an apparent proparoxytone,
+  \item select those hyphenations agreed by five dictionaries, that have no alternative hyphenation proposal (5 to 0 votes);
+  \item from those with alternative proposals, exam whether they constituted apparent proparoxytones (these cases could arise from instances with 5 to 1 votes or 6 to 1 votes, as explained earlier), 
       \begin{enumerate*}[label=\alph*)]
-	  \item if it has a diacritic, select the paroxytone option (e.g. select \emph{po-lí-cia} instead of \emph{po-lí-ci-a} and \emph{pe-rí-neo} instead of \emph{pe-rí-ne-o}),
-	  \item if not, select the proparoxytone option (e.g. select \emph{au-to-ri-a} instead of \emph{au-to-ri-a} and \emph{mar-ce-nei-ro} instead of \emph{mar-ce-neiro})\footnote{We just have to make sure we are not selecting those cases where there is a sequence of the form \texttt{[gq]u-[aeio]} (using regex notation), as in \emph{a-pa-zi-gu-ar} and \emph{en-xa-gu-ar}.}.
+	  \item if the word had a diacritic, select the paroxytone option (e.g. \emph{po-lí-cia} instead of \emph{po-lí-ci-a} and \emph{pe-rí-neo} instead of \emph{pe-rí-ne-o}),
+	  \item if not, choose the proparoxytone option (e.g. \emph{au-to-ri-a} instead of \emph{au-to-ri-a} and \emph{mar-ce-nei-ro} instead of \emph{mar-ce-neiro})\footnote{We just have to make sure we are not selecting those cases where there is a sequence of the form \texttt{[gq]u-[aeio]} (using regex notation), as in \emph{a-pa-zi-gu-ar} and \emph{en-xa-gu-ar}.}.
 	      % [gq]u-[aeio]
       \end{enumerate*}
-  \item if it is not an apparent proparoxytone case, select the hyphenation with five votes.
+  \item if the word did not fall into the apparent proparoxytone category, select the hyphenation with five votes.
 \end{enumerate*}
-This procedure is implemented in the script \texttt{get51.sh}.
-Just a few hyphenations were manually corrected. They are: \emph{quar-tzo}, 
-\emph{quar-tzi-to}, \emph{su-bli-nha} (was added), \emph{de-sem-bai-nhar},
-\emph{a-pnei-a}, \emph{dis-pnei-a}, \emph{hi-per-al-ge-si-a}, \emph{join-vi-len-se}, and \emph{neer-lan-dês}.
-The final list is stored in \texttt{hyphenations5.dic} and holds \num{\NumberOfFiveAgrees} additional hyphenations.
-Using the two lists created so far, we have in total \num{\NumberOfSixFiveAgrees} hyphenations.
+This procedure was implemented in the script \texttt{get51.sh}. 
+Only a few hyphenations required manual correction, including the following that were added:
+\emph{quar-tzo}, \emph{quar-tzi-to}, \emph{su-bli-nha}, \emph{a-pnei-a}, \emph{dis-pnei-a}, 
+\emph{hi-per-al-ge-si-a}, and \emph{neer-lan-dês}.
+The final list, containing \num{\NumberOfFiveAgrees} additional hyphenations, is stored in \texttt{hyphenations5.dic}, 
+bringing the total number of hyphenations across both lists to \num{\NumberOfSixFiveAgrees}.
 
 % results from script ./get51.sh
 % cases where majority vote might go wrong:
@@ -968,16 +1090,17 @@ Using the two lists created so far, we have in total \num{\NumberOfSixFiveAgrees
 % the remaining are apparent proparoxytones
 
 
-For those hyphenations that have 4 votes, we used basically the same approach
-as before. We noticed many words had only 4 votes (no alternative hyphenation was provided
-by any dictionary), and they were hyphenated as proparoxytones. They were, in fact, 
-apparent proparoxytones. Those cases were easy to target by looking
-for diacritics in the third to last syllable and a sequence \emph{V-V} in the end.
-We transformed those cases into paroxytones by removing the last hyphen.
-The remaining cases, where an alternative hyphenation was found, we checked for
-diacritics, selecting the paroxytone option when found and selection the
-proparoxytone option when not. For the reaming cases with alternative option,
-we simply select the most voted one. This procedure is implemented in script 
+For those hyphenations with four votes, we adopted a similar approach to the
+one used previously. Many words garnered only four votes, indicating a lack of
+alternative hyphenations provided by any dictionary, and were thus initially
+hyphenated as proparoxytones. These instances were typically distinguished by
+diacritics in the third-to-last syllable and a \emph{V-V} sequence at the end.
+To address this, we converted these words into paroxytones by eliminating the
+final hyphen. In cases where alternative hyphenations were available, we
+assessed the presence of diacritics. If diacritics were detected, we chose the
+paroxytone option; otherwise, we defaulted to the proparoxytone option. In
+instances with multiple alternative options, we selected the option with the
+highest frequency of votes. This procedure is implemented in the script
 \texttt{get4.sh}.
 
 % analisar os resultados das hifenizações através da análise de frequência das sílabas
@@ -1038,33 +1161,14 @@ we simply select the most voted one. This procedure is implemented in script
 % grep "(5)" ../data/hyphagreements | grep "(1)" | head | tr -d '()0-9' | while read line; do word1=$(echo $line | cut -d, -f1); word2=$(echo $line | cut -d, -f2); count1=$(grep -o '-' <<< "$word1" | wc -l); count2=$(grep -o '-' <<< "$word2" | wc -l); if [ $count1 -gt $count2 ]; then w1=$(echo $word1 | sed 's/\(.*\)-/\1/'); compare_strings "$w1" "word2"; result=$?; if [ $result -ne 0 ]; then echo "c1: $line $w1 $word2"; od -c <<< "$w1"; od -c <<< "$word2"; fi; elif [ $count1 -lt $count2 ]; then w2=$(echo $word2 | sed 's/\(.*\)-/\1/'); compare_strings "$w2" "word1"; result=$?; if [ $result -ne 0 ]; then echo "c2: $line $word1 $w2"; fi; else compare_strings "$word1" "word2"; result=$?; if [ $result -ne 0 ]; then echo $line; fi; fi; done
 
 
-After performing all procedures above described to create our golden hyphenation
-dictionary, we might still need manual corrections.
-All manual corrections are written in the file \texttt{replacements.txt} and
-the script \texttt{manualcorrections.sh} is used to perform these corrections.
+After completing the aforementioned procedures to create our golden hyphenation
+dictionary, manual corrections may still be necessary to ensure its accuracy
+and reliability. These manual adjustments, which encompass the corrections
+described earlier, are documented in the file \texttt{replacements.txt}.
+Utilizing the script \texttt{manualcorrections.sh}, we meticulously apply these
+corrections to refine our hyphenation dictionary and enhance its effectiveness.
 
 
-
-
-In certain dictionaries, words are commonly annotated with a colon (`:') to
-signify a potential variation in pronunciation or production, specifically as a
-diphthong or hiatus, classifying them as `apparent proparoxytones'.  In
-Portuguese, words ending in \emph{ea}, \emph{eo}, \emph{ia}, \emph{ie},
-\emph{io}, \emph{ua}, \emph{ue}, or \emph{uo}, with the stressed syllable
-before these endings, can be considered either paroxytones ending in a rising
-diphthong or proparoxytones ending in a hiatus. The words \emph{his-tó-ri:a}
-and \emph{on-du-la-tó-ri:o} are examples of words marked as apparent
-proparoxytones, meaning they might be regarded as paroxytones \emph{his-tó-ria}
-and \emph{on-du-la-tó-rio} or as proparoxytones \emph{his-tó-ri-a} and
-\emph{on-du-la-tó-ri-o}.  The script \texttt{hyphenationagreements.sh} might
-deal with these apparent proparoxytones in four different ways: we might keep
-the hyphenations with the colon mark to indicate an apparent proparoxytones; or
-we might only the paroxytones or only the proparoxytones counterpart; or we may
-count both paroxytones and proparoxytones.  As there is no consensus in the
-literature, we have decided to count both hyphenations. In our hyphenation
-dictionary, we have found \NumberOfAppProp{} words marked as apparent
-proparoxytones.
- 
 
 
 
