@@ -1,0 +1,112 @@
+\section{Limitations}
+
+In general, although the erroneous words share some common characteristics that
+might allow for a reduction in hyphenation errors to some extent, there is a
+limitation inherent in the way \TeX{}'s rules are conceived. Below, we present
+the systematics found in these data that could be encompassed by a different
+rule structure:
+
+\begin{description} 
+    \item[Morphological determination:\label{morpho-det}] Prefixes such as \emph{re-},
+	\emph{sub-}, \emph{ciber-}, \emph{hiper-}, and \emph{auto-}, among others, require separating the
+	prefix from its stem, which can lead to phonological issues. For example, words like
+	\emph{reiniciar}, \emph{sublinhar}, \emph{ciberespaço}, \emph{hiperalgesia}, and \emph{autoimagem} contain prefixes and could be hyphenated as 
+	\emph{re-i-ni-ci-ar}, \emph{sub-li-nhar}, \emph{ci-ber-es-pa-ço}, \emph{hi-per-al-ge-si-a}, and \emph{au-to-i-ma-gem}, 
+	respectively, to respect their morphological formation. However,
+        considering that Portuguese hyphenates its words based on syllabic phonological correlates, 
+	words that require morphological information, such as these, might not have their hyphenation performed correctly. 
+	%In our corpus, there are twelve such words (eight with \emph{re-}, and one each with \emph{auto-}, \emph{meta-}, \emph{sub-}, \emph{cyber-}, \emph{geo-}, or \emph{neuro-}). 
+	These examples are presented in \Cref{tab-mor-syl}.
+	% $ { head -n 1 ../data/hyphenations.csv; grep "^sublinhar," ../data/hyphenations.csv; } | column -t -s,
+	% su-bli-nhar (priberam, wiktionary, aulete)
+	% sub-li-nhar (michaelis, portal, dicio)
+
+	% $ { head -n 1 ../data/hyphenations.csv; grep "^auto[a-z]\+," ../data/hyphenations.csv | grep -v ",,,";} | column -t -s,
+
+	\begin{table}
+	\centering
+	\scriptsize
+	\caption{Hyphenation in the dictionaries of words having conflict between morphological and syllabic information.}
+	\label{tab-mor-syl}
+        \begin{tabular}{ll*{6}{c}}
+	\toprule
+	    word                      & hyphenation       & \multicolumn{6}{c}{dictionary} \\
+             &                                            & Michaelis & Priberam & Wikitionary & Aulete & Portal & Dicio \\
+	\midrule
+        \multirow{2}{*}{sublinhar}    & su-bli-nhar       &           & x        & x           & x      &        &       \\
+				      & sub-li-nhar       & x         &          &             &        & x      &       \\
+	\midrule
+	\multirow{2}{*}{reiniciar}    & rei-ni-ci-ar      &           &          & x           &        & x      &       \\
+				      & re-i-ni-ci-ar     & x         & x        &             & x      &        & x     \\
+	\midrule
+	\multirow{2}{*}{ciberespaço}  & ci-be-res-pa-ço   &           & x        &             &        & x      &       \\
+				      & ci-ber-es-pa-ço   & x         &          & x           & x      &        & x     \\
+	\midrule
+	\multirow{2}{*}{hiperalgesia} & hi-pe-ral-ge-si-a & x         & x        &             & x      & x      & x     \\
+				      & hi-per-al-ge-si-a &           &          & x           &        &        &       \\
+	\midrule
+	\multirow{2}{*}{autoimagem}   & au-toi-ma-gem     &           &          &             &        & x      &       \\
+				      & au-to-i-ma-gem    & x         &          &             & x      &        & x     \\
+	\bottomrule
+	\end{tabular}
+	\end{table}
+
+    \item[Foreignness:\label{foreignness}] There is a group of words %20 words 
+	in the corpus that are terminologies or words incorporated into the 
+	Portuguese language without full phonological adaptation, such as 
+	\emph{darwinismo}, \emph{quilowatt}, and \emph{esfiha}. The lack of
+	adaptation makes the phonological pattern very specific to the word,
+	making it impossible to incorporate their cases \TeX{}'s rules alongside the
+	other rules. The solution is to add them to the exception word list.
+
+    \item[Word-initial consonant clusters:\label{word-init-cc}] Portuguese has few cases of
+	consonant clusters at the beginning of a word. They are, in general, 
+	etymological remnants and are currently unproductive in the language,
+	since there are no neologisms with this pattern. Encounters like
+	\emph{ps-} and \emph{pn-} are more frequent, as they are present in
+	words like \emph{psicologia} and \emph{pneu}, which have moderate 
+	frequency in the language. These can be predicted by specific rules that would cover  
+	49 and 13 words in the corpus, respectively.
+	However, there are consonant clusters that are
+	found in very specific and low-frequency words. Although possible, it
+	is not worth adding very specific rules for clusters found in words like
+	\emph{dzeta}, \emph{gnu}, \emph{cnidário},
+	\emph{ftálico}, and \emph{gnaisse} -- which amount to only five words.
+
+    \item[Abbreviations, Acronyms, or Initialisms:\label{abbrev}] 
+       Whether for efficiency, convenience, clarity, or specialized jargon, 
+       it is common to use shortened versions of words or phrases. \emph{Abbreviation} is 
+       a method employed to achieve this shortening. In our Portuguese corpus, we find examples such as 
+       \emph{etc.}\footnote{Latin expression \emph{et cetera}, meaning `and other similar things'.}, 
+       \emph{Dr.}\footnote{\emph{doutor} (doctor, person with PhD title, but popularly used to designate an erudite individual)}, 
+       \emph{Exmo.}\footnote{\emph{Excelentíssimo} (honourable)},
+       \emph{cap.}\footnote{\emph{capítulo} (chapter)}, \emph{Univ.}\footnote{Universidade (university)}, 
+       \emph{ed.}\footnote{\emph{edição} (edition)}, 
+       \emph{s.n.}\footnote{sine nomine, Latin expression meaning `without a name', mostly used in the context of publishing.}.
+       Another shortened form is an \emph{initialism}, which consists of using
+       the initial letters of words to create a shortened version. However,
+       initialisms may not always conform to the hyphenation rules described in
+       this work, as they do not necessarily follow the orthographic or
+       phonotactic standards of the language. Some abbreviations found in the
+       corpus include 
+       \emph{SESC}\footnote{Serviço Social do Comércio}, 
+       \emph{INSS}\footnote{\emph{Instituto Nacional do Seguro Social} (National Institute of Social Security)}, 
+       \emph{PCdoB}\footnote{\emph{Partido Comunista do Brasil} (Communist Party of Brazil)},
+       \emph{PM}\footnote{\emph{Polícia Militar} (military police)}, and 
+       \emph{UFRJ}\footnote{Universidade Federal do Rio de Janeiro}.
+       \emph{Acronyms} are a specific type of shortening where the first letters (or
+       groups of letters) of each word are combined to form a new pronounceable
+       word. In the corpus, we encounter examples like 
+       \emph{Anatel}\footnote{\emph{Agência Nacional de Telecomunicações} (National Telecommunications Agency)},
+       \emph{Ovni}\footnote{\emph{Objeto voador não identificado} (unidentified flying object - UFO)},
+       \emph{Sida}\footnote{\emph{Síndrome da Imunodeficiência Adquirida} (acquired immunodeficiency syndrome - AIDS)} (in Portugal) and
+       \emph{Mercosul}\footnote{\emph{Mercado Comum do Sul} (Southern Common Market).}.
+       These various shortened forms play an important role in written
+       language, providing concise ways to represent longer words or phrases.
+       It is important to note that abbreviations, acronyms, and initialisms
+       are generally treated as single units and are not hyphenated.
+
+\end{description}
+
+
+

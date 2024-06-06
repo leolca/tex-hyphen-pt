@@ -1,0 +1,65 @@
+\section{Patterns for \TeX{} hyphenation}\label{sec-patt4TeX} 
+
+To simplify, if we consider only the Latin alphabet, with no diacritcs, the patterns used 
+in \TeX{} hyphenation are of the form: \texttt{\^{}\textbackslash{}.?[0-9]?([a-z]+[0-9]?)+\textbackslash{}.?\$},
+where we have described it using a regular expression\footnote{
+    Regular expressions (regex) are powerful search patterns used in text processing to find, match, and manipulate strings of text. They are a fundamental tool in programming and are supported in many programming languages.
+    The regex given here uses the Perl syntax and might be broken in the following
+    parts: \texttt{\^{}} and \texttt{\$} mark the start and end of the string;
+    \texttt{\textbackslash{}.?} specifies an optional period; \texttt{[0-9]?} allows for an optional single digit;
+    \texttt{([a-z]+[0-9]?)+} matches sequences of lowercase letters interleaved with optional digits.
+}.
+One example of such pattern is \texttt{4z1z2}, which is composed of a sequence
+of letters and numbers. In general, we use characters/symbols from the language
+alphabet, along with Hindu-Arabic numbers, to express either hyphenation
+facilitation or inhibition.  Odd numbers indicate a good hyphenation point,
+whereas even numbers indicate a bad place to break.  The given example states
+that the sequence has a good breaking point between the first and the second
+\emph{z} and an hyphenation should be inhibited before the first \emph{z} and
+after the second \emph{z}. For example, the hyphenation of the word
+\emph{piz-za}, \emph{fiz-zle} and \emph{mez-zanine} use this rule, where we see
+the hyphen placed between the two \emph{z}'s and no hyphen before, nor after
+the \emph{z}'s. Patterns may also use period symbol (\emph{.}) to indicate word
+boundaries. The pattern \texttt{.sh2} applies to beginning of words, implying
+that the \emph{s} and the \emph{h} should stick together in beginning of a word
+and an hyphenation should also be inhibited after the \emph{h}. For example,
+this pattern is used in \emph{Sher-lock}.
+
+Hyphenation rules are organized in levels, from 1 to 9, where odd numbers
+represent hyphenating levels and even numbers represent inhibiting levels. Each
+level works as an exception level of it predecessor. For example, the rule
+\texttt{sh1er} indicate a good hyphenation point between the \emph{h} and the
+\emph{e} in the sequence \emph{sher}. A rule at a higher level, as
+\texttt{.sh2}, implies an exception to the lower level rule. When we see
+\emph{sher}, in the beginning of a word, the rule \texttt{.sh2} applies and
+hyphenation proposed by the lower level rule \texttt{sh1er} should be hindered.
+That is the case in the hyphenation of the word \emph{Sher-lock}. The full
+example is provided in \Cref{sherlockhyphenation}, where we might see all pertinent
+English rules taking place in the hyphenation of \emph{Sher-lock}.
+
+\noindent\begin{minipage}{\linewidth}
+\begin{lstlisting}[language={}, caption={Example of rules applyied in the
+hyphenation of the word \emph{Sherlock}. Example done using a port of \TeX{}'s
+hyphenation algorithm to Go provided at
+\url{https://github.com/speedata/hyphenation}.}, label=sherlockhyphenation]
+   .   s   h   e   r   l   o   c   k   .
+     0   0   2   |   |   |   |   |   |    .sh2
+     0   2   0   |   |   |   |   |   |    s2h
+     0   0   1   0   0   |   |   |   |    sh1er
+     |   |   |   0   1   0   |   |   |    r1l
+     |   |   |   0   3   0   4   |   |    r3lo4
+     |   |   |   |   |   |   0   0   1    ck1
+max: 0   2   2   0   3   0   4   0   1
+final: s   h   e   r - l   o   c   k -
+\end{lstlisting}
+\end{minipage}
+
+In summary, a pattern will consist of a string made of characters (from the language
+alphabet) possibly with a number in between, expressing the
+hyphenation/inhibition level. Occasionally word boundaries marker (the period)
+is used at the pattern edges. When there is no number between characters in a pattern,
+a zero is assumed, which means \emph{undefined} and no hyphenation point will
+be suggest at that location.
+
+
+

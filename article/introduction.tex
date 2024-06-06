@@ -1,0 +1,267 @@
+\section{Introduction}\label{sec-intro}
+
+Hyphenation in text wrapping was not used for a long time. Words should fit
+entirely in a line, or they would be broken in arbitrary places.  Initially, no
+markers were used to indicate word wrapping, leading to potential confusion and
+unintended interpretations. As a result, orthographers advocated for the
+introduction of a sign to indicate such breaks. Portuguese faced the same
+gradual introduction of a hyphenation sign to mark words wrapping across lines.
+Even though the usage of a hyphenation sign ($=$) was advocated by
+orthographers \parencite{gandavo1574}, few documents used such sign until the end of
+the 18th century \parencite{araujo2015}.
+
+In some cases, hyphenation hinders smooth reading and should be avoided in
+child literature. In opposition, both excessive spacing and insufficient
+spacing between words also impose difficulty in the reading process, making
+hyphenation fundamental when texts use short line lengths. As a line gets
+shorter, the number of breaking candidates between words decreases, leading to
+awkward spaces between words and among letters. For that matter, automatic
+hyphenation plays an important role in good typesetting.
+
+%Automatic hyphenation plays an important role in good typesetting and
+%it is fundamental when a text uses short line lengths. As a line gets
+%shorter, the number of breaking candidates between words decreases,
+%creating awkward spaces between words and among letters.
+
+\TeX{} is a typesetting system which carefully deals with these issues,
+automatically arranging text on a page to create a good reading experience.
+Automatic hyphenation is an important part on this process,
+promoting an even-tempered distribution of elements on the page.
+%Hyphenation is therefore an important part on this process.
+%A good readability depends on an even-tempered distribution of elements
+%on the page.
+Line height and line length, paragraph length, font size and typeface,
+letter-spacing, and word-spacing are some factors which influence the text legibility
+and readability. Space between words should not be too long creating lakes and
+rivers in the text, nor too tight, impairing the legibility and readability.
+
+Another important matter to consider is ambiguities that might be created when
+a word is partitioned during the hyphenation process. In English we should
+avoid hyphenations such as \emph{re-cover}, \emph{re-form}, \emph{re-sign}, \emph{the-rapist},
+\emph{depart-mental}, and \emph{mans-laughter} (in Portuguese, some examples are:
+\emph{de-putada}, \emph{fede-ração}, \emph{acu-mula}, \emph{após-tolo},
+\emph{cú-bico}). Hyphenations that might lead the reader to pronounce a word
+incorrectly should also be prevented. That is the case of
+\emph{considera-tion}, in Enslish (and \emph{pe-rigo} in Portuguese).
+
+In some situations, hyphenation is also a matter of style. Some partitioning
+choices sound better than others. These conflicting alternatives typically
+arises when a words has many possible hyphenation points. Consider
+\emph{ar-chae-ol-o-gist} (\emph{or ar-che-ol-o-gist}), which is preferably partitioned as
+\emph{archae-ologist} (or \emph{arche-ologist}) in opposition to \emph{archaeol-ogist} (or
+\emph{archeol-ogist}) or \emph{archaeolo-gist} (or \emph{archeolo-gist}). It is preferable to keep
+whole morphemes together. In the previous example: \emph{archae} (or \emph{arche}, meaning
+``ancient'', ``primitive'')
+%\footnote{archae- comes from the Ancient Greek ἀρχαῖος (arkhaîos, `ancient',
+%`primitive'), from ἀρχή (arkhḗ, `beginning').}
+%https://en.wiktionary.org/wiki/archae-
+and \emph{-ologist} (``one who studies the topic''). In Portuguese, it is also more
+elegant to avoid splits between double consonants or vowels, even if an
+hyphenation point do exists between those letters. For example,
+\emph{pressu-rizar} is preferable over \emph{pres-surizar} and
+\emph{empreen-dedor} is preferable over \emph{empre-endedor}. Even so,
+exceptions exists, it is preferable to partition \emph{micro-organismo}
+rather than \emph{microor-ganismo} (keeping morphemes together is favored
+over splitting a double vowel). Numerous factors come into play when choosing
+the optimal hyphenation point for a word.
+
+The general rule for Portuguese hyphenation is to split a word into its
+syllables. A syllable is made of a mandatory nucleus, filled by a vowel, and
+optional peripheral consonants (before or after the nucleus). In some
+situations, the syllabic division does not respect the ethnologic constituents.
+The usage of the prefixes \emph{bis-} and \emph{in-} are examples of this
+circumstance. The correct syllabifications are \emph{bi-sa-vô},
+\emph{i-nobs-tan-te}\footnote{The rule of syllable
+division could lead to two possible partitions: \emph{i-nobs-tan-te} and
+\emph{in-obs-tan-te}, but the first is preferable.}, and \emph{i-na-ti-vo}, 
+where the prefixes are split into two syllables. 
+But, as pointed out previously, it is preferable to keep
+morphemes together rather than splitting them apart. Therefore we should
+favor the hyphenation \emph{bisa-vô} over \emph{bi-savô}, \emph{inobs-tante} 
+over \emph{i-nobstante}, and \emph{ina-tivo} over \emph{i-nativo}. 
+This last example could also lead to a misunderstanding
+since the word \emph{nativo} (\emph{native} in English) emerges from this word
+break. 
+
+Each language has its hyphenation rules, which can be categorized into two
+groups: those driven by morphology (etymology) and those driven by
+pronunciation.  An algorithmic approach employs a logical system to analyze
+words and apply the hyphenation rules of a specific language. Since hyphenation
+rules vary significantly between languages, an algorithm must be
+developed for each one. While a logic-based system can be efficient and
+compact, it still needs to address exceptions through hard-coded rules.
+
+%The automation of this process might use a dictionary based approach, which
+%will restrict the hyphenation possibilities to those entries in the dictionary,
+%an algorithmic base approach, which might be applied to whatever sequence found
+%in a text, or a mix of both approaches. 
+%%An algorithmic approach might use a logic system to analyse words and apply
+%%the hyphenation rules of a given language. 
+%A rule base model might include the recognition of prefixes,
+%suffixes, morphemes, or some sequences suitable for the inclusion of a break.
+%Another approach is the usage of pattern matching. Given a corpus of
+%hyphenation examples in a language, it is necessary to identify those sequence
+%of letters that define a point where hyphenation is suitable or not. Patterns
+%might include prefixes, suffixes, exceptions and special hyphenation rules of a
+%given language. Such approach might be used for different languages, by
+%providing hyphenation examples in a target language to extract patterns and
+%rules.
+
+The automation of this process can employ various approaches, including:
+\begin{description}
+\item[Dictionary-Based Approach:] This method restricts hyphenation
+    possibilities to entries found in the dictionary.
+\item[Algorithmic-Based Approach:] This approach can be applied to any sequence
+    encountered in a text.
+\item[Rule-Based Model:] This model recognizes prefixes, suffixes, morphemes,
+    or specific sequences suitable for hyphenation.
+\item[Pattern Matching:] By using a corpus of hyphenation examples in a
+    language, this approach identifies letter sequences that determine suitable
+    hyphenation points. Patterns encompass prefixes, suffixes, exceptions, and
+    special hyphenation rules of the language.
+\item[Mixed Approach:] This approach combines two or more of the previously
+    described methods to enhance hyphenation accuracy and flexibility.
+\end{description}
+
+Analyzing only the immediate surroundings may not always suffice to determine a
+potential hyphenation point. For instance, consider \emph{de-moc-ra-cy} and \emph{dem-o-crat},
+where the immediate surrounding of the letter \emph{e} does not provide a clear
+indication of the hyphenation point. 
+Even when facing chosen patterns that typically make hyphenation
+straightforward, exceptions can arise. Take the sequence \emph{tion}, for example.
+It may seem logical to place a break before this pattern, but the word \emph{cation}
+is hyphenated as \emph{cat-ion}, highlighting the influence of etymology on the way
+a word is split.
+
+A word with multiple meanings may have distinct hyphenations based on its intended meaning.
+`For instance, the Swedish word form \emph{glassko} has three different
+meanings, and can be hyphenated as \emph{glas-sko} (glass shoe),
+\emph{glass-ko} (ice cream cow) and in the non-standard way,
+\emph{glass-sko} (ice cream shoe)' \parencite{nemeth2006}. In Portuguese, the
+word \emph{sublinha} might be hiphenated in two different ways:
+\emph{su-bli-nha} when representing the inflected form of the verb
+\emph{sublinhar} (to underline) or \emph{sub-li-nha} when refering
+to the line under (underline as a noun).
+
+% hyphenation might change with syntactic function
+% part of speech (PoS)
+
+Machine learning techniques were employed to hyphenate Norwegian text
+\parencite{kristensen2001}. The study revealed that, overall, the \TeX{} approach
+outperformed a neural network.  Both methods demonstrated similar performance
+in identifying correct hyphenation points and minimizing incorrect hyphenations
+when tested on a small word list (with the neural network slightly
+outperforming in correctly recognizing hyphenation points).  However, when
+tested on a larger word list, the \TeX{} approach proved superior in avoiding
+incorrect hyphenations compared to the neural network.
+
+
+The original \TeX{} hyphenation algorithm, introduced by %Knuth in 1977
+\textcite{knuth1977}, primarily focused on the English language and employed three
+main rules:
+\begin{enumerate*}[label=(\arabic*)]
+ \item suffix removal; 
+ \item prefix removal; and 
+ \item the Vowel-Consonant-Consonant-Vowel (VCCV) breaking rule\footnote{The 
+     VCCV rule in hyphenation patterns, places the syllable boundary between 
+     two consecutive consonants when they appear between two vowels. For example, 
+     in the word \emph{sudden}, the syllable break occurs between the \emph{d} and 
+     the second \emph{d}, making it \emph{sud-den}. 
+     The VCCV pattern is a relatively common syllable division pattern in English.
+     This rule ensures accurate 
+     hyphenation, maintaining word readability and pronunciation when words are 
+     split at the end of a line in printed text.}. 
+\end{enumerate*}
+Tests demonstrated that it could identify 40\% of allowable hyphen locations
+\parencite{liang1983}.  The \TeX{} hyphenation algorithm later adopted the approach
+proposed by Frank M. Liang, which involves competing patterns.  The \TeX{}82
+algorithm employs five alternating levels of hyphenating and inhibiting
+patterns. The program for pattern generation, known as PATGEN, was created by
+%Liang 
+\parencite{liangbreitenlohner1999} and has been utilized to generate
+hyphenating patterns for numerous languages
+\parencite{sojka1995,sojka1995a,sojka2005thesis,sojka2003,scannell2003}. It involves
+sweeping a database of hyphenated words in a language to identify both
+hyphenating and inhibiting patterns, ultimately creating a list of competing
+patterns for that specific language.
+
+The effective hyphenation of words by \TeX{} will actually depends on the following factors:
+\begin{enumerate*}[label=(\arabic*)]
+    \item document language, which will determine which set of patterns to apply;
+    \item characters used, since some might block hyphenation at their edges;
+    \item the value of the internal variables \verb|lefthyphenmin| and \verb|righthyphenmin|\footnote{
+	The variables \verb|lefthyphenmin| and \verb|righthyphenmin| are language dependant and
+	are defined in \emph{tlpobj} files (\verb|/usr/local/texlive/20XX/tlpkg/tlpobj/hyphen-xxxxxx.tlpobj|). 
+	Default values varies in the range from 1 to 3. 
+    	English and Portuguese, for example, use \verb|lefthyphenmin=2| and \verb|righthyphenmin=3|.},
+	% ls /usr/local/texlive/2023/tlpkg/tlpobj/*.tlpobj | while read -r filename; do grep -Po "lefthyphenmin=[0-9]\s+righthyphenmin=[0-9]" $filename; done | tr '\t' ' ' | tr -s ' ' | sort | uniq -c
+	%      17 lefthyphenmin=1 righthyphenmin=1
+        %       6 lefthyphenmin=1 righthyphenmin=2
+        %       1 lefthyphenmin=1 righthyphenmin=3
+        %      49 lefthyphenmin=2 righthyphenmin=2
+        %       9 lefthyphenmin=2 righthyphenmin=3
+        which defines the minimum sequence length of characters at the left and right borders
+        before any hyphenation is allowed.
+\end{enumerate*}
+
+Despite the fact that \TeX{} hyphenation algorithm and rules are old, they are,
+to these days, the most frequently used approach, even outside the \TeX{}'s
+world. The grounds for this is Hunspell, a spell checker and morphological
+analyzer that is adopted in many softwares (e.g. LibreOffice, OpenOffice.org,
+Mozilla Firefox, Mozilla Thunderbird, Google Chrome, macOS, InDesign, memoQ,
+Opera, Affinity Publisher, among others \parencite{hunspell}). Hunspell uses \TeX{}
+hyphenation rules \parencite{hunspellhyphen,levien1998}, making \TeX{} hyphenation
+widespread in the computer world. That is a result of \TeX{} approach
+simplicity and versatility.  The algorithm works effectively, as it already
+supports rules for 66 languages \parencite{texhyphenrules}, and offers the
+flexibility to create rules for any currently unsupported languages.
+
+Unfortunately, certain hyphenation rules cannot be implemented using the \TeX{}
+hyphenation algorithm. For example, in German, hyphenation can lead to letter
+change or insertion.  Additionally, compound words lack hyphens, resulting in
+extended letter sequences without visible separation and even repetitions of
+the same letter, as seen in examples like \emph{Wasserrinne} and
+\emph{Schifffahrt}.  Furthermore, the German spelling reform made some changes,
+making it necessary to create a different set of rules for German hyphenation.
+For example, the word \emph{Schiffahrt} should be hyphenated as
+\emph{Schiff-fahrt}, preserving the \emph{f}s from each word that makes this
+compound. The hyphenation should insert an \emph{f} that is not part of the
+written form. That was not a problem for the old written form of the word:
+\emph{Schifffahrt}. Also, the old hyphenating rules of German grammar stated
+the hyphenation \emph{Bäk-ker} for the word \emph{Bäcker}, \emph{Zuk-ker} for
+the word \emph{Zucker} and \emph{pak-ken} for the word \emph{packen}. Nowadays, those
+words are hyphenated as \emph{Bä-cker}, \emph{Zu-cker} and \emph{pa-cken},
+respectively. Some words have also changed their hyphenation point after the
+spelling reform. For example, \emph{Fen-ster} became \emph{Fens-ter} and
+\emph{mei-stens} became \emph{meis-tens}. Some problems in compound word
+hyphenation in \TeX{} are discussed in \textcite{sojka1995a}.
+
+
+% Some hyphenation rules are not possible with TeX algorithm.
+% For example, the german word Schiffahrt should be hyphenated as Schiff-fahrt.
+% Although it is no longer the recommend written form, it was the most usual
+% until 2003 (see graph in schifffart.png from google ngrams).
+% Also the old hyphenating rules of German grammatic stated the following
+% hyphenations Bäk-ker (for the word Bäcker, what is now hyphenated as Bä-cker),
+% Zuk-ker (for the word Zucker, what is now hyphenated as Zu-cker),
+% pak-ken (for packen, and now pa-cken) and trok-ken (for trocken, now tro-cken).
+
+
+%which contain archeo can be alternatively spelt with archaeo or archæo.
+
+
+%GÂNDAVO, Pero de Magalhães de. Regras que ensinam a maneira de escrever e
+%orthographia da lingoa portuguesa, etc. Lisboa: Antonio Gonsalvez, 1574
+
+%  HIFENIZAÇÃO EM PORTUGUÊS
+% Antonio Martins de ARAÚJO and Toru MARUYAMA
+
+
+
+Moreover, as mentioned earlier, certain hyphenations may be preferred for
+stylistic reasons, or to avoid ambiguity, or for better reading experience.
+Some words might have multiple hyphenations, depending on the intended meaning.
+In such cases, \TeX{} may not efficiently address the hyphenation challenge, as
+it would necessitate case-by-case handling.
+
+

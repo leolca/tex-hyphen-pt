@@ -1,0 +1,111 @@
+\section{Methodology}\label{sec-methodology}
+
+To assess the performance of each set of rules, we require a collection of
+correctly hyphenated Portuguese words. We employed word frequency data to
+ensure we selected representative, commonly used words, avoiding excessively
+rare ones. Our comprehensive word list was curated using online dictionaries,
+Portuguese corpora, and verified against Portuguese grammars to validate
+hyphenation rules. We also performed manual corrections where necessary.
+We should not expect an entire corpus to follow a set of conventions for a written 
+language nor uniformity among a variety of corpora, especially those harvested from the Internet.
+``It is notoriously difficult to prescribe rules governing the use of a written language; it is even more difficult
+to get people to `follow the rules.' This is in large part due to the nature of written language, in which
+the conventions are not always in line with actual usage and are subject to frequent change'' \parencite[p.~14]{palmer2010}.
+
+
+
+\subsection{Data collection}\label{sec-data-coll}
+
+Initially, we selected
+\href{https://www.linguateca.pt/cetenfolha/index_info.html}{CETENFolha}
+as the source corpus, but this approach presented two issues: many
+words were still missing, and the corpus was based on text from 1994, prior to
+the implementation of the Orthographic Agreement. The Orthographic Agreement
+of the Portuguese Language was conducted in 1990, and its transition period
+started in 2009, becoming mandatory in 2016. However, even after the agreement,
+some words continue to have different spellings in the participating countries.
+To address these idiosyncrasies, we aim to develop hyphenation rules that
+accommodate variations in spelling. For instance, the word \emph{reception}
+might be written as \emph{receção} (Portugal) or \emph{recepção} (Brazil); the
+word \emph{action} might be written as \emph{acção} (Portugal) or \emph{ação}
+(Brazil); and the word \emph{project} might be written as \emph{projecto}
+(Portugal) or \emph{projeto} (Brazil).
+
+% We have used the Portuguese Wikipedia dump as our Portuguese corpus. Texts in Wikipedia might be written by Brazilian or Portuguese contributors, the both spellings may appear.
+
+% cat /ms/downloads/samples/wikipedia/ptwiki-latest-pages-articles-multistream_wordlist.txt | tr -dc '0-9\n' | paste -sd+ | bc
+% 302226482
+% cat /ms/downloads/samples/wikipedia/ptwiki-latest-pages-articles-multistream_wordlist.txt | awk '{CUMCOUNT+=$1; if(CUMCOUNT < 287115158) print;}' >/tmp/ptwikitop95.txt
+% cat /ms/downloads/samples/wikipedia/ptwiki-latest-pages-articles-multistream_wordlist.txt | awk '{CUMCOUNT+=$1; if(CUMCOUNT < 299204217) print;}' >/tmp/ptwikitop99.txt
+% cat /tmp/ptwikitop99.txt | tr -d "0-9 " |  while read -r word; do if ! grep -q "^${word}," ../data/hyphenations.csv; then echo $word; fi; done > /tmp/ptwikitop99_notinlist.txt
+% cat /home/leoca/ee/research/hyphenation/listapalavrasnet.txt | awk '{print tolower($0)}' | while read -r word; do if ! grep -qP "^\s*[0-9]+\s*${word}$" /ms/downloads/samples/wikipedia/ptwiki-latest-pages-articles-multistream_wordlist.txt; then echo $word; fi; done > /tmp/list_of_palavrasnet_not_in_wikipedia.txt
+
+% wc -l /ms/downloads/samples/wikipedia/ptwiki-latest-pages-articles-multistream_wordlist.txt
+% 1746947
+% wc -l /tmp/ptwikitop99_notinlist.txt
+% 42017
+% from 1746947 of wikipedia, only 42017 are not in list
+
+Due to the peculiarities mentioned, we made the decision to integrate the word
+list from \href{https://www.palavras.net/}{Palavras NET}, and subsequently, we
+augmented it with words sourced from the
+\href{https://pt.wikipedia.org}{Portuguese Wikipedia} dump. From the Wikipedia
+data, we narrowed down the selection to a subset of \num{50721} words,
+accounting for 95\% of occurrences in the corpus. This threshold was set to
+filter out typos and infrequent words. The initial word list became quite
+extensive, comprising \num{\CorpusSize} words. However, we refined the list by
+retaining only those words for which we could find hyphenation data in at least
+one of the following online dictionaries:
+\href{https://michaelis.uol.com.br/}{Michaelis},
+\href{https://dicionario.priberam.org/}{Priberam},
+\href{https://pt.wiktionary.org}{Wikcionário},
+\href{https://aulete.com.br/}{Aulete},
+\href{http://www.portaldalinguaportuguesa.org/}{Portal da Língua Portuguesa}, and
+\href{https://www.dicio.com.br/}{Dicio}.
+Consequently, this curation process resulted in a final dictionary containing
+\num{\DictionarySize} words.  
+
+Table \ref{tblstats} presents the number of distinct words with a given number
+of hyphenations found in the dictionaries.  Additionally, it displays the
+number of words that received the highest agreed-upon hyphenation.  For
+instance, the word \emph{como} was consistently hyphenated as \emph{co-mo} in
+all six dictionaries, therefore, it contributes to both the counts in the
+column representing six hyphenations (first column).  On the other hand, the
+word \emph{sua} received different hyphenations: \emph{su-a} in four
+dictionaries, \emph{sua} in one dictionary, and one dictionary did not provide
+any hyphenation result.  This leads to an increment in the first line, second
+column (since hyphenations were found in five dictionaries) and the second
+line, third column (since the most frequent hyphenation was found in four
+dictionaries). It is evident now that the number of identical hyphenations can
+exceed the total number of hyphenations found, especially for smaller values.
+
+\begin{table}
+\centering
+\caption{Considering the six dictionaries used, the first line of this table
+presents the number of words that a given number of hyphenations were found in the
+dictionaries. The second line presents the number of words that have a given
+number of hyphenation as its most frequent form found in the
+dictionaries.}\label{tblstats}
+\small
+\begin{tabular}{@{ }l@{ } *{7}{@{ }S[table-format=6]@{ }}}
+    hyphenations & 6 & 5 & 4 & 3 & 2 & 1 & 0 \\
+    \hline
+    hyphenations found & \NumberOfSixHyphens{} & \NumberOfFiveHyphens{} &
+    \NumberOfFourHyphen{} & \NumberOfThreeHyphens{} & \NumberOfTwoHyphens{} &
+    \NumberOfOneHyphens{} & \NumberOfNoHyphens{} \\
+
+    same hyphenations & \NumberOfSixAgrees{} & \NumberOfFiveAgrees{} &
+    \NumberOfFourAgrees{} & \NumberOfThreeAgrees{} & \NumberOfTwoAgrees{} &
+    \NumberOfOneAgrees{} & n/a
+\end{tabular}
+\end{table}
+
+In summary, our data compilation involved \emph{CETENFolha}, \emph{Palavras
+NET}, and \emph{Wikipedia}, and hyphenated the words using the original \TeX{}
+hyphenation rules.  Subsequently, we compared the hyphenated results with
+those obtained from the dictionary. By conducting a thorough performance
+appraisal, we systematized the errors and delved into the relevant literature
+to identify potential rules that could complement and enhance the existing
+hyphenation system.
+
+

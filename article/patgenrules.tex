@@ -1,0 +1,183 @@
+\section{Creating a new set of rules using Patgen}
+In this section, we describe the process of creating a new set of hyphenation rules using \emph{patgen}.
+This involves defining specific parameters, choosing a reference dictionary with correct hyphenations, and 
+using a translation file tailored for \emph{patgen}. In the previous \Cref{sec-patgen} we have detailed 
+how \emph{patgen} works.
+
+A partial of the content of the translation file is shown in \Cref{lst-trafile}.
+
+\begin{minipage}{\linewidth}
+\lstinputlisting[language={}, numbers=left, numberstyle=\tiny, linerange={1-10}, basicstyle=\small\ttfamily, caption={Portuguese translation file.}, label={lst-trafile}]{../data/portuguese.tra}
+\ldots
+\lstinputlisting[language={}, numbers=left, numberstyle=\tiny, linerange={39-41}, firstnumber=39, basicstyle=\small\ttfamily]{../data/portuguese.tra}
+\end{minipage}
+
+
+%\emph{Patgen} uses a few parameters along its executions: 
+%\begin{description}
+%    \item[hyph\_start and hyph\_finish]: Two numbers between 1 and 9 (separated by a space), representing the desired pattern levels
+%	in the final set of rules. Odd pattern levels are hyphenating levels and even pattern levels are inhibiting levels. 
+%	Higher level numbers prevail over lower ones, creating exceptions, exceptions over exceptions, and so on... 
+%	\texttt{hyph\_start} and \texttt{hyph\_finish} specify the first and last levels, respectively, to be considered during the rule creation process.
+%
+%    \item[pat\_start and pat\_finish]: Patterns at each level are chosen in order of increasing pattern length (usually starting with length 2). 
+%	This is controlled by the parameters \texttt{pat\_start} and \texttt{pat\_finish} specified at the beginning of each level. 
+%	These are the minimum and maximum lengths of patterns we are interesting in. Their values range between 1 and 15.
+%
+%    \item[good weight, bad weight, threshold]: Each level of patterns is tested over all words in the dictionary.
+%	A pattern is only if it satisfies the following formula: $\alpha \times \#\text{good matches} - \beta \times \#\text{bad matches} \geq \eta$, where
+%	$\alpha$ is the \texttt{good weight}, $\beta$ is the \texttt{bad weight} and $\eta$ is the \texttt{threshold}.
+%
+%\end{description}
+%
+%The syntax to run \emph{patgen} is described in \Cref{lst-patgen-syntax}
+%\begin{lstlisting}[language={bash}, basicstyle=\small\ttfamily, caption={Syntax to run patgen.}, label={lst-patgen-syntax}]
+%patgen dictionary_file initial_pattern_set output_file translation_file
+%\end{lstlisting}
+
+The parameters mentioned in \Cref{sec-patgen} to run \emph{patgen} are provided interactively during the execution of \emph{patgen}.
+We might automatize this process using a script. The \Cref{lst-patgentest} presents the code block
+responsible for passing these parameters to \emph{patgen}.
+\lstinputlisting[language={bash}, linerange={76-83}, basicstyle=\small\ttfamily, breaklines=true, caption={Portuguese translation file.}, label={lst-patgentest}]{../scripts/patgentest.sh}
+As an example of execution, when choosing \texttt{hyph\_start}=1, \texttt{hyph\_finish}=9, \texttt{pat\_start}=2, \texttt{pat\_finish}=5,
+\texttt{good weight}=1, \texttt{bad weight}=1, and \texttt{threshold}=1, we achieve 99.97\%(86799) correct 
+hyphenations, 0.01\%(12) incorrect hyphenations, and 0.03\%(25) missing hyphenations.
+It produced a set of 799 rules, where just 123 are present in the handcrafted set of rules.
+
+We have also used the approach used by \textcite{sojka2019} in creating the script \texttt{make-full-pattern}.
+In this approach, the parameters are loaded from a file and might be distinct for each level.
+We start from an empty set and create progressive higher order rules, always using the rules from the previous
+step as the starting point at the next step.
+Using this approach with the 8 level parameters they used to create hyphenation rules to German,
+we achieved 99.98\%(86820) correct hyphenations, 0.01\%(9) incorrect hyphenations, and 0.00\%(4) missed hyphenations.
+The result was a set of 593 rules, with only 69 in common with those handcrafted rules proposed earlier.
+
+
+% patgen portuguese_utf8.dic portuguese.0.pat portuguese_utf8.out portuguese_utf8.tra
+
+% $ cat ../data/hyphenations6.dic ../data/hyphenations5.dic ../data/hyphenations4.dic > ../data/portuguese.dic
+% $ ./patgentest.sh -w "1 2 1" -h "1 9" -p "2 5"
+% 86799 good, 12 bad, 25 missed
+% 99.97 %, 0.01 %, 0.03 %
+% 799 rules
+% 123 lines in common with handcrafted rules
+
+% $ ./patgentest.sh -w "1 1 1" -h "1 9" -p "2 5"
+% 86791 good, 5 bad, 33 missed
+% 99.96 %, 0.01 %, 0.04 %
+% 704 rules
+% 81 lines in common with handcrafted rules
+
+% $ ./patgentest.sh -w "1 1 2" -h "1 9" -p "2 5"
+% 86671 good, 93 bad, 153 missed
+% 99.82 %, 0.11 %, 0.18 %
+% 498 rules
+% 72 lines in common with handcrafted rules
+
+% make-full-pattern.sh DICTIONARY_FILE TRANSLATE_FILE PARAMETERS_FILE
+%
+% ./make-full-pattern.sh ../data/portuguese.dic ../data/portuguese.tra german8levels-orig.par
+% 86820 good, 9 bad, 4 missed
+% 100.00 %, 0.01 %, 0.00 %
+% 593 rules
+% 69 lines in common with handcrafted rules
+%
+% ./make-full-pattern.sh ../data/portuguese.dic ../data/portuguese.tra german8levels-orig.par ../data/patched-default.TeX.pt-br.patterns.v2
+% 86818 good, 7 bad, 6 missed
+% 99.99 %, 0.01 %, 0.01 %
+% 1260 rules
+% 421 lines in common with handcrafted rules
+% 
+% ./make-full-pattern.sh ../data/portuguese.dic ../data/portuguese.tra scannell.par
+% 86815 good, 10 bad, 9 missed
+% 99.99 %, 0.01 %, 0.01 %
+% 1104 rules
+% 44 lines in common with handcrafted rules
+%
+% ./make-full-pattern.sh ../data/portuguese.dic ../data/portuguese.tra scannell.par ../data/patched-default.TeX.pt-br.patterns.v2
+% 86812 good, 7 bad, 12 missed
+% 99.99 %, 0.01 %, 0.01 %
+% 764 rules
+% 429 lines in common with handcrafted rules
+
+% ./apparentproparoxytonesfix.sh ../data/portuguese.dic
+% ./make-full-pattern.sh ../data/portuguese_apparentproparoxytone.dic ../data/portuguese.tra german8levels-orig.par
+% 86766 good, 9 bad, 4 missed
+% 100.00 %, 0.01 %, 0.00 %
+% 547 rules
+% 69 lines in common with handcrafted rules 
+
+% ./make-full-pattern.sh ../data/portuguese_apparentproparoxytone.dic ../data/portuguese.tra scannell.par
+% 86767 good, 10 bad, 3 missed
+% 100.00 %, 0.01 %, 0.00 % 
+% 1065 rules
+% 44 lines in common with handcrafted rules
+
+% ./make-full-pattern.sh ../data/portuguese_apparentproparoxytone.dic ../data/portuguese.tra german8levels-orig.par ../data/patched-default.TeX.pt-br.patterns.v2
+% 86764 good, 7 bad, 6 missed
+% 99.99 %, 0.01 %, 0.01 %
+% 1182 rules 
+% 421 lines in common with handcrafted rules
+
+
+% ./gocreateresultfile.sh ../data/portuguese.dic portuguese.out > /tmp/portuguese_patgen_001.dic;
+% ./resultfilemetrics.sh -f /tmp/portuguese_patgen_001.dic;
+% correct: 32447; wrong: 12 (12); missing: 25 (25)
+% 32447 good, 12 bad, 25 missed
+% 99.89 %, 0.04 %, 0.07 %
+
+% $ cat <(printf "1 5\n") <(printf -- '2 5\n1 2 1\n%.0s' {1..5}) <(printf "y") | patgen ../data/portuguese.dic ../data/patched-default.TeX.pt-br.patterns.v2 portuguese.out.2 ../data/portuguese.tra
+% 86803 good, 429 bad, 21 missed
+% 99.98 %, 0.49 %, 0.02 %
+
+
+
+% create a test set using words with three hyphenations (3) in dictionary
+% grep "(3)" ../data/hyphagreements | cut -d, -f1 | grep -v "(4)" | sed 's/([0-9])//g' > ../data/hyphenations3.dic
+% ./apparentproparoxytonesfix.sh ../data/hyphenations3.dic
+% ../data/hyphenations3_apparentproparoxytone.dic
+% ./gocreateresultfile.sh ../data/hyphenations3_apparentproparoxytone.dic pattern.final > /tmp/portuguese3patfinal.dic;
+% ./resultfilemetrics.sh -f /tmp/portuguese3patfinal.dic;
+% correct: 647; wrong: 47 (46,1); missing: 7089 (1899,2088,1588,946,423,122,21,1,1)
+%
+% ./gocreateresultfile.sh ../data/hyphenations3_apparentproparoxytone.dic output_w111_h19_p25 > /tmp/portuguese3w111_h19_p25.dic;
+% ./resultfilemetrics.sh -f /tmp/portuguese3w111_h19_p25.dic
+% correct: 7465; wrong: 150 (143,6,1); missing: 183 (181,2) 
+%
+% ./gocreateresultfile.sh ../data/hyphenations3_apparentproparoxytone.dic ../data/patched-default.TeX.pt-br.patterns.v2 > /tmp/portuguese3patchv2.dic
+% ./resultfilemetrics.sh -f /tmp/portuguese3patchv2.dic
+% correct: 7335; wrong: 42 (40,2); missing: 385 (381,4)
+
+
+The results from the set of rules crafted by \emph{patgen} seems outstanding, but we must be 
+skeptical of its generalization power. To inquire on this matter, we decided to retrieve the
+list of words where just three hyphenations were found in the dictionaries. We have also dealt
+with apparent proparoxytones, to be consistent in our approach.  
+In this new set, the number of correct, incorrect and missing hyphenations for each set of rules
+is given \Cref{tbl-comres-hy3}.
+\begin{table}[h]
+\centering
+\caption{Compared results between two use cases of \emph{patgen} and the handcrafted rule set.}\label{tbl-comres-hy3}
+\begin{tabular}{llll}
+rule set          & correct & incorrect & missing \\
+\hline
+fixed parameters  & 7465    & 150       & 183 \\
+make-full-pattern & 647     & 47        & 7089 \\
+handcrafted       & 7335    & 42        & 385 
+\end{tabular}
+\end{table}
+It is important to hightlight that, among those 385 missing hyphenations in the handcrafted rules,
+278 cases correspond to the last hyphen, leaving a single vowel as a final syllable.
+Comparing to the other set of rules, we have 7 (in 183, for fixed parameters case), and 257 (in 7089, 
+for the \texttt{make-full-pattern} script).
+
+Establishing this comparison leave us no doubt that our handcrafted rules achieved the best
+performance, also retaining a small number of useful rules, what leads to good generalization.
+
+
+% $ grep "-" /tmp/portuguese3patchv2.dic | grep "\-[aeiouáéíóúãõâêô]$" | wc -l
+% 278
+% $ grep "-" /tmp/portuguese3w111_h19_p25.dic | grep "\-[aeiouáéíóúãõâêô]$" | wc -l
+% 7
+
+

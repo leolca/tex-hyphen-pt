@@ -1,0 +1,208 @@
+\section{Creating the dictionary}\label{sec-dictionay}
+
+A bash script, named \texttt{gethyphenations.sh}, was developed to crawl six
+online dictionaries and extract word hyphenations whenever available. The
+process involves launching parallel threads for each word in the list, querying
+a specific online dictionary, and retrieving the corresponding hyphenation. For
+this purpose, individual scripts were created for each dictionary:
+\texttt{getmichaelishyphenation.sh} for \href{https://michaelis.uol.com.br/}{Michaelis},
+\texttt{getpriberamhyphenation.sh} for \href{https://dicionario.priberam.org/}{Priberam},
+\texttt{getwiktionaryhyphenation.sh} for \href{https://pt.wiktionary.org}{Wikcionário},
+\texttt{getauletehyphenation.sh} for \href{https://aulete.com.br/}{Aulete},
+\texttt{getportalhyphenations.sh} for \href{http://www.portaldalinguaportuguesa.org/}{Portal da Língua Portuguesa}, and
+\texttt{getdiciohyphenation.sh} for \href{https://www.dicio.com.br/}{Dicio}.
+This systematic approach ensures efficient and accurate extraction of
+hyphenations from various online sources. The resulting data is stored in a CSV\footnote{
+    Comma-separated values (CSV) is a text file format defined in \href{https://datatracker.ietf.org/doc/html/rfc4180}{RFC 4180}.
+    In CSV, commas are used to separate values, and each line in the file represents a new record. Records consist of fields separated by delimiters, typically a single comma.
+} file named \texttt{hyphenations.csv}.
+
+
+
+
+
+
+\subsection{Establishing a gold standard}
+
+To establish our gold standard for hyphenation, we will compare the
+hyphenations offered by all six dictionaries. First, we will determine the total count
+of unique hyphenations across these dictionaries using the script
+\texttt{hyphenation\-agreements.sh}.
+It's worth noting that certain dictionaries annotate words with a colon (`:') to
+indicate potential variations in pronunciation or production.
+Particularly, `apparent proparoxytones' might appear marked by this colon sign, indicating 
+the possibility of a diphthongs or hiatuses in the word ending.
+In Portuguese, words ending in \emph{ea}, \emph{eo}, \emph{ia}, \emph{ie},
+\emph{io}, \emph{ua}, \emph{ue}, or \emph{uo}, with the stressed syllable
+before these endings, can be considered either paroxytones ending in a rising
+diphthong or proparoxytones ending in a hiatus. For instance, words like \emph{his-tó-ri:a}
+and \emph{on-du-la-tó-ri:o} are examples of words marked as apparent
+proparoxytones, suggesting they could be regarded as paroxytones (\emph{his-tó-ria}
+and \emph{on-du-la-tó-rio}) or proparoxytones (\emph{his-tó-ri-a} and
+\emph{on-du-la-tó-ri-o}). The script \texttt{hyphenationagreements.sh} 
+offers four potential approaches to handle these apparent proparoxytones:
+retaining the hyphenations with the colon mark to indicate an apparent proparoxytone; 
+selecting only the paroxytone or only the proparoxytone counterpart; or counting both paroxytones and proparoxytones. 
+Given the lack of consensus in the literature, our initial approach involves 
+counting both hyphenations, and we will detail below how we resolve this issue. 
+In our hyphenation dictionary, we have identified \NumberOfAppProp{} words marked as apparent proparoxytones.
+
+As our initial hyphenation reference, we will consider those cases where all
+six dictionaries are in agreement. This comprehensive list comprises
+\num{\NumberOfSixAgrees} words. Their corresponding hyphenations are
+meticulously compiled and stored in the file \texttt{hyphenations6.dic}. This
+curated list serves as a benchmark for evaluating the accuracy and
+effectiveness of hyphenation rules generated through computational methods. It
+will establish a reliable baseline for our hyphenation analysis, enabling us to
+assess and refine our methodologies effectively.
+
+In case of disagreement, we must exercise caution and examine each instance.
+We might be tempted to choose the majority vote approach, simply selecting
+those hyphenations that have the most supporters, but it is unclear 
+how the hyphenations on those online dictionaries were curated; 
+many might use algorithmic approaches, leading to potential flaws shared
+among them. 
+For example, 5 dictionaries use the hyphenation 
+\emph{quart-zo} while the dictionary Aulete (originally from Portugal) favors the hyphenation \emph{quar-tzo},
+which can be explained by the lack of an epenthetic vowel in European Portuguese\footnote{
+The online dictionary Aulete has its origins on the printed version known as \emph{Dicionário Caldas Aulete}.
+It is a dictionary from Portugal, reflecting the European Portuguese dialect.} \parencite{mateus}.
+% Epêntese Vocálica e Restrições de Acento no Português do Sul do Brasil, Gisela COLLISCHONN  - Universidade Federal do Rio Grande do Sul (UFRGS)
+% https://core.ac.uk/download/pdf/293615216.pdf
+Similarly, \emph{ap-nei-a} or \emph{a-pnei-a} and \emph{disp-nei-a} or \emph{dis-pnei-a} should
+be accepted considering, since there could be an epenthetic vowel (Brazilian Portuguese) or not (European Portuguese).
+The same happens with \emph{hiperalgesia}, already mentioned in Section \ref{sec-grammar-port}.
+Among other examples, we might also highlight \emph{neerlandês}, which appears 
+hyphenated as \emph{ne-er-lan-dês} in five dictionaries and as \emph{neer-lan-dês} in one.
+If we consider its pronunciation, we would prefer the former hyphenation, but the
+first one conforms better to regular written syllables in Portuguese.
+%The same happens with \emph{de-sem-ba-i-nhar} and \emph{de-sem-bai-nhar},
+%the former one receiving the majority of the votes.
+Some strings might accept more than one hyphenation, since they represent different words. For example, 
+\emph{sub-li-nha} and \emph{su-bli-nha}, where the former is the substantive \emph{underline} and the latter is a flexed form of the verb \emph{to underline}.
+%\todo{Aline, segue a lista dos casos duvidosos que encontrei com votos 5 a 1. Marquei em negrito aqueles
+%    que considero ser a forma correta.
+%    quart-zo(5), \textbf{quar-tzo}(1) (assim também trocar quart-zi-to por \textbf{quar-tzi-to)}; \textbf{sub-li-nha}(5), \textbf{su-bli-nha}(1); 
+%    de-sem-ba-i-nhar(5), \textbf{de-sem-bai-nhar}(1); ap-nei-a(5), \textbf{a-pnei-a}(1); 
+%    disp-nei-a(5), dispneia(1) (\textbf{dis-pnei-a}, forma não encontrada nos dicionários); 
+%    hi-pe-ral-ge-si-a(5), \textbf{hi-per-al-ge-si-a}(1);
+%    in-de-is-cen-te(5), \textbf{in-deis-cen-te}(1); jo-in-vi-len-se(5), \textbf{join-vi-len-se}(1); 
+%    ne-er-lan-dês(5), \textbf{neer-lan-dês}(1). Os demais casos de 5 a 1 são proparoxítonas aparentes.
+%}
+
+The procedure to create the second list of hyphenated words involved several steps:
+\begin{enumerate*}[label=\arabic*)]
+  \item select those hyphenations agreed by five dictionaries, that have no alternative hyphenation proposal (5 to 0 votes);
+  \item from those with alternative proposals, exam whether they constituted apparent proparoxytones (these cases could arise from instances with 5 to 1 votes or 6 to 1 votes, as explained earlier), 
+      \begin{enumerate*}[label=\alph*)]
+	  \item if the word had a diacritic, select the paroxytone option (e.g. \emph{po-lí-cia} instead of \emph{po-lí-ci-a} and \emph{pe-rí-neo} instead of \emph{pe-rí-ne-o}),
+	  \item if not, choose the proparoxytone option (e.g. \emph{au-to-ri-a} instead of \emph{au-to-ri-a} and \emph{mar-ce-nei-ro} instead of \emph{mar-ce-neiro})\footnote{We just have to make sure we are not selecting those cases where there is a sequence of the form \texttt{[gq]u-[aeio]} (using regex notation), as in \emph{a-pa-zi-gu-ar} and \emph{en-xa-gu-ar}.}.
+	      % [gq]u-[aeio]
+      \end{enumerate*}
+  \item if the word did not fall into the apparent proparoxytone category, select the hyphenation with five votes.
+\end{enumerate*}
+This procedure was implemented in the script \texttt{get51.sh}. 
+Only a few hyphenations required manual correction, including the following that were added:
+\emph{quar-tzo}, \emph{quar-tzi-to}, \emph{su-bli-nha}, \emph{a-pnei-a}, \emph{dis-pnei-a}, 
+\emph{hi-per-al-ge-si-a}, and \emph{neer-lan-dês}.
+The final list, containing \num{\NumberOfFiveAgrees} additional hyphenations, is stored in \texttt{hyphenations5.dic}, 
+bringing the total number of hyphenations across both lists to \num{\NumberOfSixFiveAgrees}.
+
+% results from script ./get51.sh
+% cases where majority vote might go wrong:
+% sub-li-nha(5),su-bli-nha(1) % both are valid
+% de-sem-ba-i-nhar(5),de-sem-bai-nhar(1) % de-sem-bai-nhar seems to be the correct choice
+% ap-nei-a(5),a-pnei-a(1) % ??
+% disp-nei-a(5),dispneia(1) or dis-pnei-a?
+% hi-pe-ral-ge-si-a(5),hi-per-al-ge-si-a(1)
+% in-de-is-cen-te(5),in-deis-cen-te(1)
+% jo-in-vi-len-se(5),join-vi-len-se(1)
+% ne-er-lan-dês(5),neer-lan-dês(1)
+% the remaining are apparent proparoxytones
+
+
+For those hyphenations with four votes, we adopted a similar approach to the
+one used previously. Many words garnered only four votes, indicating a lack of
+alternative hyphenations provided by any dictionary, and were thus initially
+hyphenated as proparoxytones. These instances were typically distinguished by
+diacritics in the third-to-last syllable and a \emph{V-V} sequence at the end.
+To address this, we converted these words into paroxytones by eliminating the
+final hyphen. In cases where alternative hyphenations were available, we
+assessed the presence of diacritics. If diacritics were detected, we chose the
+paroxytone option; otherwise, we defaulted to the proparoxytone option. In
+instances with multiple alternative options, we selected the option with the
+highest frequency of votes. This procedure is implemented in the script
+\texttt{get4.sh}.
+
+% analisar os resultados das hifenizações através da análise de frequência das sílabas
+% as silabas de baixa frequência podem ser indicativos de erros... verificar a origem delas
+% cat ../data/hyphenations6.dic ../data/hyphenations5.dic ../data/hyphenations4.dic | tr '-' '\n' | sort | uniq -c | sort -nr > /tmp/syls
+% grep -P "\s+1\s[^0-9]+$" /tmp/syls | tr -d '1' | sed 's/^\s\+//g' | while read syl; do grep "^$syl-\|-$syl-\|-$syl$" ../data/hyphenations6.dic; done > /tmp/rare
+% grep -P "\s+1\s[^0-9]+$" /tmp/syls | tr -d '1' | sed 's/^\s\+//g' | while read syl; do grep "^$syl-\|-$syl-\|-$syl$" ../data/hyphenations5.dic; done >> /tmp/rare
+% grep -P "\s+1\s[^0-9]+$" /tmp/syls | tr -d '1' | sed 's/^\s\+//g' | while read syl; do grep "^$syl-\|-$syl-\|-$syl$" ../data/hyphenations4.dic; done >> /tmp/rare
+% grep -P "\s+1\s[^0-9]+$" /tmp/syls | tr -d '1' | sed 's/^\s\+//g' | while read syl; do grep --color=always "^$syl-\|-$syl-\|-$syl$" <(cat ../data/hyphenations6.dic ../data/hyphenations5.dic ../data/hyphenations4.dic); done | ansi2html > /tmp/rare.html
+
+
+% fun-ci-o-ná-ri-o > fun-ci-o-ná-rio
+% co-mí-ci-o > co-mí-cio
+% con-vê-ni-o > con-vê-nio
+% cri-té-ri-o > cri-té-rio
+% ple-ná-ri-o > ple-ná-rio
+% cre-di-á-ri-o > cre-di-á-rio
+% es-tá-gi-o > es-tá-gio
+% in-ter-ban-cá-ri-o > in-ter-ban-cá-rio
+% ur-gên-ci-a > ur-gên-cia
+% i-mo-bi-li-á-ri-a > i-mo-bi-li-á-ria
+% re-vo-lu-ci-o-ná-ri-o > re-vo-lu-ci-o-ná-rio
+% ve-ló-ri-o > ve-ló-rio
+% es-có-ci-a > es-có-cia
+% for-mu-lá-ri-o > for-mu-lá-rio
+% or-ça-men-tá-ri-o > or-ça-men-tá-rio
+
+
+
+% ag-nós-ti-co(5),a-gnós-ti-co(1)   << ?
+% co-i-bir(5),coi-bir(1)            << both are correct?
+% drui-da(5),dru-i-da(1)            << drui-da is correct, since an hiatus would require an accent dru-í-da
+% flui-do(5),flu-i-do(1)            << as there is no diacritic it should be flui-do
+%					fluido (sem acento) - substantivo: flui-do (ditongo) -- exemplo: O fluido de freio acabou.
+%					fluido (com acento) - forma verbal: flu-í-do (hiato) -- exemplo: A discussão para aprovar reformas no país não tem fluído como esperavam os governantes.
+% sub-li-nha(5),su-bli-nha(1)       << sub-linha or su-blinha (sublinhar) 
+% man-ti-do(5) mantido(1)           << mantido clearly was not hyphenated 
+% quart-zo(5),quar-tzo(1)           << quar-tzo sounds like the correct choice
+% den-ti-frí-ci-o(5),den-ti-frí-cio(1) << it should be marked as apparent proparoxytones but no one did
+
+
+%compare_strings() {
+%    # Trim leading and trailing whitespace from the first string
+%    string1_trimmed="${1#"${1%%[![:space:]]*}"}"
+%    string1_trimmed="${string1_trimmed%"${string1_trimmed##*[![:space:]]}"}"
+%
+%    # Trim leading and trailing whitespace from the second string
+%    string2_trimmed="${2#"${2%%[![:space:]]*}"}"
+%    string2_trimmed="${string2_trimmed%"${string2_trimmed##*[![:space:]]}"}"
+%
+%    if [ "$string1_trimmed" == "$string2_trimmed" ]; then
+%        return 0  # Strings are equal
+%    else
+%        return 1  # Strings are different
+%    fi
+%}
+
+% grep "(5)" ../data/hyphagreements | grep "(1)" | head | tr -d '()0-9' | while read line; do word1=$(echo $line | cut -d, -f1); word2=$(echo $line | cut -d, -f2); count1=$(grep -o '-' <<< "$word1" | wc -l); count2=$(grep -o '-' <<< "$word2" | wc -l); if [ $count1 -gt $count2 ]; then w1=$(echo $word1 | sed 's/\(.*\)-/\1/'); compare_strings "$w1" "word2"; result=$?; if [ $result -ne 0 ]; then echo "c1: $line $w1 $word2"; od -c <<< "$w1"; od -c <<< "$word2"; fi; elif [ $count1 -lt $count2 ]; then w2=$(echo $word2 | sed 's/\(.*\)-/\1/'); compare_strings "$w2" "word1"; result=$?; if [ $result -ne 0 ]; then echo "c2: $line $word1 $w2"; fi; else compare_strings "$word1" "word2"; result=$?; if [ $result -ne 0 ]; then echo $line; fi; fi; done
+
+
+After completing the aforementioned procedures to create our golden hyphenation
+dictionary, manual corrections may still be necessary to ensure its accuracy
+and reliability. These manual adjustments, which encompass the corrections
+described earlier, are documented in the file \texttt{replacements.txt}.
+Utilizing the script \texttt{manualcorrections.sh}, we meticulously apply these
+corrections to refine our hyphenation dictionary and enhance its effectiveness.
+
+
+
+% results
+% ./gocreateresultfile.sh ../data/hyphenations6.dic  ../data/default.TeX.pt-br.patterns > ../data/results_hyph6_dfpatt
+
+
+

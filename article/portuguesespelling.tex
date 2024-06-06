@@ -1,0 +1,192 @@
+\section{Portuguese spelling system}\label{sec-grammar-port}
+
+Portuguese employs an alphabetical writing system, which means its spelling is
+guided by phonological principles \parencite{cagliari2015}. The correlation between
+spelling and pronunciation influences word hyphenation, as words are divided
+into syllables based on the phonemic system. It is important to note that
+different languages follow diverse principles for word division. For example,
+English is primarily guided by morphological principles, evident in words like
+\emph{walk-ing}, \emph{un-happy}, \emph{work-s}, and \emph{ear-ly}.
+Additionally, other factors also impact word hyphenation in English, such as 
+the distinction between long and short vowels, which function within the context
+of open or closed syllable, respectively; and the presence of doubled consonants and
+digraphs \parencite{lin2011,yavas2020}.
+Although each language has its driving principles for the hyphenation process, 
+multiple factors come into play, leading to various solutions in certain scenarios.
+For instance, in Portuguese, the phonological principle would lead to \emph{hipe-rativo}, while 
+the morphological principle would lead to \emph{hiper-ativo}. Both approaches seem valid
+and are indeed found in online dictionaries\footnote{Looking at words with prefixes, 
+it seems that even on those words, the phonological approach was predominant on hyphenation,
+but we cannot tell if it is a byproduct of automatic hyphenation that might be used
+to hyphenate words on online dictionaries.}.
+Some rather rare words, such as \emph{hiperalgesia}, may not be subject to morphological 
+influences. Since it has a low frequency of occurrence, the individual may not be
+aware of its morphological components and therefore hyphenate it as \emph{hipe-ralgesia}.
+The form \emph{hiper-algesia} could also be accepted, emphasizing its morphological constituents. 
+Furthermore, there exist numerous exceptions that may be categorized into rules.
+% https://english.stackexchange.com/questions/385/what-are-the-rules-for-splitting-words-at-the-end-of-a-line
+
+% $ grep "^hiper[aeiou]" ../data/hyphenations.csv  | grep "-" | grep -o "hi-pe-r[aeiou]\|hi-per-[aeiou]" | sort | uniq -c
+% 16 hi-pe-ra
+%  1 hi-per-a
+% 29 hi-pe-re
+% 20 hi-pe-ri
+%  2 hi-per-i
+%  2 hi-pe-ro
+%  2 hi-pe-ru
+
+Merely stating that an orthographic system is guided by phonological issues
+does not necessarily mean that its hyphenation rules directly mirror the
+phonetic counterpart. This is notably apparent in Portuguese, where a strict
+one-to-one correspondence between letters and sounds is not always observed.
+The orthographic system operates according to its specific rules. For example,
+consider consonant clusters that create a single sound (digraphs) in words like
+%\emph{\underline{ch}ave}, 
+\emph{a\underline{ch}ado},
+\emph{i\underline{lh}a}, 
+%\emph{\underline{sh}ampoo}, 
+\emph{su\underline{sh}i},
+\emph{ca\underline{rr}o}, and \emph{ma\underline{ss}a}.
+While these digraphs are pronounced as one sound within a single syllable,
+their representation in writing determines how they are divided. Specifically,
+different consonants within a digraph must remain together, whereas identical
+consonants are separated. As a result, we observe hyphenations like
+%\emph{cha-ve}, 
+\emph{a-cha-do},
+\emph{i-lha}, and 
+%\emph{sham-poo}, 
+\emph{su-shi},
+but \emph{car-ro} and \emph{mas-sa}. 
+
+%When there is no space left in line for a whole word, it might be split in two
+%using a hyphen as an indication of such procedure. 
+
+In Portuguese, hyphenations are allowed on syllables boundaries and, in
+general, follow phonological principles.  According to the Grammar
+\parencite{cunha2016,bergstrom2011,cegalla2008}, some rules might still apply:
+\begin{description}
+    \item[Non-Splitting Rules]\  
+
+\begin{enumerate}
+    \item\label{rule-di-triphthong} diphthong or triphthong should not be split
+	(e.g. \emph{m\underline{ui}-to}, \emph{Pa-ra-g\underline{uai}});
+    \item\label{rule-unstressed} the sequences \emph{ia}, \emph{ie}, \emph{io}, \emph{oa}, \emph{ua},
+	\emph{ue} and \emph{uo}, when in final unstressed position, should not be split 
+	(e.g. \emph{gló-r\underline{ia}}, \emph{vi-tó-r\underline{ia}}, 
+	\emph{cá-r\underline{ie}}, \emph{es-pé-c\underline{ie}}, 
+	\emph{Má-r\underline{io}}, \emph{má-g\underline{oa}}, 
+	\emph{ré-g\underline{ua}}, \emph{tê-n\underline{ue}}, 
+	\emph{con-tí-g\underline{uo}}, \emph{am-bí-g\underline{uo}});
+    \item\label{rule-c-clusters} consonant clusters starting a syllable should not be
+	split (e.g. \emph{\underline{pn}eu-má-ti-co}, \emph{\underline{ps}i-có-lo-go}, 
+	\emph{\underline{mn}e-mô-ni-co});
+    \item\label{rules-digraphs-ns} the digraphs	\emph{ch}, \emph{lh}, \emph{nh}
+	should not be split (e.g. \emph{ra-\underline{ch}ar},
+	\emph{a-bro-\underline{lh}os}, \emph{ma-\underline{nh}ã};
+    \item\label{rule-guqu} bigrams like \emph{gu} and \emph{qu} whose vowel \emph{u} is not 
+	pronounced are never separated from the vowel or diphthong that follows it 
+	(e.g. \emph{U-ru-\underline{guai}}, \emph{pe-\underline{que}});
+    \item\label{rule-nasalization} since they are digraphs, a vowel and its following 
+	nasalization marker (a graphic nasal consonant) should not be split (e.g. \emph{\underline{am}-bição},
+	\emph{m\underline{an}-cha});
+    \item\label{rule-decreasing} decreasing diphthongs should not be split (e.g. 
+	\emph{\underline{ai}-ro-so}, \emph{ca-d\underline{ei}-ra}, 
+	\emph{o-ra-ç\underline{ão}});
+    \item\label{rule-rising} rising diphthong should not be split (e.g.
+	\emph{a-b\underline{ai}-xo}; \emph{c\underline{au}-te-la}, 
+	\emph{pa-p\underline{éi}s}, \emph{cha-p\underline{éu}}, 
+	\emph{pre-f\underline{ei}-to}, \emph{r\underline{eu}-nir},
+	\emph{n\underline{oi}-te}; \emph{ca-la-b\underline{ou}-ço}, 
+	\emph{as-te-r\underline{ói}-de}; 
+	\emph{re-tri-b\underline{ui}});
+    \item\label{rule-singlev} disyllables whose syllable has a single vowel should 
+	not be split (e.g. \emph{\underline{a}to}, \emph{ru\underline{a}}, 
+	\emph{\underline{ó}dio}, \emph{\underline{u}nha});
+    \item\label{rule-orphan} words with more than two syllables, when divided, cannot 
+	isolate a syllable composed of a single vowel (e.g. \emph{\underline{a}gos-to}, 
+	\emph{la-go\underline{a}}, \emph{\underline{i}da-de});
+\end{enumerate}
+
+\item[Splitting Rules]\ 
+
+%    \hspace{10em} \hbox to 5cm{\leaders\hbox to 10pt{\hss . \hss}\hfil} 
+\begin{enumerate}[resume]
+    \item\label{rule-hiatus} hiatus vowels and those vowel sequences where each vowel
+	belongs to a different syllable should be split (e.g.
+	\emph{sa\underline{-ú-}de}, \emph{ra\underline{-i-}nha}, \emph{d\underline{o-e}r},
+	\emph{v\underline{o-o}s}), the same procedure is used splitting diphthongs
+	in different syllables (e.g. \emph{c\underline{ai-ai}s}) or diphthong and
+	vowel in different syllables (e.g. \emph{en-s\underline{ai-o}s});
+    \item\label{rule-consonants} consonant sequences, when in different syllables, should
+	be split (e.g. \emph{a\underline{f-t}a}, \emph{a\underline{b-d}i-car},
+	\emph{re\underline{s-c}i-são}, \emph{a\underline{b-s}o-lu-to});
+    \item\label{rule-digraphs} the following consonant digraphs should be split:
+	\emph{rr}, \emph{ss}, \emph{mm}, \emph{nn}, \emph{sc}, \emph{sç} and
+	\emph{xc} (e.g. \emph{te\underline{r-r}a}, \emph{pro-fe\underline{s-s}or},
+	\emph{co-mu\underline{\emph{m-m}}en-te}, \emph{co\underline{n-n}os-co},
+	\emph{de\underline{s-c}er}, \emph{cre\underline{s-ç}a}, \emph{e\underline{x-c}e-der}).
+\end{enumerate}
+\end{description}
+
+Rules \ref{rule-singlev} and \ref{rule-orphan} are primarily aimed at ensuring
+proper readability of the text, aligning with \TeX{} approach to deal with
+widows and orphans. As mentioned in \Cref{sec-intro}, the variables
+\verb|lefthyphenmin| and \verb|righthyphenmin| control the minimum length for
+fragments of hyphenated words.  When those variables are set to values greater
+than one, Rules \ref{rule-singlev} and \ref{rule-orphan} become fiddling rules
+in \TeX{} hyphenation, and they could be disregarded. Notwithstanding, the full
+hyphenation of words is useful, particularly in text-to-speech applications
+\parencite{libossek2000,trogkanis2010}.
+
+Additionally, it is advisable to refrain from
+splitting disyllables consisting of four letters (e.g., \emph{para},
+\emph{como}, \emph{cede}). This considerations also lead to more aesthetically
+pleasing and intelligible text, and \TeX{}'s control of isolated fragments,
+through the variables \verb|\lefthyphenmin| and \verb|\righthyphenmin|, already
+address this issue.
+
+%Note that rules \ref{rule-singlev} and \ref{rule-orphan} are fiddling rules in
+%\TeX{} hyphenation, since \TeX{} already has directives to avoid hyphenated
+%widows and orphans.  As mentioned in \Cref{sec-intro}, the variables
+%\verb|lefthyphenmin| and \verb|righthyphenmin| are used to control the minimum
+%length for fragments of hyphenated words.  For this reason, we will not take
+%into account rules \ref{rule-singlev} and \ref{rule-orphan} during the analysis
+%and development of the hyphenation rules.
+
+In some situations a hyphen should be repeated at the start of the following
+line. They are: 
+\begin{enumerate}
+\item cases where compound words using a hyphen are split across lines (e.g.,
+    \emph{couve-/-flor}, \emph{ex-/-presidente}); and
+\item cases where splitting a pronoun could result in a different meaning (e.g.,
+    \emph{prazer de ver-/-me}\footnote{Possible conveyed meanings: 
+    \emph{pleasure in seeing me} or \emph{worm's pleasure}.}). 
+\end{enumerate}
+
+%To ensure proper hyphenation and readability, certain guidelines should be
+%followed. Avoiding a single vowel at the end or start of a line is crucial
+%(e.g., \emph{san-guí-nea} should be split only on the provided hyphens,
+%avoiding a split that leaves the final vowel \emph{a} alone at the start of a
+%new line: \emph{sanguíne-a}). Additionally, it is advisable to refrain from
+%splitting disyllables consisting of four letters (e.g., \emph{para},
+%\emph{como}, \emph{cede}).  These considerations lead to more aesthetically
+%pleasing and intelligible text.
+
+Systematizing the rules that guide syllable boundaries and hyphenation in
+Portuguese is a fundamental step to understand and improve the \TeX{}
+hyphenation rules. To ensure the accuracy of hyphenation rules and effectively
+compare their results, a hyphenation spelling dictionary serves as an
+indispensable reference. This dictionary provides a comprehensive listing of
+correctly hyphenated words, enabling the computation of the correctness of each
+set of hyphenation rules. By consulting the hyphenation spelling dictionary,
+one can verify whether the hyphenation patterns generated by a set of rules
+align with established standards. This process involves analyzing how well the
+hyphenation rules adhere to the accepted conventions of the language, ensuring
+that they effectively segment words without compromising readability or
+consistency. Moreover, by comparing the results obtained from different sets of
+hyphenation rules against the entries in the spelling dictionary, we can assess
+the efficacy and reliability of each approach. In section \ref{sec-dictionay},
+we will define the specifications of this reference dictionary, outlining its
+role in subsequent rule updates and rules generation.
+
+

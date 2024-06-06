@@ -1,0 +1,95 @@
+\captureshell*[\NumberOfDefaultRules]{wc -l ../data/default.TeX.pt-br.patterns | cut -d' ' -f1}
+
+\captureshell*[\NumberOfNewRules]{wc -l ../data/patch.TeX.pt-br.patterns | cut -d' ' -f1}
+
+\captureshell*[\DictionarySize]{../scripts/dicstats.sh} % number of words that have at least one hyphenation
+\captureshell*[\CorpusSize]{../scripts/dicstats.sh -1} % total number of words in the corpus used (same as $ wc -l ../data/hyphenatios.csv)
+
+% https://www.texdev.net/2009/10/06/what-does-write18-mean/
+% number of words that hyphenations were found in N online dictionaries
+\captureshell*[\NumberOfSixHyphens]{../scripts/dicstats.sh 6}  
+\captureshell*[\NumberOfFiveHyphens]{../scripts/dicstats.sh 5}
+\captureshell*[\NumberOfFourHyphen]{../scripts/dicstats.sh 4}
+\captureshell*[\NumberOfThreeHyphens]{../scripts/dicstats.sh 3}
+\captureshell*[\NumberOfTwoHyphens]{../scripts/dicstats.sh 2}
+\captureshell*[\NumberOfOneHyphens]{../scripts/dicstats.sh 1}
+\captureshell*[\NumberOfNoHyphens]{../scripts/dicstats.sh 0}
+\captureshell*[\NumberOfFourToSixHyphens]{../scripts/dicstats.sh 6../scripts/dicstats.sh 4-6}
+% run to update values
+%\immediate\write18{../scripts/hyphenationagreements.sh > ../data/hyphagreements}
+\captureshell*[\NumberOfSixAgrees]{cat ../data/hyphenations6.dic | wc -l}
+% run to update hyphen5 dic
+%\immediate\write18{../scripts/get51.sh > ../data/hyphenations5.dic}
+%\immediate\write18{../scripts/manualcorrections.sh ../data/hyphenations5.dic}
+\captureshell*[\NumberOfFiveAgrees]{cat ../data/hyphenations5.dic | wc -l} %#{../scripts/gethyphenationagreements.sh 5}
+\captureshell*[\NumberOfSixFiveAgrees]{cat ../data/hyphenations6.dic ../data/hyphenations5.dic | wc -l}
+\captureshell*[\NumberOfFourAgrees]{../scripts/gethyphenationagreements.sh 4}
+\captureshell*[\NumberOfThreeAgrees]{../scripts/gethyphenationagreements.sh 3}
+\captureshell*[\NumberOfTwoAgrees]{../scripts/gethyphenationagreements.sh 2}
+\captureshell*[\NumberOfOneAgrees]{../scripts/gethyphenationagreements.sh 1}
+
+\captureshell*[\ExceptionRulesCV]{../scripts/listrules.sh 1}
+\captureshell*[\ExceptionRulesLR]{../scripts/listrules.sh 2[lr]}
+\captureshell*[\ExceptionRulesCLNH]{../scripts/listrules.sh [cln]2h}
+\captureshell*[\ExceptionRulesThree]{../scripts/listrules.sh 3}
+\captureshell*[\ExceptionRulesFour]{../scripts/listrules.sh 4}
+
+
+\captureshell*[\NumberOfAppProp]{grep ':' ../data/hyphenations.csv | wc -l} % number of apparent proparoxytones
+
+%\immediate\write18{../scripts/gocreateresultfile.sh ../data/hyphenations6.dic ../data/default.TeX.pt-br.patterns > ../data/hyphenations6result-default-patterns.dic}
+\immediate\write18{../scripts/resultfileexamples.sh -w -f ../data/hyphenations6result-default-patterns.dic | sed ''s/$/\\n/g'' > /tmp/hyphenations6result-default-patterns_wrong.dic}
+\AtEndDocument{\immediate\write18{rm -f /tmp/hyphenations6result-default-patterns_wrong.dic}}
+\immediate\write18{../scripts/resultfileexamples.sh -m -n 20 -f ../data/hyphenations6result-default-patterns.dic | sed ''s/$/\\n/g'' > /tmp/hyphenations6result-default-patterns_missing.dic}
+\AtEndDocument{\immediate\write18{rm -f /tmp/hyphenations6result-default-patterns_missing.dic}}
+\immediate\write18{../scripts/resultfileexamples.sh -m -f ../data/hyphenations6result-default-patterns.dic | ../scripts/filtersurrounding.sh -c '-' -n 1 | sort | uniq -c | sort -nr | sed ''s/$/\\n/g'' > /tmp/hyphenations6result-default-patterns_missing_context}
+\AtEndDocument{\immediate\write18{rm -f /tmp/hyphenations6result-default-patterns_missing_context}}
+% number of words correctly hyphenated using default TeX rules when analysing the words in hyphenations6.dic
+\captureshell*[\NumberOfCorrectSix]{../scripts/resultfilemetrics.sh -c -f ../data/hyphenations6result-default-patterns.dic}
+% number of words with wrong hyphenations using default TeX rules when analysing the words in hyphenations6.dic
+\captureshell*[\NumberOfWrongSix]{../scripts/resultfilemetrics.sh -w -f ../data/hyphenations6result-default-patterns.dic}
+% number of words with missing hyphenations using default TeX rules when analysing the words in hyphenations6.dic
+\captureshell*[\NumberOfMissingSix]{../scripts/resultfilemetrics.sh -m -f ../data/hyphenations6result-default-patterns.dic}
+% total number of words in hyphenations6.dic
+\captureshell*[\NumberOfTotalSix]{wc -l ../data/hyphenations6result-default-patterns.dic | awk '{print $1}'}
+
+%\immediate\write18{../scripts/gocreateresultfile.sh ../data/hyphenations5.dic ../data/default.TeX.pt-br.patterns > ../data/hyphenations5result-default-patterns.dic}
+%\immediate\write18{grep "\." ../data/hyphenations5result-default-patterns.dic > ../data/hyphenations5result-default-patterns_wrong.dic}
+%\immediate\write18{grep "\-" ../data/hyphenations5result-default-patterns.dic > ../data/hyphenations5result-default-patterns_missing.dic}
+% number of words correctly hyphenated using default TeX rules when analysing the words in hyphenations5.dic
+\captureshell*[\NumberOfCorrectFive]{../scripts/resultfilemetrics.sh -c -f ../data/hyphenations5result-default-patterns.dic} 
+% number of words with wrong hyphenations using default TeX rules when analysing the words in hyphenations5.dic
+\captureshell*[\NumberOfWrongFive]{../scripts/resultfilemetrics.sh -w -f ../data/hyphenations5result-default-patterns.dic}
+% number of words with missing hyphenations using default TeX rules when analysing the words in hyphenations5.dic
+\captureshell*[\NumberOfMissingFive]{../scripts/resultfilemetrics.sh -m -f ../data/hyphenations5result-default-patterns.dic}
+% total number of words in hyphenations6.dic
+\captureshell*[\NumberOfTotalFive]{wc -l ../data/hyphenations5result-default-patterns.dic | awk '{print $1}'}
+
+%\immediate\write18{../scripts/gocreateresultfile.sh ../data/hyphenations4.dic ../data/default.TeX.pt-br.patterns > ../data/hyphenations4result-default-patterns.dic}
+%\immediate\write18{grep "\." ../data/hyphenations4result-default-patterns.dic > ../data/hyphenations4result-default-patterns_wrong.dic}
+%\immediate\write18{grep "\-" ../data/hyphenations4result-default-patterns.dic > ../data/hyphenations4result-default-patterns_missing.dic}
+% number of words correctly hyphenated using default TeX rules when analysing the words in hyphenations4.dic
+\captureshell*[\NumberOfCorrectFour]{../scripts/resultfilemetrics.sh -c -f ../data/hyphenations4result-default-patterns.dic} 
+% number of words with wrong hyphenations using default TeX rules when analysing the words in hyphenations4.dic
+\captureshell*[\NumberOfWrongFour]{../scripts/resultfilemetrics.sh -w -f ../data/hyphenations4result-default-patterns.dic}
+% number of words with missing hyphenations using default TeX rules when analysing the words in hyphenations4.dic
+\captureshell*[\NumberOfMissingFour]{../scripts/resultfilemetrics.sh -m -f ../data/hyphenations4result-default-patterns.dic}
+% total number of words in hyphenations4.dic
+\captureshell*[\NumberOfTotalFour]{wc -l ../data/hyphenations4result-default-patterns.dic | awk '{print $1}'}
+
+%\captureshell*[\ListOfWrongWordsSix]{../scripts/resultfileexamples.sh -w -n 20 -f ../data/hyphenations6result-default-patterns.dic}
+%\captureshell*[\ListOfMissingWordsSix]{../scripts/resultfileexamples.sh -m -n 20 -f ../data/hyphenations6result-default-patterns.dic}
+%\captureshell*[\ListOfWrongWordsFive]{../scripts/resultfileexamples.sh -w -n 20 -f ../data/hyphenations5result-default-patterns.dic}
+%\captureshell*[\ListOfMissingWordsFive]{../scripts/resultfileexamples.sh -m -n 20 -f ../data/hyphenations5result-default-patterns.dic}
+%\captureshell*[\ListOfWrongWordsFour]{../scripts/resultfileexamples.sh -w -n 20 -f ../data/hyphenations4result-default-patterns.dic}
+%\captureshell*[\ListOfMissingWordsFour]{../scripts/resultfileexamples.sh -m -n 20 -f ../data/hyphenations4result-default-patterns.dic}
+
+
+\captureshell*[\NumberOfCorrectSum]{../scripts/resultfilemetrics.sh -c -f ../data/hyphenations6result-default-patterns.dic -f ../data/hyphenations5result-default-patterns.dic -f ../data/hyphenations4result-default-patterns.dic}
+\captureshell*[\NumberOfWrongSum]{../scripts/resultfilemetrics.sh -w -f ../data/hyphenations6result-default-patterns.dic -f ../data/hyphenations5result-default-patterns.dic -f ../data/hyphenations4result-default-patterns.dic}
+\captureshell*[\NumberOfMissingSum]{../scripts/resultfilemetrics.sh -m -f ../data/hyphenations6result-default-patterns.dic -f ../data/hyphenations5result-default-patterns.dic -f ../data/hyphenations4result-default-patterns.dic}
+\captureshell*[\NumberOfTotalSum]{wc -l ../data/hyphenations4result-default-patterns.dic ../data/hyphenations5result-default-patterns.dic ../data/hyphenations6result-default-patterns.dic | tail -n 1  | awk '{print $1}'}
+
+\newcounter{numberRulesGroups}
+
+

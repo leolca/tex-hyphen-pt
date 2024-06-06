@@ -1,0 +1,47 @@
+\section{\TeX{} hyphenation rules for portuguese}\label{sec-tex-hyphen-pt}
+\textcite{rezende1987} was the first to create patterns for Portuguese hyphenation
+in \TeX{}. The pattern set was last updated in 2015, incorporating
+contributions from %José João Dias Almeida 
+\textcite{hyphpt}, resulting in a total
+of 307 rules\footnote{The set of rules for Portuguese hyphenation is short when
+compared to rules in other languages. For example, English currently has 4938
+rules, Russian has 7023 rules and German has 34011 rules.}. 
+These rules effectively hyphenate the majority of Portuguese words.
+
+However, in light of certain cases, we propose an analysis of the default rules
+to identify areas for improvement. By addressing specific issues and
+considering non-typical patterns, we aim to enhance hyphenation accuracy. The
+methodology used for this analysis is described in Section
+\ref{sec-methodology}.
+
+%
+% FILE="../data/default.TeX.pt-br.patterns"; grep "^1..$" "$FILE" | awk '{print substr($0, 0, 2)}' | sort | uniq -c | while read line; do p=$(echo $line | cut -d' ' -f2); c=$(grep "^$p[^0-9]$" "$FILE" | awk '{print substr($0, 3)}' | tr '\n' ' '); printf "$line $c \n"; done | cut -d' ' -f1 | paste -sd+ | bc
+%
+Out of the default \TeX{} rules, 252 (82\%) follow the pattern \verb|1CV|, which
+represents the recurring CV syllables in Portuguese.  As for the consonants,
+there are typically 18 considered (\verb|b|, \verb|c|, \verb|ç|, \verb|d|,
+\verb|f|, \verb|g|, \verb|j|, \verb|k|, \verb|l|, \verb|m|, \verb|n|, \verb|p|,
+\verb|r|, \verb|s|, \verb|t|, \verb|v|, \verb|x|, and \verb|z|) that can
+combine with 14 vowels (\verb|a|, \verb|e|, \verb|i|, \verb|o|, \verb|u|,
+\verb|á|, \verb|â|, \verb|ã|, \verb|é|, \verb|í|, \verb|ó|, \verb|ú|, \verb|ê|,
+and \verb|õ|), resulting in these CV patterns that indicate favorable
+hyphenation points before the consonants\footnote{The complete list of these
+252 patterns is given here: \ExceptionRulesCV{}.}. 
+It is worth noting that there might
+be other rules or exceptions in the hyphenation patterns not covered by these
+default rules.  To accommodate exceptions, \textcite{rezende1987} proposes the 
+following rules: 
+\begin{itemize}
+    \item 20 rules created for cases involving consonants \verb|b|, \verb|c|, \verb|d|, \verb|f|, \verb|g|, \verb|k|, \verb|p|, \verb|t|, \verb|v|, or \verb|w| followed by \verb|l| or \verb|r|\footnote{The 20 additional rules are: \ExceptionRulesLR{}.};
+    \item 3 rules for \verb|c|, \verb|l| or \verb|n| followed by \verb|h|\footnote{Those 3 rules are: \ExceptionRulesCLNH{}.};
+    % FILE="../data/default.TeX.pt-br.patterns"; grep -v "^1..$" "$FILE" | grep "2" | awk '{print substr($0, 2, 1)}' | sort | uniq | while read line; doc=$(grep "^1${line}2.$" "$FILE" | tr -d '12' | awk '{print substr($0, 2, 1)}' | tr '\n' ' '); printf "$line $c\n"; done
+    \item 23 distinct patterns were introduced to indicate hyphenation points between vowels or between \verb|c|'s, \verb|r|'s, and \verb|s|'s\footnote{Those patterns are: \ExceptionRulesThree{}.}; 
+    % FILE="../data/default.TeX.pt-br.patterns"; grep -v "^1..$" "$FILE" | grep -v "2" | grep "3" | wc -l
+    \item 8 patterns adhere to the \verb|1[gq]u4V| pattern, signaling beneficial hyphenation points before \verb|g| or \verb|q|, followed by a sequence of \verb|u| and a vowel, with an inhibiting point between the \verb|u| and the subsequent vowel\footnote{They are the following: \ExceptionRulesFour{}.};
+    \item 1 pattern represented as \verb|1-|, denoting that a hyphen indeed serves as a beneficial hyphenation point.
+\end{itemize}
+
+% - contabilizar a quantidade de palavras que não são contempladas pela proposta do autor
+% - analisar a necessidade de excluir alguma regra (ao invés de apenas acrescentar novas)
+
+
