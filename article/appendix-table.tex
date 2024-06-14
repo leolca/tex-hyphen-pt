@@ -1,0 +1,24 @@
+% 
+% #./createresulttable.sh --vowel | sort > ../article/comparedresults-appprop.tex
+% #./removeduplicatedlines.sh ../article/comparedresults-appprop.tex
+% 
+% ./createresulttable2.sh > ../article/comparedresults.tex
+% grep -v "[\.\-][aeiouáéíóúâêôãõ] " ../article/comparedresults.tex > ../article/comparedresults_nofinalvowel.tex
+% # here is how to update the counts
+% awk -F '&' '{print $2}' ../article/comparedresults_nofinalvowel.tex | grep -o '\\cmark' | wc -l
+% awk -F '&' '{print $3}' ../article/comparedresults_nofinalvowel.tex | grep -o '\\cmark' | wc -l
+\begin{small}
+\begin{longtable}{l l l}
+    \caption{Comparison of hyphenation results in a sample of words using the default rules and the proposed patched rules. In this sample we select cases where there are incorrect hyphenations from either set of rules and we are discarding those cases with incorrect hyphenation before a final vowel.}\label{tab-resultados}\\
+\hline
+word & defult rule result & patched rules result \\
+\hline
+\endfirsthead
+\hline
+word & defult rule result & patched rules result \\
+\hline
+\endhead
+\input{comparedresults_nofinalvowel.tex}
+\end{longtable}
+\end{small}
+

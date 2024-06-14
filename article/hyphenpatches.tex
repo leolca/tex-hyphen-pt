@@ -1,0 +1,218 @@
+\section{Hyphenation rule patches}\label{sec-hyph-rpatches}
+We systematize the set of new rules in this section, and provide a few examples for
+each instance. These rules are intended as a complement for the default \TeX{} hyphenation
+rules created by \cite{hyphpt}. 
+
+
+\begin{rules}
+\refstepcounter{numberRulesGroups}\item\label{rulegrp_gno} rule: \texttt{.g2no}, \texttt{.g2nó}, \texttt{.g2nô} -- \emph{gnomo}, \emph{gnóstico}, \emph{gnômon}
+
+\refstepcounter{numberRulesGroups}\item\label{rulegrp_tc} rule: \texttt{t2c} -- \emph{tchau}, \emph{tcheco}
+
+\refstepcounter{numberRulesGroups}\item\label{rulegrp_pneu} rule: \texttt{1p2neu} -- \emph{pneumonia}, \emph{pneumotórax}, \emph{pneumático}, \emph{hidropneumático}
+
+\refstepcounter{numberRulesGroups}\item\label{rulegrp_tm} rule: \texttt{.t2m} -- \emph{tmese}
+   
+\refstepcounter{numberRulesGroups}\item\label{rulegrp_pt} rule: \texttt{.p2t} -- \emph{ptose}, \emph{pterossauro}
+
+\refstepcounter{numberRulesGroups}\item\label{rulegrp_mn} rule: \texttt{.m2n} -- \emph{mnemônico}
+
+\refstepcounter{numberRulesGroups}\item\label{rulegrp_cza} rule: \texttt{c2za} -- \emph{czar}
+
+\refstepcounter{numberRulesGroups}\item\label{rulegrp_s2} rule: \texttt{.s2} -- \emph{stalinismo}
+
+\refstepcounter{numberRulesGroups}\item\label{rulegrp_t2} rule: \texttt{.t2} -- tsunami, tzarista
+
+\refstepcounter{numberRulesGroups}\item\label{rulegrp_psi} rule: \texttt{.p2si}, \texttt{.p2sí} -- \emph{psicologia}, \emph{psíquico} % update (word-initial pattern, exception not necessary (?)) 
+%\item\label{rulegrp_psi} regra: \texttt{p2si}, \texttt{p2sí} -- psicologia, psíquico\\
+%exceção: \texttt{p3sia}, \texttt{p3sin} -- epilepsia, rodopsina
+
+\refstepcounter{numberRulesGroups}\item\label{rulegrp_sub} rule: \texttt{su2b3r}, \texttt{su2b3l} -- \emph{sublunar}, \emph{subrotina} \\
+exception: \texttt{.su3b4li} -- \emph{sublinhar}, \emph{sublimar}
+%exceção: \texttt{su3b4li1nh}, \texttt{su3b4li1ma}, \texttt{su3b4li1me}, \texttt{su3b4li1mid} -- sublinhar, sublimar, sublime, sublimidade
+
+\refstepcounter{numberRulesGroups}\item\label{rulegrp_neo} rule: \texttt{.ne4o} -- \emph{neoliberal}, \emph{neonazista}
+
+\refstepcounter{numberRulesGroups}\item\label{rulegrp_pseu} rule: \texttt{1p2seu1d} -- \emph{pseudônimo}
+
+\refstepcounter{numberRulesGroups}\item\label{rulegrp_qu} rule: \texttt{1qu} -- \emph{enquanto}, \emph{inquieto}, \emph{farquhar}, \emph{qubit}
+
+\refstepcounter{numberRulesGroups}\item\label{rulegrp_air} rule: \texttt{a1ir.}, \texttt{u1ir.} -- \emph{sair}, \emph{extrair}, \emph{diminuir}, \emph{incluir}
+
+\refstepcounter{numberRulesGroups}\item\label{rulegrp_ain} rule: \texttt{a1ind}, \texttt{a1i1nh} -- \emph{ainda}, \emph{rainha}
+
+\refstepcounter{numberRulesGroups}\item\label{rulegrp_eim} rule: \texttt{e1imp} -- \emph{reimpresso}, \emph{teleimpressor}%, coimbra, coimperador
+%exceção: \texttt{que2i}, \texttt{te2im} -- queimar, queimadura, teimosia, tirateima
+
+\refstepcounter{numberRulesGroups}\item\label{rulegrp_ein} rule: \texttt{e1inc}, \texttt{e1inf}, \texttt{e1ing}, \texttt{e1ins}, \texttt{e1int}, \texttt{e1inv} -- \emph{reincidência}, \emph{reinfecção}, \emph{reingressa}, \emph{reinserção}, \emph{reintegração}, \emph{reinventar} 
+%exceção: \texttt{e1in2st}, \texttt{e1in2sc} -- reinstalado, reinscrever
+
+%\item\label{rulegrp_unit} rule: \texttt{u1int}, \texttt{u1ind} -- \emph{contribuinte}, \emph{excluindo}
+%não precisa, temos a regra u1in
+
+\refstepcounter{numberRulesGroups}\item\label{rulegrp_aiz} rule: \texttt{u1iz.}, \texttt{a1iz.} -- \emph{juiz}, \emph{raiz}
+
+\refstepcounter{numberRulesGroups}\item\label{rulegrp_proi} rule: \texttt{pro1i1b} -- proibição
+
+\refstepcounter{numberRulesGroups}\item\label{rulegrp_Vi} rule: \texttt{tu1i}, \texttt{bu1i}, \texttt{nu1i}, \texttt{o1im}, \texttt{o1in}, \texttt{u1in}, \texttt{su1i}, \texttt{í1e}, \texttt{ju1i}, \texttt{fu1i}, \texttt{du1i}, \texttt{do1im}, \texttt{au1i}, \texttt{u1i1ç} -- \emph{intuitivo}, \emph{contribuidor}, \emph{ingenuidade}, \emph{coimbra}, \emph{coincide}, \emph{ruindade}, \emph{suicida}, \emph{píer}, \emph{juizado}, \emph{fuinha}, \emph{assiduidade}, \emph{amendoim}, \emph{cacauicultor}, \emph{constituição} \\
+exception: \texttt{tu2id}, \texttt{tu2it}, \texttt{co2ima}, \texttt{o2i1na} -- \emph{gratuidade}, \emph{intuito}, \emph{coima}, \emph{boina}
+
+\refstepcounter{numberRulesGroups}\item\label{rulegrp_aa} rule: \texttt{a1â}, \texttt{a1ã}, \texttt{a1é}, \texttt{a1í}, \texttt{a1ó}, \texttt{a1ô}, \texttt{a1ú}, \texttt{e1á}, \texttt{e1â}, \texttt{e1ã}, \texttt{e1é}, \texttt{e1ê}, \texttt{e1í}, \texttt{e1ó}, \texttt{e1ô}, \texttt{e1ú}, \texttt{é1o}, \texttt{i1á}, \texttt{i1ã}, \texttt{i1é}, \texttt{i1í}, \texttt{i1ó}, \texttt{i1u}, \texttt{i1ú}, \texttt{í1a}, \texttt{í1o}, \texttt{o1á}, \texttt{o1ã}, \texttt{o1é}, \texttt{o1ê}, \texttt{o1í}, \texttt{o1ó}, \texttt{u1á}, \texttt{u1ã}, \texttt{u1â}, \texttt{u1é}, \texttt{u1ê}, \texttt{u1í}, \texttt{ú1o} --  \emph{abraâmico}, \emph{abraão}, \emph{aéreo}, \emph{país}, \emph{caótico}, \emph{faraônico}, \emph{saúde}, \emph{balneário}, \emph{oceânico}, \emph{campeã}, \emph{feérico}, \emph{veêm}, \emph{veículo}, \emph{teórico}, \emph{napoleônico}, \emph{conteúdo}, \emph{néon}, \emph{diário}, \emph{região}, \emph{soviético}, \emph{iídiche}, \emph{periódico}, \emph{feiura}, \emph{viúva}, \emph{maníaco}, \emph{íon}, \emph{razoável}, \emph{joão}, \emph{poético}, \emph{boêmia}, \emph{heroísmo}, \emph{alcoólico}, \emph{usuário}, \emph{itapuã}, \emph{lituânia}, \emph{suécia}, \emph{cauê}, \emph{suíça}, \emph{flúor} \\
+exception: \texttt{1gu2á}, \texttt{1gu2ã}, \texttt{1gu2é}, \texttt{1gu2ê}, \texttt{1gu2í}, \texttt{1qu2á}, \texttt{1qu2ã}, \texttt{1qu2â}, \texttt{1qu2é}, \texttt{1qu2ê}, \texttt{1qu2í}, -- \emph{jaraguá}, \emph{saguão}, \emph{alguém}, \emph{português}, \emph{linguística}, \emph{aquático}, \emph{camaquã}, \emph{equânime}, \emph{inquérito}, \emph{sequência}, \emph{química} 
+% the inclusion of rules e1é, é1o, i1í and í1a cause problem and if exceptions are necessary
+
+%\item\label{rulegrp_gua} rule: \texttt{1gu2á}, \texttt{1gu2ã}, \texttt{1qu2ã} -- \emph{jaraguá}, \emph{saguão}, \emph{quão}
+
+\refstepcounter{numberRulesGroups}\item\label{rulegrp_bo} rule: \texttt{1bô}, \texttt{1cô}, \texttt{1çô}, \texttt{1dô}, \texttt{1fô}, \texttt{1gô}, \texttt{1lô}, \texttt{1pô}, \texttt{1mô}, \texttt{1nô}, \texttt{1rô}, \texttt{1sô}, \texttt{1tô}, \texttt{1vô}, \texttt{1xô}, \texttt{1zô} -- \emph{robô}, \emph{recôncavo}, \emph{maçônico}, \emph{judô}, \emph{telefônica}, \emph{xangô}, \emph{camelô}, \emph{capô}, \emph{sumô}, \emph{econômico}, \emph{subsônico}, \emph{tarô}, \emph{chatô}, \emph{vovô}, \emph{saxônia}, \emph{amazônia}
+
+\refstepcounter{numberRulesGroups}\item\label{rulegrp_Vf} rule: \texttt{4a.}, \texttt{4e.}, \texttt{4o.} -- \emph{secretária}, \emph{planície}, \emph{paratormônio}
+
+  % co1in (parace não ser necessário, já que o1in faz o seu papel)
+  % cu1i (não faze sentido, já que temos cu2i)
+  % ra1is (excluir, só existe a arrais e me parece que a forma correta é ar-rais)
+
+%rules not necessary
+%\item\label{rulegrp_cui} rule: \texttt{cu2i} -- \emph{cuidado} \\
+%exception: \texttt{cu3in} -- \emph{picuinha}
+
+
+%\item\label{rulegrp_aui} regra: \texttt{au1i1c}, \texttt{du1i1c}, \texttt{u1i1ç}, \texttt{u1i1d}, \texttt{cu2i}, \texttt{dru2i}, \texttt{flu2id}, \texttt{bu1i1n}, \texttt{cu1i1n}, \texttt{fu1i1n}, \texttt{nu1i1n}, \texttt{ru1i1na}, \texttt{ru1i1no}, \texttt{su1i1ti}, \texttt{tu1i1ti}, \texttt{u1iz} -- cacauicultor, sanduicheira, constituição, continuidade, cuidador, druida, fluido, tabuinha, picuinha, fuinha, genuinamente, arruinado, arruinou, jesuitismo, intuitivo, juizado \\ 
+%exceção: \texttt{cu3i1da1de}, \texttt{bu1i2n1d}, \texttt{bu1i2n1t}  -- acuidade, contribuindo, contribuinte
+% not necessary
+
+%\item\label{rulegrp_oin} regra: \texttt{o1in} -- coincidência, agroindustrial, bioinformática, amendoins, gastrointestinal
+%exceção: \texttt{oi1na} -- boina
+% already includede
+
+%\item\label{rulegrp_zz} regra: \texttt{z1z}, \texttt{p1p}, \texttt{z2z.} -- pizza, shopping, jazz
+% not necessary
+
+%\item\label{rulegrp_so} regra: \texttt{1sô} -- subsônico
+% already included above
+
+%\item\label{rulegrp_ein} regra: \texttt{e1in1c}, \texttt{e1in1f}, \texttt{e1in1g}, \texttt{e1in1s}, \texttt{e1in1t}, \texttt{e1in1v} -- reincidência, reinfecção, reingressa, reinserção, reintegração, reinventar \\
+%exceção: \texttt{e1in2st}, \texttt{e1in2sc} -- reinstalado, reinscrever
+
+%\item\label{rulegrp_ia} regra: \texttt{í1a} -- baía
+% already included above
+
+%\item\label{rulegrp_oin} regra: \texttt{o1i1nh} -- moinho
+% not necessary, we have o1in and 1n2h
+
+%\item\label{rulegrp_aui} regra: \texttt{au1i1c}, \texttt{du1i1c}, \texttt{u1i1ç}, \texttt{u1i1d}, \texttt{cu2i}, \texttt{dru2i}, \texttt{flu2id}, \texttt{bu1i1n}, \texttt{cu1i1n}, \texttt{fu1i1n}, \texttt{nu1i1n}, \texttt{ru1i1na}, \texttt{ru1i1no}, \texttt{su1i1ti}, \texttt{tu1i1ti}, \texttt{u1iz} -- cacauicultor, sanduicheira, constituição, continuidade, cuidador, druida, fluido, tabuinha, picuinha, fuinha, genuinamente, arruinado, arruinou, jesuitismo, intuitivo, juizado \\ 
+%exceção: \texttt{cu3i1da1de}, \texttt{bu1i2n1d}, \texttt{bu1i2n1t}  -- acuidade, contribuindo, contribuinte
+% not necessary
+
+%\item\label{rulegrp_iur} regra: \texttt{i1ur} -- diurno
+% not necessary
+
+%\item\label{rulegrp_uo} regra: \texttt{ú1o} -- flúor
+% not necessary
+
+%\item\label{rulegrp_iun} regra: \texttt{i1un} -- triunfar
+% not necessary
+
+%\item\label{rulegrp_quo} regra: \texttt{1qu4ó}, \texttt{1qu4â} -- quórum, equânime
+% created rule u1â and 1qu2â
+% three is no word with u-ó, so rule u1ó is not necessary, therefore 1qu2ó is also not necessary
+
+%\item\label{rulegrp_eo} regra: \texttt{é3o} -- alvéolo
+% rule é1o included 
+
+%\item\label{rulegrp_ia} \st{regra: \texttt{i4a.}, \texttt{i4e.}, \texttt{i4o.}, \texttt{o4a.}, \texttt{u4a.} -- economia, espécie, vazio, destoa, institua}
+% not necessary
+
+%\item\label{rulegrp_lo} regra: \texttt{1lô} -- camelô
+
+%\item\label{rulegrp_co} regra: \texttt{1cô} -- recôncavo
+
+%\item\label{rulegrp_cco} regra: \texttt{1çô} -- maçônico
+% included
+
+% As sequências gráficas ia, ie, io, oa, ua quando em posição
+% final átona, que são normalmente pronunciadas como ditongos
+% crescentes, mas que podem corresponder foneticamente a duas
+% vogais (hiato), sobretudo quando pronunciadas pausadamente:
+% vitó-ria, espé-cie, exercí-cio, nó-doa, lé-gua, tê-nue, ambí-guo.
+%\setcounter{numberRulesGroups}{\value{enumi}}
+\end{rules}
+
+
+% script to extract the rules above (inside \texttt{ })
+% head -n 142 ../article/hyphenpatches.tex | grep -v "^%" | grep -oP '\\texttt\{.*?\}' | sed 's/\\texttt{//; s/}//' 
+% meld <(head -n 142 ../article/hyphenpatches.tex | grep -v "^%" | grep -oP '\\texttt\{.*?\}' | sed 's/\\texttt{//; s/}//' | sort) <(sort ../data/patch.TeX.pt-br.patterns.v2)
+
+The \NumberOfNewRules{} rules were grouped above in a list of
+\thenumberRulesGroups\ types of rules. They may be further organized into five
+large groups. The first, which comprises rules %\ref{rulegrp_gno} to \ref{rulegrp_t2}, 
+\cref{rulegrp_gno,rulegrp_tc,rulegrp_pneu,rulegrp_tm,rulegrp_pt,rulegrp_mn,rulegrp_cza,rulegrp_s2,rulegrp_t2},
+includes consonant clusters such as \emph{czar}, \emph{ptose}
+and \emph{gnomo}. 
+%They, unlike the examples that will be exposed in section \ref{secxxx} (exceptions - item 9 currently), present a set of derived words,
+%which makes their marking advantageous in view of the number of cases that are included in this marking rule. 
+The second group, comprising rules
+%\ref{rulegrp_psi} to \ref{rulegrp_eim}, 
+\cref{rulegrp_psi,rulegrp_sub,rulegrp_neo,rulegrp_pseu},
+delimits the morphological boundary
+between prefixes and radicals. As noted, although phonological issues guide the
+separation of numerous words in Portuguese, there are also those that are
+guided by morphology. This is the case of words that have the prefixes
+\emph{sub-} and \emph{re-}, such as \emph{sublunar} and \emph{reinserção}. The
+third group, comprising rules \cref{rulegrp_qu,rulegrp_air,rulegrp_ain,rulegrp_eim,rulegrp_ein,rulegrp_aiz,rulegrp_proi,rulegrp_Vi,rulegrp_aa}, seeks to
+understand a set of words that have vowel combinations that do not follow the
+general rules. This is because the Portuguese language has vowel encounters
+with the second vowel graphically marked that can be separated, forming
+hiatuses, such as \emph{caótico}, \emph{balneário} and \emph{razoável}, while
+there are also words with a similar structure that constitute a diphthong, such
+as \emph{português}, \emph{alguém} and \emph{linguística}. It is remarkable, of
+course, that the latter are formed by the digraphs \emph{qu-} and \emph{gu-},
+while the former by vowels other than \emph{i} and \emph{u}. The fourth group, 
+in turn, which comprises \cref{rulegrp_aa,rulegrp_bo}\footnote{Note that \cref{rulegrp_aa} is in the intersection
+between the third and fourth group of rules.}, 
+which are counterparts of rules that were already in the
+default rules, but did not contemplate the cases with certain accents. They
+were then added to encompass words such as \emph{camelô}, \emph{recôncavo},
+\emph{amazônia}, and \emph{maçônico}. 
+The fifth, and last group, has just a single instance, \cref{rulegrp_Vf},
+which represents our choice in how to deal the apparent proparoxytones,
+avoiding a final hyphenation with the vowels \emph{a}, \emph{e}, or \emph{o}.
+
+%It is important to highlight that the words included in these rules are, in
+%general, of low frequency and were incorporated into the Portuguese language
+%without a phonotactic adaptation, which causes these idiosyncrasies and
+%exceptions to the language. They are characterized as marked cases, since it is
+%not possible to defend that they reproduce a phonological pattern of the
+%language because they are not productive, that is, they are not taken as an
+%example and/or derive new words.
+
+
+The set made of \NumberOfNewRules{} rules is presented below:
+\begin{multicols}{6}
+    \footnotesize
+    \verbatiminput{../data/patch.TeX.pt-br.patterns}
+\end{multicols}
+
+\Cref{tab-resultados} presents the hyphenation errors in a set of 876 words.
+We have omitted those words where both rules let to a correct hyphenation and
+those that have incorrect hyphenation in a vowel in the last position. 
+Once again, we are using the \emph{patgen} notation to mark correct, incorrect,
+and missing hyphenation points: \texttt{*}, \texttt{.}, and \texttt{-}, respectively.
+Incorrect or missing hyphenation points are considered errors. In these cases,
+we place mark \xmark. Correct hyphenations are marked with \cmark.
+The default rules achieved 17 correct hyphenations in this set, against 811 
+of the patched rules.
+%A Tabela \ref{tab-resultados} apresenta os erros cometidos no conjunto das
+%37798 palavras analisadas. As palavras omitidas são aquelas que foram
+%hifenizadas corretamente pelos dois conjuntos de regra. Utilizamos aqui a
+%marcação adotada pelo \emph{Patgen}: \texttt{*} para indicar pontos de
+%hifenização corretamente marcados, \texttt{.} para indicar pontos de hifenização
+%marcados erroneamente e \texttt{-} para indicar pontos de hifenização não
+%encontrados. 
+%Os pontos marcados erroneamente e aqueles não encontrados são
+%considerados erros. Quando ocorre algum erro de hifenização, marcaremos a
+%palavra com \xmark. Quando não houver erro algum, marcaremos a palavra com
+%\cmark. Ao final, podemos verificar que as regras padrão apresentaram 1368 erros
+%(3,62\%) e as novas regras 132 erros (0,35\%).
+
+
+

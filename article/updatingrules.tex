@@ -1,15 +1,187 @@
 \section{Updating the rules}
-We now begin incorporating the rules proposed in the previous section and
-appraise the results of each one. During this process, we will consider the
-necessity of updating those rules, including exceptions, or even discarding the
-proposed rules if needed.
+
+In this section we will analyse the results of the default rules on our dictionaries,
+find patterns, and gradually incorporate new rules to the set, appraising the result of
+each one, to avoid causing more damage than good, create exception rules when necessary,
+and, if necessary, discard rules. We will stick to the \emph{patgen} notation to express
+a wrong, a missing, and a correct hyphenation point (`.', `-', and `*', respectively).
+
+For the list comprised in \texttt{hyphenations6}, below is the complete list of
+\NumberOfWrongSix{} words that were incorrectly hyphenated:
+% wrong
+\begin{multicols}{3}
+\setlength{\columnsep}{0pt}
+\setlength{\parindent}{0pt}
+\emph{\input{/tmp/hyphenations6result-default-patterns_wrong.dic}}
+\end{multicols}
+In each instance, an erroneous hyphenation point was placed at the beginning of
+a word, indicating a potential issue in recognizing certain prefixing morphemes
+in the language.  Among those, 20 occurred in words containing the \emph{psi}
+morpheme, where the algorithm erroneously hyphenated between the initial
+\emph{p} and the following \emph{s}. Additionally, 3 cases involved the
+starting \emph{gno} sequence, while the remaining errors were observed in the
+sequences \emph{pneu} (3), \emph{tch} (1), \emph{tme} (1), \emph{pto} (1), and
+\emph{sub} (1).
+
+Those erroneous hyphenation points might be corrected by the introduction of a few rules:
+\texttt{.p2si, .p2sí} (see \cref{rulegrp_psi}), \texttt{.g2no, .g2nó} (see \cref{rulegrp_gno}), 
+\texttt{1p2neu} (see \cref{rulegrp_pneu}),
+\texttt{t2c} (see \cref{rulegrp_tc}), \texttt{.t2m} (see \cref{rulegrp_tm}), \texttt{.p2t} (see \cref{rulegrp_pt}) 
+and \texttt{su2b3r}, \texttt{su2b3l}  (see \cref{rulegrp_sub}). They are deeply 
+discussed in \Cref{sec-hyph-rpatches}.
+
+% $ ../scripts/resultfileexamples.sh -m -f ../data/hyphenations6result-default-patterns.dic | grep -o "[^-]-[^-]" | sort | uniq -c | sort -nr | column
+
+The first 20 examples of missing hyphenations are displayed in the following list:
+% missing
+\begin{multicols}{3}
+\setlength{\columnsep}{0pt}
+\setlength{\parindent}{0pt}
+\emph{\input{/tmp/hyphenations6result-default-patterns_missing.dic}
+...}
+\end{multicols}
+It is a long list with \NumberOfMissingSix{} entries, therefore it is
+unavoidable to analyse it through clusters of certain patterns. It is presented
+below the counts of immediate context in which those missing hyphenations were
+found:
+\begin{multicols}{5}
+\setlength{\columnsep}{0pt}
+\setlength{\parindent}{0pt}
+\emph{\input{/tmp/hyphenations6result-default-patterns_missing_context}}
+\end{multicols}
+
+% number of words correctly hyphenated using default TeX rules when analysing the words in hyphenations6.dic
+%\captureshell*[\NumberOfCorrectSix]{../scripts/resultfilemetrics.sh -f ../data/hyphenations6result-default-patterns.dic -c}
+
+% number of words with wrong hyphenations using default TeX rules when analysing the words in hyphenations6.dic
+%\captureshell*[\NumberOfWrongSix]{../scripts/resultfilemetrics.sh -f ../data/hyphenations6result-default-patterns.dic -w}
+
+% number of words with missing hyphenations using default TeX rules when analysing the words in hyphenations6.dic
+%\captureshell*[\NumberOfMissingSix]{../scripts/resultfilemetrics.sh -f ../data/hyphenations6result-default-patterns.dic -m}
+
+% tra-b.a*lho
+%    ^ ^ ^
+%    | | |
+%    | | + -- correct (*)
+%    | + ---- wrong   (.)  
+%    + ------ missed  (-)
+
+On the top of the list we see the missing hyphen in \emph{u-i}, accounting for
+38 cases. Among those, 34 were originated from the pattern \texttt{u-ir} in the
+end of word and 13 from \texttt{a-ir} in the end of word. 
+To fix them, We will include the rules \texttt{u1ir.} and \texttt{a1ir.} (see 
+\cref{rulegrp_air}). The cases that are not covered by this rule are:
+\emph{tu-im}, \emph{je*su-i*tis*mo}, \emph{ma*lau-i*a*no}, and
+\emph{con*tri*bu-in*te}. On \cref{rulegrp_Vi} we see how to deal with
+them.
+
+The default rules already include 17 separating rules for vowel sequences:
+% vowel="[aeiouáãàâéêíóõôú]"; grep "$vowel[13579]$vowel" ../data/default.TeX.pt-br.patterns | sed ':a;N;$!ba;s/\n/ \\\\ /g'
+\begin{multicols}{5}
+\setlength{\columnsep}{0pt}
+\setlength{\parindent}{0pt}
+\texttt{a3a \\ a3e \\ a3o \\ e3a \\ e3e \\ e3o \\ i3a \\ i3e \\ i3i \\ i3o \\ i3â \\ i3ê \\ i3ô \\ o3a \\ o3e \\ o3o \\ u3a \\ u3e \\ u3o \\ u3u}
+\end{multicols}
+\noindent{}but there are just 3 rules to hyphenate between vowels when one has a diacritic: \texttt{i3â}, \texttt{i3ê}, \texttt{i3ô}.
+We could then add more 29 rules to account for the missing hyphenations between vowels with diacritics and also the
+missing rule \texttt{i1u}:
+% ../scripts/resultfileexamples.sh -m -f ../data/hyphenations6result-default-patterns.dic | ../scripts/filtersurrounding.sh -c '-' -n 1 | sort | uniq -c | sort -nr | grep "[áàâãéêíóôõú]" | awk '{print $2}' | sort | sed ':a;N;$!ba;s/\n/ \\\\ /g'
+\begin{multicols}{5}
+\setlength{\columnsep}{0pt}
+\setlength{\parindent}{0pt}
+\texttt{%
+% complete set of 37 rules
+%a1â \\ a1ã \\ a1é \\ a1í \\ a1ó \\ a1ô \\ a1ú \\ 
+%e1á \\ e1â \\ e1ã \\ e1é \\ e1ê \\ e1í \\ e1ó \\ e1ô \\ e1ú \\ é1o \\ 
+%i1á \\ i1ã \\ i1ã \\ i1é \\ i1í \\ i1ó \\ i1u \\ i1ú \\ í1a \\ 
+%o1á \\ o1ã \\ o1é \\ o1ê \\ o1í \\ o1ó \\ 
+%u1á \\ u1ã \\ u1é \\ u1ê \\ u1í \\ ú1o
+%
+% 29 rules necessary for hyphenations6 dic
+a1é \\ a1í \\ a1ó \\ a1ú \\ 
+e1á \\ e1â \\ e1ã \\ e1é \\ e1ê \\ e1í \\ e1ó \\ e1ú \\ é1o \\ 
+i1á \\ i1ã \\ í1a \\ i1é \\ i1í \\ i1ó \\ i1u \\ i1ú \\ í1o \\ 
+o1á \\ o1é \\ o1í \\ o1ó \\ 
+u1á \\ u1ã \\ u1í \\ ú1o
+}
+%\emph{a-é \\ a-í \\ a-ó \\ a-ú \\ e-á \\ e-â \\ e-ã \\ e-é \\ e-ê \\ e-í \\ e-ó \\ é-o \\ e-ú \\ i-á \\ i-ã \\ í-a \\ i-é \\ i-í \\ i-ó \\ í-o \\ i-ú \\ o-á \\ o-é \\ o-í \\ o-ó \\ u-á \\ u-ã \\ u-í \\ ú-o}
+\end{multicols}
+See more about this on \cref{rulegrp_aa}. These rules will require exceptions for sequences with \emph{[qg]uV'} 
+(where we used \emph{V'} to represent a vowel with a diacritic). See more on \cref{rulegrp_aa}.
+
+From the list of missing hyphenations above, we find another recurring pattern, a missing hyphen preceding \emph{q}: 
+% ../scripts/resultfileexamples.sh -m -f ../data/hyphenations6result-default-patterns.dic | ../scripts/filtersurrounding.sh -c '-' -n 1 | sort | uniq -c | sort -nr | awk '{print $2}' | sort | grep "q$" | sort | sed ':a;N;$!ba;s/\n/ \\\\ /g'
+\begin{multicols}{5}
+\setlength{\columnsep}{0pt}
+\setlength{\parindent}{0pt}
+\emph{a-q \\ e-q \\ i-q \\ o-q \\ r-q \\ s-q \\ u-q}
+\end{multicols}
+That issue might be easily solved by adding a hyphenation rule \texttt{1qu}. The \emph{q} is always followed by 
+a sequence \emph{uV}, and there are already four hyphenation rules involving this sort of sequence in the default rules
+(\texttt{1qu4a}, \texttt{1qu4e}, \texttt{1qu4i} and \texttt{1qu4o})\footnote{The default rules uses level three to hyphenate
+between those vowels: \texttt{u3a}, \texttt{u3e}, \texttt{u3i}, and \texttt{u3o}. Apparently, they could have used 
+a lower degree rule and, consequently, a lower degree rule to discourage the hyphen in sequences with \emph{q} or \emph{q}}. 
+The only valid exceptions\footnote{The other exceptions we are not considering include typos and proper names (names of places, for example \emph{Urquhart}, \emph{
+Qurgonteppa
+}, \emph{Al-Qusayr}, etc.).} found in Wikipedia corpus are
+the words \emph{far-quhar} and \emph{qu-bit}. We could then add the rule \texttt{1qu} along with the exception rules
+for those hyphenation rules between \emph{u} and the following vowel (see \cref{rulegrp_aa}):
+% $ grep "q" ../data/patch.TeX.pt-br.patterns | awk '{print "\\texttt{" $1 "}"}' | sed ':a;N;$!ba;s/\n/, /g'
+\texttt{1qu2á}, \texttt{1qu2ã}, \texttt{1qu2â}, \texttt{1qu4é}, \texttt{1qu2ê}, and \texttt{1qu2í} (see \cref{rulegrp_aa}). 
+Note that \texttt{1qu2ó} was not added since we will not use a rule to hyphenate between these vowels.
+%since there are rules to create hyphenation points between \emph{u} and the following vowel (see \cref{rulegrp_aa}).  
+%could be added (see \cref{rulegrp_aa,rulegrp_quo}), but they have not necessary at this moment.
+%%% XXX check if they are not really necessary
+% cut -d, -f1 ../data/hyphenations.csv | grep -Po "qu[aeioáéíóâêôãõ]" | sort | uniq -c | column
+% 1354 qua          52 quá           8 quâ           3 quã        4411 que          99 qué          79 quê        3655 qui         224 quí         102 quo           9 quó
+
+The missing hyphens in \emph{a-v} and \emph{i-v} might be easily solved by introducing the rule \texttt{1vô} (see \cref{rulegrp_bo}) which 
+complements the rule \texttt{1vo} already included in the default set of rules.
+% pi-vô, a-vô, bi*sa-vô ...
+Similarly, the missing hyphens \emph{e-l}, \emph{u-l}, \emph{o-l}, and \emph{a-l} are corrected by the introduction of the rule \texttt{1lô} rule (see \cref{rulegrp_bo}),
+complementing the already included rule \texttt{1lo}.
+In the same way, the rules \texttt{1cô}, \texttt{1gô}, \texttt{1bô}, \texttt{1tô}, \texttt{1rô}, and \texttt{1pô} (see \cref{rulegrp_bo}) 
+should be added to fix the missing hyphens \emph{e-c}, \emph{i-c}, \emph{o-g}, \emph{o-b}, \emph{a-t}, \emph{a-r},
+and \emph{a-p}, respectively.
+% ca*me-lô, gi*go-lô, ..., bi*be-lô, su.b-lu*nar
+%                                       rule 1b2l causes wrong hyphen
+%
+%    .   s   u   b   l   u   n   a   r   .
+%     1   0   0   |   |   |   |   |   |    1su
+%     |   |   1   2   0   |   |   |   |    1b2l
+%     |   |   |   1   0   0   |   |   |    1lu
+%     |   |   |   |   |   1   0   0   |    1na
+%max: 1   0   1   2   0   1   0   0   0
+%final: s   u - b   l   u - n   a   r
+The missing hyphen \emph{b-l} happened in %\emph{su.b-lu*nar}
+\emph{su.b-lu*nar}, which also has a wrong hyphenation.
+Those errors were caused by the default rule \texttt{1b2l}. The introduction of rule \texttt{su2b3l} 
+will help solve this matter (see details in \cref{rulegrp_sub}).
+
+% e-c, i-c: missing rule 1cô
+% o-g: missing rule 1gô
+% o-b: missing rule 1bô
+% a-t: missing rule 1tô
+% a-r: missing rule 1rô
+% a-p: missing rule 1pô
+
+The remaining missing hyphen is \emph{o-w}, which comes from the foreign \emph{kilo-watt}.
+Those cases of words borrowed from other languages are dealt in the topic \ref{foreignness}.
+% o-w: qui*lo-watt
+
+
+% number of words with missing hyphenations using default TeX rules when analysing the words in hyphenations6.dic
+
+
+
+
 
 % cat ../data/default.TeX.pt-br.patterns <(echo -e "p2si\np2sí") > /tmp/patts
 % ./gocreateresultfile.sh ../data/hyphenations6.dic /tmp/patts > /tmp/hyphenations6result_001.dic
 % ./resultfilemetrics.sh -f /tmp/hyphenations6result_001.dic
 % correct: 15548; wrong: 10 (10); missing: 284 (283,1)
 
-% cat ../data/default.TeX.pt-br.patterns <(echo -e "p2si\np2sí\n.g2no\n.g2nó\nt2c\np2neu\n.t2m\n.p2t\nsu2b3r\nsu2b3l") > /tmp/patts
+% cat ../data/default.TeX.pt-br.patterns <(echo -e "p2si\np2sí\n.g2no\n.g2nó\nt2c\n1p2neu\n.t2m\n.p2t\nsu2b3r\nsu2b3l") > /tmp/patts
 % ./gocreateresultfile.sh ../data/hyphenations6.dic /tmp/patts > /tmp/hyphenations6result_001.dic
 % ./resultfilemetrics.sh -f /tmp/hyphenations6result_001.dic
 % correct: 15552; wrong: 6 (6); missing: 286 (285,1)
@@ -19,17 +191,19 @@ proposed rules if needed.
 % 
 % ./gohyphenfull ../data/default.TeX.pt-br.patterns psiquiátrico
 %
-% cat ../data/default.TeX.pt-br.patterns <(echo -e ".p2si\n.p2sí\n.g2no\n.g2nó\nt2c\np2neu\n.t2m\n.p2t\nsu2b3r\nsu2b3l") > /tmp/patts
+% cat ../data/default.TeX.pt-br.patterns <(echo -e ".p2si\n.p2sí\n.g2no\n.g2nó\nt2c\n1p2neu\n.t2m\n.p2t\nsu2b3r\nsu2b3l") > /tmp/patts
 % ./gocreateresultfile.sh ../data/hyphenations6.dic /tmp/patts > /tmp/hyphenations6result_001.dic
 % ./resultfilemetrics.sh -f /tmp/hyphenations6result_001.dic
 % correct: 15562; wrong: 3 (3); missing: 279 (278,1)
 
 
 After introducing the rules: \texttt{.p2si}, \texttt{.p2sí}, \texttt{.g2no}, \texttt{.g2nó}, \texttt{t2c}, 
-\texttt{p2neu}, \texttt{.t2m}, \texttt{.p2t}, \texttt{su2b3r}, and \texttt{su2b3l}, 
+\texttt{1p2neu}, \texttt{.t2m}, \texttt{.p2t}, \texttt{su2b3r}, and \texttt{su2b3l}, 
 the number of incorrect hyphenations decreased to 3, and the number of missing hyphenations decreased to 278.
 At first sight, we expected the number of incorrect hyphenations to drop to zero. However, 
 the introduction of rule \texttt{su2b3l} introduced hyphenation errors in \emph{su-b.li*me}, \emph{su-b.li*ma*ção} and \emph{su-b.li*ma*do}.
+%\emph{sublime}, \emph{sublimação}, and \emph{sublimado}.
+%\emph{su-b.li*me}, \emph{su-b.li*ma*ção} and \emph{su-b.li*ma*do}.
 
 \noindent\begin{minipage}{\linewidth}
 \begin{lstlisting}[language={}, caption={Hyphenation of the word \emph{sublime} after the indroduction of rule \texttt{su2b3l}. 
@@ -46,7 +220,7 @@ final: s   u   b - l   i - m   e
 \end{minipage}
 \noindent{}By inserting the rule \texttt{.su3b4li}, we fixed the hyphenation errors caused by the introduction of the rule \texttt{su2b3l},
 as illustrated in \Cref{sublimehyphenation}. This adjustment resulted in zero hyphenation errors and 276 missing hyphens.
-% cat ../data/default.TeX.pt-br.patterns <(echo -e ".p2si\n.p2sí\n.g2no\n.g2nó\nt2c\np2neu\n.t2m\n.p2t\nsu2b3r\nsu2b3l\n.su3b4li") > /tmp/patts
+% cat ../data/default.TeX.pt-br.patterns <(echo -e ".p2si\n.p2sí\n.g2no\n.g2nó\nt2c\n1p2neu\n.t2m\n.p2t\nsu2b3r\nsu2b3l\n.su3b4li") > /tmp/patts
 % ./gocreateresultfile.sh ../data/hyphenations6.dic /tmp/patts > /tmp/hyphenations6result_001.dic
 % ./resultfilemetrics.sh -f /tmp/hyphenations6result_001.dic
 % correct: 15565; wrong: 0 (); missing: 276 (275,1)
@@ -54,15 +228,15 @@ as illustrated in \Cref{sublimehyphenation}. This adjustment resulted in zero hy
 % 12 regra: su2b3r, su2b3l – sublunar, subrotina exceção: su3b4li1nh, su3b4li1ma,
 % su3b4li1me, su3b4li1mid – sublinhar, sublimar, sublime, sublimidade
 
-The next step is to introduce the rules o address the missing hyphenation points. These rules are: 
-\texttt{a1ir.}, \texttt{u1ir.}, \texttt{i3â}, \texttt{i3ê}, \texttt{i3ô}, \texttt{1qu}, \texttt{1vô}, \texttt{1lô}, \texttt{1cô}, \texttt{1gô}, \texttt{1bô}, 
+The next step is to introduce the rules to address the missing hyphenation points. These rules are: 
+\texttt{a1ir.}, \texttt{u1ir.}, \texttt{1qu}, \texttt{1vô}, \texttt{1lô}, \texttt{1cô}, \texttt{1gô}, \texttt{1bô}, 
 \texttt{1tô}, \texttt{1rô}, \texttt{1pô}, \texttt{a1é}, \texttt{a1í}, \texttt{a1ó}, \texttt{a1ú}, \texttt{e1á}, \texttt{e1â}, \texttt{e1ã}, 
 \texttt{e1é}, \texttt{e1ê}, \texttt{e1í}, \texttt{e1ó}, \texttt{é1o}, \texttt{e1ú}, \texttt{i1á}, \texttt{i1ã}, \texttt{í1a}, \texttt{i1é}, 
 \texttt{i1í}, \texttt{i1ó}, \texttt{í1o}, \texttt{i1u}, \texttt{i1ú}, \texttt{o1á}, \texttt{o1é}, \texttt{o1í}, \texttt{o1ó}, \texttt{u1á}, \texttt{u1ã}, 
 \texttt{u1í}, \texttt{ú1o}.
 % \texttt{1qu2á}, \texttt{1qu2é}, \texttt{1qu2ê}, \texttt{1qu2í}, \texttt{que2i}, \texttt{1qu4ã}, \texttt{1qu4ó}, \texttt{1qu4â}
 % \texttt{1gu2é}, \texttt{1gu2ê}, \texttt{1gu2í} 
-% cat ../data/default.TeX.pt-br.patterns <(echo ".p2si, .p2sí, .g2no, .g2nó, t2c, p2neu, .t2m, .p2t, su2b3r, su2b3l, .su3b4li, a1ir., u1ir., i3â, i3ê, i3ô, 1qu, 1vô, 1lô, 1cô, 1gô, 1bô, 1tô, 1rô, 1pô, a1é, a1í, a1ó, a1ú, e1á, e1â, e1ã, e1é, e1ê, e1í, e1ó, é1o, e1ú, i1á, i1ã, í1a, i1é, i1í, i1ó, í1o, i1u, i1ú, o1á, o1é, o1í, o1ó, u1á, u1ã, u1í, ú1o" | tr -d ' ' | tr ',' '\n') > /tmp/patts2
+% cat ../data/default.TeX.pt-br.patterns <(echo ".p2si, .p2sí, .g2no, .g2nó, t2c, 1p2neu, .t2m, .p2t, su2b3r, su2b3l, .su3b4li, a1ir., u1ir., 1qu, 1vô, 1lô, 1cô, 1gô, 1bô, 1tô, 1rô, 1pô, a1é, a1í, a1ó, a1ú, e1á, e1â, e1ã, e1é, e1ê, e1í, e1ó, é1o, e1ú, i1á, i1ã, í1a, i1é, i1í, i1ó, í1o, i1u, i1ú, o1á, o1é, o1í, o1ó, u1á, u1ã, u1í, ú1o" | tr -d ' ' | tr ',' '\n') > /tmp/patts2
 % %%% a1â, a1ã, a1é, a1í, a1ó, a1ô, a1ú, e1á, e1â, e1ã, e1é, e1ê, e1í, e1ó, e1ô, e1ú, é1o, i1á, i1ã, i1é, i1í, i1ó, i1u, i1ú, í1a, o1á, o1ã, o1é, o1ê, o1í, o1ó, u1á, u1ã, u1é, u1ê, u1í, ú1o
 % ./gocreateresultfile.sh ../data/hyphenations6.dic /tmp/patts2 > /tmp/hyphenations6result_002.dic
 % ./resultfilemetrics.sh -f /tmp/hyphenations6result_002.dic
@@ -70,9 +244,9 @@ The next step is to introduce the rules o address the missing hyphenation points
 % grep "\." /tmp/hyphenations6result_002.dic | grep -oP "[^\.\*\-]{1,2}\.[^\.\*\-]{1,2}" | sort | uniq -c | sort -nr | column
 % 11 qu.í          4 qu.á          1 qu.ís         1 qu.ín         1 gu.ís
 After inserting these rules, the number of incorrect hyphenations increases to 18 due to the inclusion of hyphens in \emph{qu.í}, \emph{gu.í} and \emph{qu.á}. 
-To overcome these errors, we need to add exception rules: \texttt{1qu2á}, \texttt{1qu2í}, and \texttt{1gu2í}.
-See more on this on \cref{rulegrp_aa,rulegrp_gua}.
-% cat ../data/default.TeX.pt-br.patterns <(echo ".p2si, .p2sí, .g2no, .g2nó, t2c, p2neu, .t2m, .p2t, su2b3r, su2b3l, .su3b4li, a1ir., u1ir., i3â, i3ê, i3ô, 1qu, 1vô, 1lô, 1cô, 1gô, 1bô, 1tô, 1rô, 1pô, a1é, a1í, a1ó, a1ú, e1á, e1â, e1ã, e1é, e1ê, e1í, e1ó, é1o, e1ú, i1á, i1ã, í1a, i1é, i1í, i1ó, í1o, i1u, i1ú, o1á, o1é, o1í, o1ó, u1á, u1ã, u1í, ú1o, 1qu2á, 1qu2í, 1gu2í" | tr -d ' ' | tr ',' '\n') > /tmp/patts3
+To overcome these errors, we need to add the exception rules: \texttt{1qu2á}, \texttt{1qu2í}, and \texttt{1gu2í}.
+See more on this on \cref{rulegrp_aa}.
+% cat ../data/default.TeX.pt-br.patterns <(echo ".p2si, .p2sí, .g2no, .g2nó, t2c, 1p2neu, .t2m, .p2t, su2b3r, su2b3l, .su3b4li, a1ir., u1ir., 1qu, 1vô, 1lô, 1cô, 1gô, 1bô, 1tô, 1rô, 1pô, a1é, a1í, a1ó, a1ú, e1á, e1â, e1ã, e1é, e1ê, e1í, e1ó, é1o, e1ú, i1á, i1ã, í1a, i1é, i1í, i1ó, í1o, i1u, i1ú, o1á, o1é, o1í, o1ó, u1á, u1ã, u1í, ú1o, 1qu2á, 1qu2í, 1gu2í" | tr -d ' ' | tr ',' '\n') > /tmp/patts3
 % ./gocreateresultfile.sh ../data/hyphenations6.dic /tmp/patts3 > /tmp/hyphenations6result_003.dic
 % ./resultfilemetrics.sh -f /tmp/hyphenations6result_003.dic
 % correct: 15822; wrong: 0 (); missing: 19 (19)
@@ -86,14 +260,15 @@ We have reached a point where there is no wrong hyphenation but still there are 
 \noindent{}Observing the instances above, 17 out of 19 involve a missing hyphen before the vowel \emph{i}. The following rules
 will be used to solve those issues: \texttt{a1ind}, \texttt{a1i1nh} (see \cref{rulegrp_ain}), \texttt{e1imp} (see \cref{rulegrp_eim}), 
 \texttt{e1inc}, \texttt{e1inf}, \texttt{e1ing}, \texttt{e1ins}, \texttt{e1int}, \texttt{e1inv}, (see \cref{rulegrp_ein}), 
-\texttt{u1int}, \texttt{u1ind} (see \cref{rulegrp_unit}), and \texttt{u1iz.}, \texttt{a1iz.} (see \cref{rulegrp_aiz}).
+%\texttt{u1int}, \texttt{u1ind} (see \cref{rulegrp_unit}),  (not necessary since we have the rule u1in)
+and \texttt{u1iz.}, \texttt{a1iz.} (see \cref{rulegrp_aiz}).
 % rulegrp_ain regra: a1ind, a1i1nh – ainda, rainha
 % rulegrp_eim regra: e1imp – reimpresso
 % rulegrp_ein regra: e1inc, e1inf, e1ing, e1ins, e1int, e1inv
 % rulegrp_unit regra: u1int, u1ind -- contribuinte, excluindo
 % rulegrp_aiz regra: u1iz., a1iz. -- juiz, raiz
 
-% cat ../data/default.TeX.pt-br.patterns <(echo ".p2si, .p2sí, .g2no, .g2nó, t2c, p2neu, .t2m, .p2t, su2b3r, su2b3l, .su3b4li, a1ir., u1ir., i3â, i3ê, i3ô, 1qu, 1vô, 1lô, 1cô, 1gô, 1bô, 1tô, 1rô, 1pô, a1é, a1í, a1ó, a1ú, e1á, e1â, e1ã, e1é, e1ê, e1í, e1ó, é1o, e1ú, i1á, i1ã, í1a, i1é, i1í, i1ó, í1o, i1u, i1ú, o1á, o1é, o1í, o1ó, u1á, u1ã, u1í, ú1o, 1qu2á, 1qu2í, 1gu2í, a1ind, a1i1nh, e1imp, e1inc, e1inf, e1ing, e1ins, e1int, e1inv, u1int, u1ind, u1iz., a1iz." | tr -d ' ' | tr ',' '\n') > /tmp/patts4
+% cat ../data/default.TeX.pt-br.patterns <(echo ".p2si, .p2sí, .g2no, .g2nó, t2c, 1p2neu, .t2m, .p2t, su2b3r, su2b3l, .su3b4li, a1ir., u1ir., 1qu, 1vô, 1lô, 1cô, 1gô, 1bô, 1tô, 1rô, 1pô, a1é, a1í, a1ó, a1ú, e1á, e1â, e1ã, e1é, e1ê, e1í, e1ó, é1o, e1ú, i1á, i1ã, í1a, i1é, i1í, i1ó, í1o, i1u, i1ú, o1á, o1é, o1í, o1ó, u1á, u1ã, u1í, ú1o, 1qu2á, 1qu2í, 1gu2í, a1ind, a1i1nh, e1imp, e1inc, e1inf, e1ing, e1ins, e1int, e1inv, u1int, u1ind, u1iz., a1iz." | tr -d ' ' | tr ',' '\n') > /tmp/patts4
 % ./gocreateresultfile.sh ../data/hyphenations6.dic /tmp/patts4 > /tmp/hyphenations6result_004.dic
 % ./resultfilemetrics.sh -f /tmp/hyphenations6result_004.dic
 % correct: 15833; wrong: 0 (); missing: 8 (8)
@@ -112,9 +287,10 @@ evaluate the results of the current rules against this set.
 In this new dataset, the number of incorrect hyphenations
 increases to 1121, with the majority stemming from apparent proparoxytones. These cases can be easily rectified by
 avoiding the final hyphen which leaves the vowels \emph{a}, \emph{e} or \emph{o} alone in the last syllable.
-To address this, we introduce rules \texttt{4a.}, \texttt{4e.}, \texttt{4o.} (see \cref{rulesxxx}).
-While a more comprehensive rule set could be developed to account for all scenarios\footnote{A better rule would be to restrain the final hyphenation, leaving the vowel alone, if the preceding syllable has a vowel with diacritic. That would require an exhaustive list of all scenarios.}, we opted for these more concise rules despite their limitations. 
-% cat ../data/default.TeX.pt-br.patterns <(echo ".p2si, .p2sí, .g2no, .g2nó, t2c, p2neu, .t2m, .p2t, su2b3r, su2b3l, .su3b4li, a1ir., u1ir., i3â, i3ê, i3ô, 1qu, 1vô, 1lô, 1cô, 1gô, 1bô, 1tô, 1rô, 1pô, a1é, a1í, a1ó, a1ú, e1á, e1â, e1ã, e1é, e1ê, e1í, e1ó, é1o, e1ú, i1á, i1ã, í1a, i1é, i1í, i1ó, í1o, i1u, i1ú, o1á, o1é, o1í, o1ó, u1á, u1ã, u1í, ú1o, 1qu2á, 1qu2í, 1gu2í, a1ind, a1i1nh, e1imp, e1inc, e1inf, e1ing, e1ins, e1int, e1inv, u1int, u1ind, u1iz., a1iz., 4a., 4e., 4o." | tr -d ' ' | tr ',' '\n') > /tmp/patts5
+To address this, we introduce rules \texttt{4a.}, \texttt{4e.}, \texttt{4o.} (see \cref{rulegrp_Vf}).
+While a more comprehensive rule set could be developed to account for all scenarios\footnote{A better rule would be to restrain the final hyphenation, leaving the vowel alone, if the preceding syllable has a vowel with diacritic. That would require an exhaustive list of all scenarios.}, we opted for these more concise rules despite their limitations.
+Note that, this set of three rules might be easily suppressed if someone intend to get the final vowel hyphenated.
+% cat ../data/default.TeX.pt-br.patterns <(echo ".p2si, .p2sí, .g2no, .g2nó, t2c, 1p2neu, .t2m, .p2t, su2b3r, su2b3l, .su3b4li, a1ir., u1ir., 1qu, 1vô, 1lô, 1cô, 1gô, 1bô, 1tô, 1rô, 1pô, a1é, a1í, a1ó, a1ú, e1á, e1â, e1ã, e1é, e1ê, e1í, e1ó, é1o, e1ú, i1á, i1ã, í1a, i1é, i1í, i1ó, í1o, i1u, i1ú, o1á, o1é, o1í, o1ó, u1á, u1ã, u1í, ú1o, 1qu2á, 1qu2í, 1gu2í, a1ind, a1i1nh, e1imp, e1inc, e1inf, e1ing, e1ins, e1int, e1inv, u1int, u1ind, u1iz., a1iz., 4a., 4e., 4o." | tr -d ' ' | tr ',' '\n') > /tmp/patts5
 % ./gocreateresultfile.sh ../data/hyphenations5.dic /tmp/patts5 > /tmp/hyphenations5result_005.dic
 % ./resultfilemetrics.sh -f /tmp/hyphenations5result_005.dic
 % correct: 14720; wrong: 35 (35); missing: 900 (897,3) 
@@ -130,14 +306,14 @@ The resulting errors are shown in the following list:
 \setlength{\parindent}{0pt}
 \emph{sa*gu.ão \\ p.seu-dô*ni*mo \\ s.ta*li*nis*mo \\ a.b-rup*to \\ su.b-li*mi*nar \\ quar-t.zi*to \\ c.za*ri*na \\ c.za*ris*ta \\ bre.ch*ti*a*no \\ c.za*ris*mo \\ su.b-li*te*ra*tu*ra \\ ca*ra*min*gu.ás \\ d.ze*ta \\ m.ne-mô*ni*ca \\ p.so*rí*a*se \\ t.za*ris*ta \\ g.nais*se \\ m.ne-mô*ni*co \\ p.so*as \\ su.b-lin*gual \\ es*tô*ma.go \\ núp*ci.as \\ su.b-li*nha \\ a*rá*bi.as \\ quar-t.zo \\ e*fe*mé*ri.de \\ cri*sân*te.mo \\ e*xé*qui.as \\ flâ*mu.la \\ a-p.nei-a \\ c.ni*dá*rio \\ dis-p.nei-a \\ gli*có*li.se \\ hi*pe.r-al*ge*si-a \\ ne.er*lan*dês}
 \end{multicols}
-\noindent{}From these, we have proposed the rules: \texttt{1gu4á}, \texttt{1gu4ã}, \texttt{1qu4ã} (see \cref{rulegrp_gua}),
+\noindent{}From these, we have proposed the rules: \texttt{1gu2á}, \texttt{1gu2ã}, \texttt{1qu2ã} (see \cref{rulegrp_aa}),
 \texttt{.m2n} (see \cref{rulegrp_mn}), \texttt{c2za} (see \cref{rulegrp_cza}), \texttt{.s2} (see \cref{rulegrp_s2}), and \texttt{1p2seu1d} (see \cref{rulegrp_pseu}).
 % regra: 1gu4á, 1gu4ã, 1qu4ã – jaraguá, saguão, quão
 % regra: .m2n – mnemônico
 % regra: c2za – czar
 % regra: .s2
 % regra: 1p2seu1d – pseudônimo
-% cat ../data/default.TeX.pt-br.patterns <(echo ".p2si, .p2sí, .g2no, .g2nó, t2c, p2neu, .t2m, .p2t, su2b3r, su2b3l, .su3b4li, a1ir., u1ir., i3â, i3ê, i3ô, 1qu, 1vô, 1lô, 1cô, 1gô, 1bô, 1tô, 1rô, 1pô, a1é, a1í, a1ó, a1ú, e1á, e1â, e1ã, e1é, e1ê, e1í, e1ó, é1o, e1ú, i1á, i1ã, í1a, i1é, i1í, i1ó, í1o, i1u, i1ú, o1á, o1é, o1í, o1ó, u1á, u1ã, u1í, ú1o, 1qu2á, 1qu2í, 1gu2í, a1ind, a1i1nh, e1imp, e1inc, e1inf, e1ing, e1ins, e1int, e1inv, u1int, u1ind, u1iz., a1iz., 4a., 4e., 4o., 1gu4á, 1gu4ã, 1qu4ã, .m2n, c2za, .s2, 1p2seu1d" | tr -d ' ' | tr ',' '\n') > /tmp/patts6
+% cat ../data/default.TeX.pt-br.patterns <(echo ".p2si, .p2sí, .g2no, .g2nó, t2c, 1p2neu, .t2m, .p2t, su2b3r, su2b3l, .su3b4li, a1ir., u1ir., 1qu, 1vô, 1lô, 1cô, 1gô, 1bô, 1tô, 1rô, 1pô, a1é, a1í, a1ó, a1ú, e1á, e1â, e1ã, e1é, e1ê, e1í, e1ó, é1o, e1ú, i1á, i1ã, í1a, i1é, i1í, i1ó, í1o, i1u, i1ú, o1á, o1é, o1í, o1ó, u1á, u1ã, u1í, ú1o, 1qu2á, 1qu2í, 1gu2í, a1ind, a1i1nh, e1imp, e1inc, e1inf, e1ing, e1ins, e1int, e1inv, u1int, u1ind, u1iz., a1iz., 4a., 4e., 4o., 1gu4á, 1gu4ã, 1qu4ã, .m2n, c2za, .s2, 1p2seu1d" | tr -d ' ' | tr ',' '\n') > /tmp/patts6
 % ./gocreateresultfile.sh ../data/hyphenations5.dic /tmp/patts6 > /tmp/hyphenations5result_006.dic
 % ./resultfilemetrics.sh -f /tmp/hyphenations5result_006.dic
 % correct: 14732; wrong: 21 (21); missing: 899 (896,3)
@@ -153,10 +329,10 @@ The list of wrong hyphenations follows below:
 Analyzing the missing hyphenation points, as mentioned earlier, most result from the rules (\texttt{4a.}, \texttt{4e.}, \texttt{4o.})
 we proposed to handle apparent proparoxytones. This leave us with 125 missing hyphenations to address.
 We observe that a few additional rules with diacritic counterpart need to be introduced: 
-\texttt{1dô}, \texttt{1fô}, \texttt{1mô}, \texttt{1nô}, \texttt{1sô}, \texttt{1zô} (see \cref{xxx}), 
+\texttt{1dô}, \texttt{1fô}, \texttt{1mô}, \texttt{1nô}, \texttt{1sô}, \texttt{1zô} (see \cref{rulegrp_bo}), 
 %\texttt{1ên} (see \cref{}), 
-\texttt{u3é}, \texttt{1gu4é}, \texttt{1qu4é} (see \cref{xxxx}).
-% cat ../data/default.TeX.pt-br.patterns <(echo ".p2si, .p2sí, .g2no, .g2nó, t2c, p2neu, .t2m, .p2t, su2b3r, su2b3l, .su3b4li, a1ir., u1ir., i3â, i3ê, i3ô, 1qu, 1vô, 1lô, 1cô, 1gô, 1bô, 1tô, 1rô, 1pô, a1é, a1í, a1ó, a1ú, e1á, e1â, e1ã, e1é, e1ê, e1í, e1ó, é1o, e1ú, i1á, i1ã, í1a, i1é, i1í, i1ó, í1o, i1u, i1ú, o1á, o1é, o1í, o1ó, u1á, u1ã, u1í, ú1o, 1qu2á, 1qu2í, 1gu2í, a1ind, a1i1nh, e1imp, e1inc, e1inf, e1ing, e1ins, e1int, e1inv, u1int, u1ind, u1iz., a1iz., 4a., 4e., 4o., 1gu4á, 1gu4ã, 1qu4ã, .m2n, c2za, .s2, 1p2seu1d, 1dô, 1fô, 1mô, 1nô, 1sô, 1zô, u3é, 1gu4é, 1qu4é" | tr -d ' ' | tr ',' '\n') > /tmp/patts7
+\texttt{u1é}, \texttt{1gu2é}, \texttt{1qu2é} (see \cref{rulegrp_aa}).
+% cat ../data/default.TeX.pt-br.patterns <(echo ".p2si, .p2sí, .g2no, .g2nó, t2c, 1p2neu, .t2m, .p2t, su2b3r, su2b3l, .su3b4li, a1ir., u1ir., 1qu, 1vô, 1lô, 1cô, 1gô, 1bô, 1tô, 1rô, 1pô, a1é, a1í, a1ó, a1ú, e1á, e1â, e1ã, e1é, e1ê, e1í, e1ó, é1o, e1ú, i1á, i1ã, í1a, i1é, i1í, i1ó, í1o, i1u, i1ú, o1á, o1é, o1í, o1ó, u1á, u1ã, u1í, ú1o, 1qu2á, 1qu2í, 1gu2í, a1ind, a1i1nh, e1imp, e1inc, e1inf, e1ing, e1ins, e1int, e1inv, u1int, u1ind, u1iz., a1iz., 4a., 4e., 4o., 1gu4á, 1gu4ã, 1qu4ã, .m2n, c2za, .s2, 1p2seu1d, 1dô, 1fô, 1mô, 1nô, 1sô, 1zô, 1gu2é, 1qu2é" | tr -d ' ' | tr ',' '\n') > /tmp/patts7
 % ./gocreateresultfile.sh ../data/hyphenations5.dic /tmp/patts7 > /tmp/hyphenations5result_007.dic
 % ./resultfilemetrics.sh -f /tmp/hyphenations5result_007.dic
 % correct: 14775; wrong: 21 (21); missing: 856 (853,3)
@@ -212,25 +388,27 @@ After incorporating these rules, we now have 21 incorrect and 856 missing hyphen
 % u1i1ç
 
 To account for a few more missing cases, we propose the inclusion of the following rules: 
-\texttt{tu1i}, \texttt{bu1i}, \texttt{co1in}, \texttt{nu1i}, \texttt{cu1i}, \texttt{o1in}, \texttt{u1in}, \texttt{su1i}, \texttt{í1e}, \texttt{ra1is},
-\texttt{ju1i}, \texttt{fu1i}, \texttt{du1i}, \texttt{do1im}, \texttt{au1i}, \texttt{u1i1ç}.
-% cat ../data/default.TeX.pt-br.patterns <(echo ".p2si, .p2sí, .g2no, .g2nó, t2c, p2neu, .t2m, .p2t, su2b3r, su2b3l, .su3b4li, a1ir., u1ir., i3â, i3ê, i3ô, 1qu, 1vô, 1lô, 1cô, 1gô, 1bô, 1tô, 1rô, 1pô, a1é, a1í, a1ó, a1ú, e1á, e1â, e1ã, e1é, e1ê, e1í, e1ó, é1o, e1ú, i1á, i1ã, í1a, i1é, i1í, i1ó, í1o, i1u, i1ú, o1á, o1é, o1í, o1ó, u1á, u1ã, u1í, ú1o, 1qu2á, 1qu2í, 1gu2í, a1ind, a1i1nh, e1imp, e1inc, e1inf, e1ing, e1ins, e1int, e1inv, u1int, u1ind, u1iz., a1iz., 4a., 4e., 4o., 1gu4á, 1gu4ã, 1qu4ã, .m2n, c2za, .s2, 1p2seu1d, 1dô, 1fô, 1mô, 1nô, 1sô, 1zô, u3é, 1gu4é, 1qu4é, tu1i, bu1i, co1in, nu1i, cu1i, o1in, u1in, su1i, í1e, ra1is, ju1i, fu1i, du1i, do1im, au1i, u1i1ç" | tr -d ' ' | tr ',' '\n') > /tmp/patts8
+\texttt{tu1i}, \texttt{bu1i}, %\texttt{co1in}, 
+\texttt{nu1i}, %\texttt{cu1i}, 
+\texttt{o1in}, \texttt{u1in}, \texttt{su1i}, \texttt{í1e}, %\texttt{ra1is},
+\texttt{ju1i}, \texttt{fu1i}, \texttt{du1i}, \texttt{do1im}, \texttt{au1i}, \texttt{u1i1ç} (see \cref{rulegrp_Vi}).
+% cat ../data/default.TeX.pt-br.patterns <(echo ".p2si, .p2sí, .g2no, .g2nó, t2c, 1p2neu, .t2m, .p2t, su2b3r, su2b3l, .su3b4li, a1ir., u1ir., 1qu, 1vô, 1lô, 1cô, 1gô, 1bô, 1tô, 1rô, 1pô, a1é, a1í, a1ó, a1ú, e1á, e1â, e1ã, e1é, e1ê, e1í, e1ó, é1o, e1ú, i1á, i1ã, í1a, i1é, i1í, i1ó, í1o, i1u, i1ú, o1á, o1é, o1í, o1ó, u1á, u1ã, u1í, ú1o, 1qu2á, 1qu2í, 1gu2í, a1ind, a1i1nh, e1imp, e1inc, e1inf, e1ing, e1ins, e1int, e1inv, u1int, u1ind, u1iz., a1iz., 4a., 4e., 4o., 1gu4á, 1gu4ã, 1qu4ã, .m2n, c2za, .s2, 1p2seu1d, 1dô, 1fô, 1mô, 1nô, 1sô, 1zô, 1gu2é, 1qu2é, tu1i, bu1i, co1in, nu1i, cu1i, o1in, u1in, su1i, í1e, ra1is, ju1i, fu1i, du1i, do1im, au1i, u1i1ç" | tr -d ' ' | tr ',' '\n') > /tmp/patts8
 % ./gocreateresultfile.sh ../data/hyphenations5.dic /tmp/patts8 > /tmp/hyphenations5result_008.dic
 % ./resultfilemetrics.sh -f /tmp/hyphenations5result_008.dic
 % correct: 14813; wrong: 21 (21); missing: 818 (815,3)
 With these additions, the number of missing hyphenations drops to 818, with 772 cases involving final vowels,
-as mentioned earlier. Among these, only two cases involve a final vowel with a diacritic: \emph{fu*zu-ê} and \emph{ba*ba*la-ô}).
+as mentioned earlier. Among these, only two cases involve a final vowel with a diacritic: \emph{fu*zu-ê} and \emph{ba*ba*la-ô}. % \emph{fuzuê} and \emph{babalaô}. %\emph{fu*zu-ê} and \emph{ba*ba*la-ô}.
 The list of the remaining 46 follows:
 \begin{multicols}{5}
 \setlength{\columnsep}{0pt}
 \setlength{\parindent}{0pt}
 \emph{ru-im \\ flu-i*dez \\ a*da-il \\ voy-eu*ris*mo \\ a.b-rup*to \\ me*ga-watt \\ ca-im \\ su.b-li*mi*nar \\ dar-wi*nis*mo \\ quar-t.zi*to \\ re-ur*ba*ni*zar \\ voy-eu*ris*ta \\ ba-ha*men*se \\ dar-wi*nis*ta \\ ma-çô*ni*co \\ pat-chu*li \\ su.b-li*te*ra*tu*ra \\ fa-im \\ voy-eu*rís*ti*co \\ tai-wa*nês \\ a*bra-â*mi*co \\ ca*far*na-um \\ ku-wai*ti*a*no \\ ma*ru-im \\ su.b-lin*gual \\ te-ô*ni*mo \\ a*lu-i*men*to \\ mal-thu*si*a*nis*mo \\ mal-thu*si*a*no \\ in*flu-ên*cia \\ de*po-i*men*to \\ re-u*nir \\ co-i*bir \\ flu-ên*cia \\ con*flu-ên*cia \\ a*nu-ên*cia \\ su.b-li*nha \\ a*flu-ên*cia \\ in*con*gru-ên*cia \\ quar-t.zo \\ es*pon*sa-is \\ ba*la-us*tra*da \\ con*gru-ên*cia \\ tran*se-un*te \\ di*flu-ên*cia \\ in*de-is*cen*te}
 \end{multicols}
-From this list, we may create a new rule: \texttt{u1ê}, which would also require two exception rules: \texttt{gu2ê} and \texttt{qu2ê}.
+From this list, we may create a new rule: \texttt{u1ê}, which would also require two exception rules: \texttt{1gu2ê} and \texttt{1qu2ê}.
 % rules: u1ê (u3ê, since the default rule has a u3e)
-%   exception rules: gu2ê, qu2ê
+%   exception rules: 1gu2ê, 1qu2ê
 %
-% cat ../data/default.TeX.pt-br.patterns <(echo ".p2si, .p2sí, .g2no, .g2nó, t2c, p2neu, .t2m, .p2t, su2b3r, su2b3l, .su3b4li, a1ir., u1ir., i3â, i3ê, i3ô, 1qu, 1vô, 1lô, 1cô, 1gô, 1bô, 1tô, 1rô, 1pô, a1é, a1í, a1ó, a1ú, e1á, e1â, e1ã, e1é, e1ê, e1í, e1ó, é1o, e1ú, i1á, i1ã, í1a, i1é, i1í, i1ó, í1o, i1u, i1ú, o1á, o1é, o1í, o1ó, u1á, u1ã, u1í, ú1o, 1qu2á, 1qu2í, 1gu2í, a1ind, a1i1nh, e1imp, e1inc, e1inf, e1ing, e1ins, e1int, e1inv, u1int, u1ind, u1iz., a1iz., 4a., 4e., 4o., 1gu4á, 1gu4ã, 1qu4ã, .m2n, c2za, .s2, 1p2seu1d, 1dô, 1fô, 1mô, 1nô, 1sô, 1zô, u3é, 1gu4é, 1qu4é, tu1i, bu1i, co1in, nu1i, cu1i, o1in, u1in, su1i, í1e, ra1is, ju1i, fu1i, du1i, do1im, au1i, u1i1ç, u1ê, gu2ê, qu2ê" | tr -d ' ' | tr ',' '\n') > /tmp/patts9
+% cat ../data/default.TeX.pt-br.patterns <(echo ".p2si, .p2sí, .g2no, .g2nó, t2c, 1p2neu, .t2m, .p2t, su2b3r, su2b3l, .su3b4li, a1ir., u1ir., 1qu, 1vô, 1lô, 1cô, 1gô, 1bô, 1tô, 1rô, 1pô, a1é, a1í, a1ó, a1ú, e1á, e1â, e1ã, e1é, e1ê, e1í, e1ó, é1o, e1ú, i1á, i1ã, í1a, i1é, i1í, i1ó, í1o, i1u, i1ú, o1á, o1é, o1í, o1ó, u1á, u1ã, u1í, ú1o, 1qu2á, 1qu2í, 1gu2í, a1ind, a1i1nh, e1imp, e1inc, e1inf, e1ing, e1ins, e1int, e1inv, u1int, u1ind, u1iz., a1iz., 4a., 4e., 4o., 1gu4á, 1gu4ã, 1qu4ã, .m2n, c2za, .s2, 1p2seu1d, 1dô, 1fô, 1mô, 1nô, 1sô, 1zô, 1gu2é, 1qu2é, tu1i, bu1i, co1in, nu1i, cu1i, o1in, u1in, su1i, í1e, ra1is, ju1i, fu1i, du1i, do1im, au1i, u1i1ç, u1ê, 1gu2ê, 1qu2ê" | tr -d ' ' | tr ',' '\n') > /tmp/patts9
 % ./gocreateresultfile.sh ../data/hyphenations6.dic /tmp/patts9 > /tmp/hyphenations6result_009.dic
 % ./resultfilemetrics.sh -f /tmp/hyphenations6result_009.dic
 % correct: 15302; wrong: 0 (); missing: 539 (539) 
@@ -277,27 +455,21 @@ Of these, 26 involve final vowels, and the remaining 3 are:
 % o1im (sim), o2i1na (sim), p1p (não), p3sia (não), p3sin (não), pro1i1b (sim), ru1i1na (não), ru1i1no (não), su1i1ti (não), z1z (não), z2z. (não)
 % 
 
-% cat ../data/default.TeX.pt-br.patterns <(echo ".p2si, .p2sí, .g2no, .g2nó, .g2nô, t2c, p2neu, .t2m, .p2t, su2b3r, su2b3l, .su3b4li, a1ir., u1ir., i3â, i3ê, i3ô, 1qu, 1vô, 1lô, 1cô, 1gô, 1bô, 1tô, 1rô, 1pô, a1é, a1í, a1ó, a1ú, e1á, e1â, e1ã, e1é, e1ê, e1í, e1ó, é1o, e1ú, i1á, i1ã, í1a, i1é, i1í, i1ó, í1o, i1u, i1ú, o1á, o1é, o1í, o1ó, u1á, u1ã, u1í, ú1o, 1qu2á, 1qu2í, 1gu2í, a1ind, a1i1nh, e1imp, e1inc, e1inf, e1ing, e1ins, e1int, e1inv, u1int, u1ind, u1iz., a1iz., 4a., 4e., 4o., 1gu4á, 1gu4ã, 1qu4ã, .m2n, c2za, .s2, 1p2seu1d, 1dô, 1fô, 1mô, 1nô, 1sô, 1zô, u3é, 1gu4é, 1qu4é, tu1i, tu2it, tu2id, bu1i, co1in, nu1i, cu1i, o1in, u1in, su1i, í1e, ra1is, ju1i, fu1i, du1i, do1im, au1i, u1i1ç, u1ê, gu2ê, qu2ê, 1çô, u1é, 1gu2é, 1qu2é, 1xô, a1â, a1ã, a1ô, cu2i, cu3in, e1ô, .ne4o, o1ã, o1ê, o1im, o2i1na, pro1i1b, co2ima" | tr -d ' ' | tr ',' '\n') > /tmp/patts10
+% cat ../data/default.TeX.pt-br.patterns <(echo ".p2si, .p2sí, .g2no, .g2nó, .g2nô, t2c, 1p2neu, .t2m, .p2t, su2b3r, su2b3l, .su3b4li, a1ir., u1ir., 1qu, 1vô, 1lô, 1cô, 1gô, 1bô, 1tô, 1rô, 1pô, a1é, a1í, a1ó, a1ú, e1á, e1â, e1ã, e1é, e1ê, e1í, e1ó, é1o, e1ú, i1á, i1ã, í1a, i1é, i1í, i1ó, í1o, i1u, i1ú, o1á, o1é, o1í, o1ó, u1á, u1ã, u1í, ú1o, 1qu2á, 1qu2í, 1gu2í, a1ind, a1i1nh, e1imp, e1inc, e1inf, e1ing, e1ins, e1int, e1inv, u1int, u1ind, u1iz., a1iz., 4a., 4e., 4o., 1gu4á, 1gu4ã, 1qu4ã, .m2n, c2za, .s2, 1p2seu1d, 1dô, 1fô, 1mô, 1nô, 1sô, 1zô, 1gu2é, 1qu2é, tu1i, tu2it, tu2id, bu1i, co1in, nu1i, cu1i, o1in, u1in, su1i, í1e, ra1is, ju1i, fu1i, du1i, do1im, au1i, u1i1ç, u1ê, 1gu2ê, 1qu2ê, 1çô, u1é, 1gu2é, 1qu2é, 1xô, a1â, a1ã, a1ô, cu2i, cu3in, e1ô, .ne4o, o1ã, o1ê, o1im, o2i1na, pro1i1b, co2ima" | tr -d ' ' | tr ',' '\n') > /tmp/patts10
 
-% echo ".p2si, .p2sí, .g2no, .g2nó, .g2nô, t2c, p2neu, .t2m, .p2t, su2b3r, su2b3l, .su3b4li, a1ir., u1ir., i3â, i3ê, i3ô, 1qu, 1vô, 1lô, 1cô, 1gô, 1bô, 1tô, 1rô, 1pô, a1é, a1í, a1ó, a1ú, e1á, e1â, e1ã, e1é, e1ê, e1í, e1ó, é1o, e1ú, i1á, i1ã, í1a, i1é, i1í, i1ó, í1o, i1u, i1ú, o1á, o1é, o1í, o1ó, u1á, u1ã, u1í, ú1o, 1qu2á, 1qu2í, 1gu2í, a1ind, a1i1nh, e1imp, e1inc, e1inf, e1ing, e1ins, e1int, e1inv, u1int, u1ind, u1iz., a1iz., 4a., 4e., 4o., 1gu4á, 1gu4ã, 1qu4ã, .m2n, c2za, .s2, 1p2seu1d, 1dô, 1fô, 1mô, 1nô, 1sô, 1zô, u3é, 1gu4é, 1qu4é, tu1i, tu2it, tu2id, bu1i, co1in, nu1i, cu1i, o1in, u1in, su1i, í1e, ra1is, ju1i, fu1i, du1i, do1im, au1i, u1i1ç, u1ê, gu2ê, qu2ê, 1çô, u1é, 1gu2é, 1qu2é, 1xô, a1â, a1ã, a1ô, cu2i, cu3in, e1ô,.ne4o, o1ã, o1ê, o1im, o2i1na, pro1i1b, co2ima" | tr -d ' ' | tr ',' '\n' > ../data/patch.TeX.pt-br.patterns.v2
+% echo ".p2si, .p2sí, .g2no, .g2nó, .g2nô, t2c, 1p2neu, .t2m, .p2t, su2b3r, su2b3l, .su3b4li, a1ir., u1ir., 1qu, 1vô, 1lô, 1cô, 1gô, 1bô, 1tô, 1rô, 1pô, a1é, a1í, a1ó, a1ú, e1á, e1â, e1ã, e1é, e1ê, e1í, e1ó, é1o, e1ú, i1á, i1ã, í1a, i1é, i1í, i1ó, í1o, i1u, i1ú, o1á, o1é, o1í, o1ó, u1á, u1ã, u1í, ú1o, 1qu2á, 1qu2í, 1gu2í, a1ind, a1i1nh, e1imp, e1inc, e1inf, e1ing, e1ins, e1int, e1inv, u1int, u1ind, u1iz., a1iz., 4a., 4e., 4o., 1gu4á, 1gu4ã, 1qu4ã, .m2n, c2za, .s2, 1p2seu1d, 1dô, 1fô, 1mô, 1nô, 1sô, 1zô, 1gu2é, 1qu2é, tu1i, tu2it, tu2id, bu1i, co1in, nu1i, cu1i, o1in, u1in, su1i, í1e, ra1is, ju1i, fu1i, du1i, do1im, au1i, u1i1ç, u1ê, 1gu2ê, 1qu2ê, 1çô, u1é, 1gu2é, 1qu2é, 1xô, a1â, a1ã, a1ô, cu2i, cu3in, e1ô,.ne4o, o1ã, o1ê, o1im, o2i1na, pro1i1b, co2ima" | tr -d ' ' | tr ',' '\n' > ../data/patch.TeX.pt-br.patterns.v2
 
-% cat ../data/default.TeX.pt-br.patterns ../data/patch.TeX.pt-br.patterns.v2 > ../data/patched-default.TeX.pt-br.patterns.v2
+% sed -e '$e cat ../data/patch.TeX.pt-br.patterns.v2' ../data/default.TeX.pt-br.patterns > ../data/patched-default.TeX.pt-br.patterns.v2
 
 Considering some additional words that are not on the list, we gather an additional set of rules to 
 be incorporated: 
-\texttt{1çô} (e.g., \emph{ma-çô-ni-co}), 
-\texttt{1xô} (e.g., \emph{a-xô-nio}, \emph{sa-xô-ni-co}),
-\texttt{a1â} (e.g., \emph{a-bra-â-mi-co}), 
-\texttt{a1ã} (e.g., \emph{a-bra-ão}, \emph{ca-na-ã}), 
-\texttt{a1ô} (e.g., \emph{fa-ra-ô-ni-co}), 
-\texttt{e1ô} (e.g., \emph{le-ô-ni-das}, \emph{na-po-le-ô-ni-co}),
-\texttt{o1ã} (e.g., \emph{jo-ão}, \emph{la-go-ão}),
-\texttt{o1ê} (e.g., \emph{bo-ê-mi-o}),
-\texttt{cu2i} (e.g., \emph{cui-da-do}, \emph{cir-cui-to}; this rule requires the exception rule \texttt{cu3in} to avoid unintended errors in words like \emph{pi-cu-i-nha}, \emph{i-mis-cu-in-do}), 
-\texttt{.ne4o} (e.g., \emph{neo-li-be-ral}, \emph{neo-na-zis-ta}),
-\texttt{o1im} (e.g., \emph{co-im-bra}; this rule requires the exception rule \texttt{co2ima} to avoid unintended errors in words like \emph{coi-ma}),
-\texttt{o2i1na} (e.g., \emph{boi-na}, \emph{coi-na}), and 
-\texttt{pro1i1b} (e.g., \emph{pro-i-bir}).
+\texttt{1çô}, and \texttt{1xô} (e.g., \emph{ma-çô*ni*co}, \emph{a-xô*nio}, \emph{sa-xô*ni*co}; see \cref{rulegrp_bo});
+\texttt{a1â}, \texttt{a1ã}, \texttt{a1ô}, \texttt{e1ô}, \texttt{o1ã}, and \texttt{o1ê} (e.g., \emph{a*bra-â*mi*co}, \emph{a*bra-ão}, \emph{ca*na-ã}, \emph{fa*ra-ô*ni*co}, \emph{le-ô*ni*das}, \emph{na*po*le-ô*ni*co}, \emph{jo-ão}, \emph{la*go-ão}, \emph{bo-ê*mio}; see \cref{rulegrp_aa}); 
+%\texttt{cu2i} (e.g., \emph{cui-da-do}, \emph{cir-cui-to}; this rule requires the exception rule \texttt{cu3in} to avoid unintended errors in words like \emph{pi-cu-i-nha}, \emph{i-mis-cu-in-do}), 
+\texttt{.ne4o} (e.g., \emph{ne.o*li*be*ral}, \emph{ne.o-na*zis*ta}; see \cref{rulegrp_neo}),
+\texttt{o1im} (e.g., \emph{co-im*bra}; this rule requires the exception rule \texttt{co2ima} to avoid unintended errors in words like \emph{coi-ma}; see \cref{rulegrp_Vi}),
+\texttt{o2i1na} (e.g., \emph{bo.i*na}, \emph{co.i*na}; created as an exception for \texttt{o1in}, see \cref{rulegrp_Vi}), and 
+\texttt{pro1i1b} (e.g., \emph{pro-i*bir}, see \cref{rulegrp_proi}).
 After incorporating those rules, the number of incorrect and missing hyphenations, respectively,
 will be: 0, 538 (\texttt{hyphenations6}); 21, 818 (\texttt{hyphenations5}); and 0, 33 (\texttt{hyphenations4}). 
 
@@ -349,7 +521,7 @@ will be: 0, 538 (\texttt{hyphenations6}); 21, 818 (\texttt{hyphenations5}); and 
 % rules we could import from patch.TeX.pt-br.patterns (?)
 % cu2i, tu2i1t, o2i1na
 %
-% cat ../data/default.TeX.pt-br.patterns <(echo ".p2si, .p2sí, .g2no, .g2nó, t2c, p2neu, .t2m, .p2t, su2b3r, su2b3l, .su3b4li, a1ir., u1ir., i3â, i3ê, i3ô, 1qu, 1vô, 1lô, 1cô, 1gô, 1bô, 1tô, 1rô, 1pô, a1é, a1í, a1ó, a1ú, e1á, e1â, e1ã, e1é, e1ê, e1í, e1ó, é1o, e1ú, i1á, i1ã, í1a, i1é, i1í, i1ó, í1o, i1u, i1ú, o1á, o1é, o1í, o1ó, u1á, u1ã, u1í, ú1o, 1qu2á, 1qu2í, 1gu2í, a1ind, a1i1nh, e1imp, e1inc, e1inf, e1ing, e1ins, e1int, e1inv, u1int, u1ind, u1iz., a1iz., 4a., 4e., 4o., 1gu4á, 1gu4ã, 1qu4ã, .m2n, c2za, .s2, 1p2seu1d, 1dô, 1fô, 1mô, 1nô, 1sô, 1zô, u3é, 1gu4é, 1qu4é, tu1i, bu1i, co1in, nu1i, cu1i, o1in, u1in, su1i, í1e, ra1is, ju1i, fu1i, du1i, do1im, au1i, u1i1ç, cu2i, tu2i1t, o2i1na" | tr -d ' ' | tr ',' '\n') > /tmp/patts9
+% cat ../data/default.TeX.pt-br.patterns <(echo ".p2si, .p2sí, .g2no, .g2nó, t2c, 1p2neu, .t2m, .p2t, su2b3r, su2b3l, .su3b4li, a1ir., u1ir., 1qu, 1vô, 1lô, 1cô, 1gô, 1bô, 1tô, 1rô, 1pô, a1é, a1í, a1ó, a1ú, e1á, e1â, e1ã, e1é, e1ê, e1í, e1ó, é1o, e1ú, i1á, i1ã, í1a, i1é, i1í, i1ó, í1o, i1u, i1ú, o1á, o1é, o1í, o1ó, u1á, u1ã, u1í, ú1o, 1qu2á, 1qu2í, 1gu2í, a1ind, a1i1nh, e1imp, e1inc, e1inf, e1ing, e1ins, e1int, e1inv, u1int, u1ind, u1iz., a1iz., 4a., 4e., 4o., 1gu4á, 1gu4ã, 1qu4ã, .m2n, c2za, .s2, 1p2seu1d, 1dô, 1fô, 1mô, 1nô, 1sô, 1zô, 1gu2é, 1qu2é, tu1i, bu1i, co1in, nu1i, cu1i, o1in, u1in, su1i, í1e, ra1is, ju1i, fu1i, du1i, do1im, au1i, u1i1ç, cu2i, tu2i1t, o2i1na" | tr -d ' ' | tr ',' '\n') > /tmp/patts9
 % ./gocreateresultfile.sh ../data/hyphenations6.dic /tmp/patts9 > /tmp/hyphenations6result_009.dic
 % ./resultfilemetrics.sh -f /tmp/hyphenations6result_009.dic
 % correct: 15302; wrong: 0 (); missing: 539 (539) 

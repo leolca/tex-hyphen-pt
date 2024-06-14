@@ -66,9 +66,11 @@
 \usepackage{bytefield}
 %\usepackage{xstring}
 
+% Define a new counter for the custom list of rules
+\newcounter{numberRulesGroups}
 % Define a new list environment for rules
 \newlist{rules}{enumerate}{1}
-\setlist[rules,1]{label=\arabic*}
+\setlist[rules,1]{label=\arabic*, ref=\arabic*, before=\setcounter{numberRulesGroups}{0}}
 
 % Custom label format for the rules environment
 \crefname{rulesi}{rule}{rules}
@@ -87,7 +89,7 @@
   \let\orglabel\label
   \let\label\@gobble
   \phantomsection
-  \edef\@currentlabel{#1}%
+  \edef\@currentlabel{#1\unskip}%
   %\edef\@currentlabelname{#1}%
   \let\label\orglabel
   \orgdescriptionlabel{#1}%
@@ -127,240 +129,244 @@
 \input{updatingrules.tex}
 \input{limitations.tex}
 \input{patgenrules.tex}
+\input{hyphenpatches.tex}
+\input{conclusion.tex}
 
 
+%\section{Comparing the set of rules} 
+%Let us remember that the standard \TeX{} hyphenation rules, proposed by
+%\textcite{hyphpt}, amount to XXX errors, in a set of XXXX words.  Among those, XXX
+%correspond to places where the hyphenation was not carried out and XXX to
+%mismarkings. Faced with the errors made by the standard hyphenator, a set of
+%\num{\NumberOfNewRules} rules were established, which reduced the errors to XXXX,
+%with XXXX unmarked hyphenation places and XXX mismarkings.  Such rules are
+%presented and exemplified below, as well as the necessary exception rules and
+%an example in which the application of the rule is demonstrated.
 
 
-\section{Comparing the set of rules} 
-Let us remember that the standard \TeX{} hyphenation rules, proposed by
-\textcite{hyphpt}, amount to XXX errors, in a set of XXXX words.  Among those, XXX
-correspond to places where the hyphenation was not carried out and XXX to
-mismarkings. Faced with the errors made by the standard hyphenator, a set of
-\num{\NumberOfNewRules} rules were established, which reduced the errors to XXXX,
-with XXXX unmarked hyphenation places and XXX mismarkings.  Such rules are
-presented and exemplified below, as well as the necessary exception rules and
-an example in which the application of the rule is demonstrated.
+%\section{Universal syllabic pattern generation}
+%Universal syllabic pattern generation by Jakub Máca, Petr Sojka, Ondřej Sojka (TUG 2023).
 
-
-\section{Universal syllabic pattern generation}
-Universal syllabic pattern generation by Jakub Máca, Petr Sojka, Ondřej Sojka (TUG 2023).
-
-% ==== OLD TEXT ====
-\section{Hyphenation rule patches}\label{sec-hyph-rpatches}
-OLD TEST
-
-OLD TEST
-
-Foi criado um conjunto de \num{\NumberOfNewRules} regras para aprimorar as hifenizações no
-português. Analisando um conjunto de \num{37798} palavras, as regras padrão apresentam
-1368 erros (1273 pontos de hifenização não marcados e 125 pontos marcados
-erroneamente)\footnote{A soma não é 1368 pois temos 30 casos em que os dois
-tipos de erros ocorrem.}, enquanto as novas regras apresentaram 132 erros (118
-pontos de hifenização não marcados e 35 pontos marcados
-erroneamente)\footnote{35 palavras apresentam ambos tipos de erro.}.
-%%% <<< fazer correção após correção manual das hifenizações tidas como corretas.
-
-Foi criado um conjunto de 37798 palavras obtidas do corpus
-\href{https://www.linguateca.pt/cetenfolha/index_info.html}{CETENFolha},
-juntamente com palavras do \href{https://www.palavras.net/}{Palavras NET} e
-algumas palavras do corpus baseado na
-\href{https://pt.wikipedia.org}{Wikipedia}. 
-Foram mantidas apenas as palavras
-para as quais encontrou-se a hifenização nos seguintes dicionários online:
-\href{https://michaelis.uol.com.br/}{Michaelis},
-\href{https://dicionario.priberam.org/}{Priberam},
-\href{https://pt.wiktionary.org}{Wikcionário},
-\href{https://aulete.com.br/}{Aulete},
-\href{http://www.portaldalinguaportuguesa.org/}{Portal da Língua Portuguesa} e
-\href{https://www.dicio.com.br/}{Dicio}.
-Adotamos como hifenização `correta' aquela que ao menos 4 dicionários
-concordavam. Algumas hifenizações foram realizadas manualmente pelo autor.
-Considerando a frequência de ocorrência das palavras nos corpus, o conjuto de
-palavras escolhido representa 55\% do total das ocorrências relativo ao
-Wikipedia e 58\% em relação ao CETENFolha.
-% Corpus Wikipedia
+%% ==== OLD TEXT ====
+%\section{Hyphenation rule patches}\label{sec-hyph-rpatches}
+%OLD TEST
 %
-% 166341424 / 302226482 = 0.55
-% 
-% soma da freq. de occ. das palavras utilizadas
-% cat portuguese_4_utf8.dic portuguese_extra_utf8.dic | tr -d '-' | while read -r word; do grep "[0-9]\+ ${word}$" /ms/downloads/samples/wikipedia/ptwiki-latest-pages-articles-multistream_wordlist.txt | head -n 1 | tr -dc '0-9\n'; done | paste -s -d+ - | bc 
-% = 166341424
+%OLD TEST
 %
-% soma da freq. de occ. de todas palavras no corpus
-% cat /ms/downloads/samples/wikipedia/ptwiki-latest-pages-articles-multistream_wordlist.txt | tr -dc '0-9\n' | paste -s -d+ - | bc
-% = 302226482
+%Foi criado um conjunto de \num{\NumberOfNewRules} regras para aprimorar as hifenizações no
+%português. Analisando um conjunto de \num{37798} palavras, as regras padrão apresentam
+%1368 erros (1273 pontos de hifenização não marcados e 125 pontos marcados
+%erroneamente)\footnote{A soma não é 1368 pois temos 30 casos em que os dois
+%tipos de erros ocorrem.}, enquanto as novas regras apresentaram 132 erros (118
+%pontos de hifenização não marcados e 35 pontos marcados
+%erroneamente)\footnote{35 palavras apresentam ambos tipos de erro.}.
+%%%% <<< fazer correção após correção manual das hifenizações tidas como corretas.
 %
-% CETENFolha
-% 13314084 / 22728804 = 0.5857
-Este percentual é relativamente baixo, mas deve-se ao fato de que não obtivemos
-sucesso em encontrar a hifenização de muitas palavras nos dicionários
-analisados e também por não observarmos um consenso de ao menos 4 dicionários
-com uma mesma hifenização.
-
-Analisando os erros resultantes da hifenização utilizando as regras padrão do
-TeX, foram estabelecidas algumas regras como forma de abarcar um conjunto maior
-de palavras. Tais regras são elencadas a seguir, expondo também as regras de
-exceção necessárias e um exemplo onde a regra será utilizada.
-
-\begin{rules}
-\item\label{rulegrp_psi} regra: \texttt{.p2si}, \texttt{.p2sí} -- psicologia, psíquico % update (word-initial pattern, exception not necessary (?)) 
-%\item\label{rulegrp_psi} regra: \texttt{p2si}, \texttt{p2sí} -- psicologia, psíquico\\
-%exceção: \texttt{p3sia}, \texttt{p3sin} -- epilepsia, rodopsina
-
-\item\label{rulegrp_tc} regra: \texttt{t2c} -- tchau%, tcheco
-
-\item\label{rulegrp_pneu} regra: \texttt{p2neu} -- pneumonia
-    
-\item\label{rulegrp_gno} regra: \texttt{.g2no}, \texttt{.g2nó} -- gnomo, gnóstico
-
-\item\label{rulegrp_pt} regra: \texttt{.p2t} -- ptose%, pterossauro
-
-\item\label{rulegrp_tm} regra: \texttt{.t2m} -- tmese % [new rule] needs to be incorporated and checked
-
-\item\label{rulegrp_cza} regra: \texttt{c2za} -- czar
-
-\item\label{rulegrp_s2} regra: \texttt{.s2} -- stalinismo
-
-\item\label{rulegrp_t2} regra: \texttt{.t2} -- tsunami
-
-\item\label{rulegrp_mn} regra: \texttt{.m2n} -- mnemônico
-
-\item\label{rulegrp_zz} regra: \texttt{z1z}, \texttt{p1p}, \texttt{z2z.} -- pizza, shopping, jazz
-
-\item\label{rulegrp_sub} regra: \texttt{su2b3r}, \texttt{su2b3l} -- sublunar, subrotina \\
-exceção: \texttt{.su3b4li}
-%exceção: \texttt{su3b4li1nh}, \texttt{su3b4li1ma}, \texttt{su3b4li1me}, \texttt{su3b4li1mid} -- sublinhar, sublimar, sublime, sublimidade
-
-
-\item\label{rulegrp_so} regra: \texttt{1sô} -- subsônico
-
-\item\label{rulegrp_pseu} regra: \texttt{1p2seu1d} -- pseudônimo
-
-%\item\label{rulegrp_ein} regra: \texttt{e1in1c}, \texttt{e1in1f}, \texttt{e1in1g}, \texttt{e1in1s}, \texttt{e1in1t}, \texttt{e1in1v} -- reincidência, reinfecção, reingressa, reinserção, reintegração, reinventar \\
-%exceção: \texttt{e1in2st}, \texttt{e1in2sc} -- reinstalado, reinscrever
-
-\item\label{rulegrp_ein} regra: \texttt{e1inc}, \texttt{e1inf}, \texttt{e1ing}, \texttt{e1ins}, \texttt{e1int}, \texttt{e1inv} -- reincidência, reinfecção, reingressa, reinserção, reintegração, reinventar \\
-% exceção: \texttt{e1in2st}, \texttt{e1in2sc} -- reinstalado, reinscrever
-
-\item\label{rulegrp_unit} regra: \texttt{u1int}, \texttt{u1ind} -- contribuinte, excluindo
-
-\item\label{rulegrp_oin} regra: \texttt{o1in} -- coincidência, agroindustrial, bioinformática, amendoins, gastrointestinal
-exceção: \texttt{o1ina} -- boina
-
-\item\label{rulegrp_eim} regra: \texttt{e1imp} -- reimpresso%, coimbra, coimperador
-%exceção: \texttt{que2i}, \texttt{te2im} -- queimar, queimadura, teimosia, tirateima
-
-\item\label{rulegrp_aa} regra: \texttt{a1â}, \texttt{a1ã}, \texttt{a1é}, \texttt{a1í}, \texttt{a1ó}, \texttt{a1ô}, \texttt{a1ú}, \texttt{e1á}, \texttt{e1â}, \texttt{e1ã}, \texttt{e1é}, \texttt{e1ê}, \texttt{e1í}, \texttt{e1ó}, \texttt{e1ô}, \texttt{e1ú}, \texttt{é1o}, \texttt{i1á}, \texttt{i1ã}, \texttt{i1é}, \texttt{i1í}, \texttt{i1ó}, \texttt{i1u}, \texttt{i1ú}, \texttt{í1a}, \texttt{o1á}, \texttt{o1ã}, \texttt{o1é}, \texttt{o1ê}, \texttt{o1í}, \texttt{o1ó}, \texttt{u1á}, \texttt{u1ã}, \texttt{u1é}, \texttt{u1ê}, \texttt{u1í}, \texttt{ú1o} --  abraâmico, abraão, aéreo, país, caótico, faraônico, saúde, balneário, oceânico, campeã, feérico, veêm, veículo, teórico, napoleônico, conteúdo, néon, diário, região, soviético, iídiche, periódico, feiura, viúva, maníaco, razoável, joão, poético, boêmia, heroísmo, alcoólico, usuário, itapuã, suécia, cauê, suíça, flúor \\
-exceção: \texttt{1gu2é}, \texttt{1gu2ê}, \texttt{1gu2í}, \texttt{1qu2á}, \texttt{1qu2é}, \texttt{1qu2ê}, \texttt{1qu2í} -- alguém, português, linguística, aquático, inquérito, sequência, química
-% the inclusion of rules e1é, é1o, i1í and í1a cause problem and if exceptions are necessary
-
-\item\label{rulegrp_gua} regra: \texttt{1gu4á}, \texttt{1gu4ã}, \texttt{1qu4ã} -- jaraguá, saguão, quão
-
-\item\label{rulegrp_air} regra: \texttt{a1ir.}, \texttt{u1ir.} -- sair, diminuir
-
-\item\label{rulegrp_aiz} regra: \texttt{u1iz.}, \texttt{a1iz.} -- juiz, raiz
-
-\item\label{rulegrp_ia} regra: \texttt{í1a} -- baía
-
-\item\label{rulegrp_ain} regra: \texttt{a1ind}, \texttt{a1i1nh} -- ainda, rainha
-
-\item\label{rulegrp_oin} regra: \texttt{o1i1nh} -- moinho
-
-\item\label{rulegrp_aui} regra: \texttt{au1i1c}, \texttt{du1i1c}, \texttt{u1i1ç}, \texttt{u1i1d}, \texttt{cu2i}, \texttt{dru2i}, \texttt{flu2id}, \texttt{bu1i1n}, \texttt{cu1i1n}, \texttt{fu1i1n}, \texttt{nu1i1n}, \texttt{ru1i1na}, \texttt{ru1i1no}, \texttt{su1i1ti}, \texttt{tu1i1ti}, \texttt{u1iz} -- cacauicultor, sanduicheira, constituição, continuidade, cuidador, druida, fluido, tabuinha, picuinha, fuinha, genuinamente, arruinado, arruinou, jesuitismo, intuitivo, juizado \\ 
-exceção: \texttt{cu3i1da1de}, \texttt{bu1i2n1d}, \texttt{bu1i2n1t}  -- acuidade, contribuindo, contribuinte
-
-\item\label{rulegrp_iur} regra: \texttt{i1ur} -- diurno
-
-\item\label{rulegrp_io} regra: \texttt{í1o} -- íon
-
-\item\label{rulegrp_uo} regra: \texttt{ú1o} -- flúor
-
-\item\label{rulegrp_proi} regra: \texttt{pro1i1b} -- proibição
-
-\item\label{rulegrp_iun} regra: \texttt{i1un} -- triunfar
-
-\item\label{rulegrp_quo} regra: \texttt{1qu4ó}, \texttt{1qu4â} -- quórum, equânime
-
-\item\label{rulegrp_eo} regra: \texttt{é3o} -- alvéolo
-
-\item\label{rulegrp_ia} \st{regra: \texttt{i4a.}, \texttt{i4e.}, \texttt{i4o.}, \texttt{o4a.}, \texttt{u4a.} -- economia, espécie, vazio, destoa, institua}
-
-%\item\label{rulegrp_lo} regra: \texttt{1lô} -- camelô
-
-%\item\label{rulegrp_co} regra: \texttt{1cô} -- recôncavo
-
-\item\label{rulegrp_bo} regra: \texttt{1bô}, \texttt{1cô}, \texttt{1dô}, \texttt{1fô}, \texttt{1gô}, \texttt{1lô}, \texttt{1pô}, \texttt{1mô}, \texttt{1nô}, \texttt{1rô}, \texttt{1tô}, \texttt{1vô}, \texttt{1xô}, \texttt{1zô} -- robô, recôncavo, judô, telefônica, xangô, camelô, capô, sumô, econômico, tarô, chatô, vovô, saxônia, amazônia
-
-\item\label{rulegrp_cco} regra: \texttt{1çô} -- maçônico
-
-% As sequências gráficas ia, ie, io, oa, ua quando em posição
-% final átona, que são normalmente pronunciadas como ditongos
-% crescentes, mas que podem corresponder foneticamente a duas
-% vogais (hiato), sobretudo quando pronunciadas pausadamente:
-% vitó-ria, espé-cie, exercí-cio, nó-doa, lé-gua, tê-nue, ambí-guo.
-    \setcounter{numberRulesGroups}{\value{enumi}}
-\end{rules}
-
-The \NumberOfNewRules{} rules were grouped above in a list of
-\arabic{numberRulesGroups} types of rules. They may be further organized into four
-large groups. The first, which comprises rules \ref{rulegrp_psi} to
-\ref{rulegrp_zz}, includes consonant clusters such as \emph{czar}, \emph{ptose}
-and \emph{gnomo}. They, unlike the examples that will be exposed in section
-\ref{secxxx} (exceptions - item 9 currently), present a set of derived words,
-which makes their marking advantageous in view of the number of cases that are
-included in this marking rule. The second group, comprising rules
-\ref{rulegrp_sub} to \ref{rulegrp_eim}, delimits the morphological boundary
-between prefixes and radicals. As noted, although phonological issues guide the
-separation of numerous words in Portuguese, there are also those that are
-guided by morphology. This is the case of words that have the prefixes
-\emph{sub-} and \emph{re-}, such as \emph{sublunar} and \emph{reinserção}. The
-third group, comprising rules \ref{rulegrp_aa} to \ref{rulegrp_ia}, seeks to
-understand a set of words that have vowel combinations that do not follow the
-general rules. This is because the Portuguese language has vowel encounters
-with the second vowel graphically marked that can be separated, forming
-hiatuses, such as \emph{caótico}, \emph{balneário} and \emph{razoável}, while
-there are also words with a similar structure that constitute a diphthong, such
-as \emph{português}, \emph{alguém} and \emph{linguística}. It is remarkable, of
-course, that the latter are formed by the digraphs \emph{qu-} and \emph{gu-},
-while the former by vowels other than \emph{i} and \emph{u}. The fourth and
-last group, in turn, which comprises rules \ref{rulegrp_lo} to
-\ref{rulegrp_cco}, which are counterparts of rules that were already in the
-default rules, but did not contemplate the cases with certain accents. They
-were then added to encompass words such as \emph{camelô}, \emph{recôncavo},
-\emph{amazônia}, and \emph{maçônico}.
-
-It is important to highlight that the words included in these rules are, in general, of low frequency and were incorporated into the Portuguese language without a phonotactic adaptation, which causes these idiosyncrasies and exceptions to the language. They are characterized as marked cases, since it is not possible to defend that they reproduce a phonological pattern of the language because they are not productive, that is, they are not taken as an example and/or derive new words.
-
-
-O conjunto de \NumberOfNewRules{} regras é apresentado a seguir:
-\begin{multicols}{6}
-    \footnotesize
-    \verbatiminput{../data/patch.TeX.pt-br.patterns}
-\end{multicols}
-
-A Tabela \ref{tab-resultados} apresenta os erros cometidos no conjunto das
-37798 palavras analisadas. As palavras omitidas são aquelas que foram
-hifenizadas corretamente pelos dois conjuntos de regra. Utilizamos aqui a
-marcação adotada pelo \emph{Patgen}: \texttt{*} para indicar pontos de
-hifenização corretamente marcados, \texttt{.} para indicar pontos de hifenização
-marcados erroneamente e \texttt{-} para indicar pontos de hifenização não
-encontrados. Os pontos marcados erroneamente e aqueles não encontrados são
-considerados erros. Quando ocorre algum erro de hifenização, marcaremos a
-palavra com \xmark. Quando não houver erro algum, marcaremos a palavra com
-\cmark. Ao final, podemos verificar que as regras padrão apresentaram 1368 erros
-(3,62\%) e as novas regras 132 erros (0,35\%).
-
-\begin{longtable}{l l l}
-\caption{Comparativo dos erros cometidos pelos dois conjuntos de regras de
-hifenização.}\label{tab-resultados}\\
-    \hline
-    palavra & regras padrão & regras adicionais \\
-    \hline
-    \endhead
-    \input{comparedresults.tex}
-\end{longtable}
-
+%Foi criado um conjunto de 37798 palavras obtidas do corpus
+%\href{https://www.linguateca.pt/cetenfolha/index_info.html}{CETENFolha},
+%juntamente com palavras do \href{https://www.palavras.net/}{Palavras NET} e
+%algumas palavras do corpus baseado na
+%\href{https://pt.wikipedia.org}{Wikipedia}. 
+%Foram mantidas apenas as palavras
+%para as quais encontrou-se a hifenização nos seguintes dicionários online:
+%\href{https://michaelis.uol.com.br/}{Michaelis},
+%\href{https://dicionario.priberam.org/}{Priberam},
+%\href{https://pt.wiktionary.org}{Wikcionário},
+%\href{https://aulete.com.br/}{Aulete},
+%\href{http://www.portaldalinguaportuguesa.org/}{Portal da Língua Portuguesa} e
+%\href{https://www.dicio.com.br/}{Dicio}.
+%Adotamos como hifenização `correta' aquela que ao menos 4 dicionários
+%concordavam. Algumas hifenizações foram realizadas manualmente pelo autor.
+%Considerando a frequência de ocorrência das palavras nos corpus, o conjuto de
+%palavras escolhido representa 55\% do total das ocorrências relativo ao
+%Wikipedia e 58\% em relação ao CETENFolha.
+%% Corpus Wikipedia
+%%
+%% 166341424 / 302226482 = 0.55
+%% 
+%% soma da freq. de occ. das palavras utilizadas
+%% cat portuguese_4_utf8.dic portuguese_extra_utf8.dic | tr -d '-' | while read -r word; do grep "[0-9]\+ ${word}$" /ms/downloads/samples/wikipedia/ptwiki-latest-pages-articles-multistream_wordlist.txt | head -n 1 | tr -dc '0-9\n'; done | paste -s -d+ - | bc 
+%% = 166341424
+%%
+%% soma da freq. de occ. de todas palavras no corpus
+%% cat /ms/downloads/samples/wikipedia/ptwiki-latest-pages-articles-multistream_wordlist.txt | tr -dc '0-9\n' | paste -s -d+ - | bc
+%% = 302226482
+%%
+%% CETENFolha
+%% 13314084 / 22728804 = 0.5857
+%Este percentual é relativamente baixo, mas deve-se ao fato de que não obtivemos
+%sucesso em encontrar a hifenização de muitas palavras nos dicionários
+%analisados e também por não observarmos um consenso de ao menos 4 dicionários
+%com uma mesma hifenização.
+%
+%Analisando os erros resultantes da hifenização utilizando as regras padrão do
+%TeX, foram estabelecidas algumas regras como forma de abarcar um conjunto maior
+%de palavras. Tais regras são elencadas a seguir, expondo também as regras de
+%exceção necessárias e um exemplo onde a regra será utilizada.
+%
+%\begin{rules}
+%\item\label{rulegrp_psi} regra: \texttt{.p2si}, \texttt{.p2sí} -- psicologia, psíquico % update (word-initial pattern, exception not necessary (?)) 
+%%\item\label{rulegrp_psi} regra: \texttt{p2si}, \texttt{p2sí} -- psicologia, psíquico\\
+%%exceção: \texttt{p3sia}, \texttt{p3sin} -- epilepsia, rodopsina
+%
+%\item\label{rulegrp_tc} regra: \texttt{t2c} -- tchau%, tcheco
+%
+%\item\label{rulegrp_pneu} regra: \texttt{p2neu} -- pneumonia
+%    
+%\item\label{rulegrp_gno} regra: \texttt{.g2no}, \texttt{.g2nó} -- gnomo, gnóstico
+%
+%\item\label{rulegrp_pt} regra: \texttt{.p2t} -- ptose%, pterossauro
+%
+%\item\label{rulegrp_tm} regra: \texttt{.t2m} -- tmese % [new rule] needs to be incorporated and checked
+%
+%\item\label{rulegrp_cza} regra: \texttt{c2za} -- czar
+%
+%\item\label{rulegrp_s2} regra: \texttt{.s2} -- stalinismo
+%
+%\item\label{rulegrp_t2} regra: \texttt{.t2} -- tsunami
+%
+%\item\label{rulegrp_mn} regra: \texttt{.m2n} -- mnemônico
+%
+%\item\label{rulegrp_zz} regra: \texttt{z1z}, \texttt{p1p}, \texttt{z2z.} -- pizza, shopping, jazz
+%
+%\item\label{rulegrp_sub} regra: \texttt{su2b3r}, \texttt{su2b3l} -- sublunar, subrotina \\
+%exceção: \texttt{.su3b4li}
+%%exceção: \texttt{su3b4li1nh}, \texttt{su3b4li1ma}, \texttt{su3b4li1me}, \texttt{su3b4li1mid} -- sublinhar, sublimar, sublime, sublimidade
+%
+%
+%\item\label{rulegrp_so} regra: \texttt{1sô} -- subsônico
+%
+%\item\label{rulegrp_pseu} regra: \texttt{1p2seu1d} -- pseudônimo
+%
+%%\item\label{rulegrp_ein} regra: \texttt{e1in1c}, \texttt{e1in1f}, \texttt{e1in1g}, \texttt{e1in1s}, \texttt{e1in1t}, \texttt{e1in1v} -- reincidência, reinfecção, reingressa, reinserção, reintegração, reinventar \\
+%%exceção: \texttt{e1in2st}, \texttt{e1in2sc} -- reinstalado, reinscrever
+%
+%\item\label{rulegrp_ein} regra: \texttt{e1inc}, \texttt{e1inf}, \texttt{e1ing}, \texttt{e1ins}, \texttt{e1int}, \texttt{e1inv} -- reincidência, reinfecção, reingressa, reinserção, reintegração, reinventar \\
+%% exceção: \texttt{e1in2st}, \texttt{e1in2sc} -- reinstalado, reinscrever
+%
+%\item\label{rulegrp_unit} regra: \texttt{u1int}, \texttt{u1ind} -- contribuinte, excluindo
+%
+%\item\label{rulegrp_oin} regra: \texttt{o1in} -- coincidência, agroindustrial, bioinformática, amendoins, gastrointestinal
+%exceção: \texttt{o1ina} -- boina
+%
+%\item\label{rulegrp_eim} regra: \texttt{e1imp} -- reimpresso%, coimbra, coimperador
+%%exceção: \texttt{que2i}, \texttt{te2im} -- queimar, queimadura, teimosia, tirateima
+%
+%\item\label{rulegrp_aa} regra: \texttt{a1â}, \texttt{a1ã}, \texttt{a1é}, \texttt{a1í}, \texttt{a1ó}, \texttt{a1ô}, \texttt{a1ú}, \texttt{e1á}, \texttt{e1â}, \texttt{e1ã}, \texttt{e1é}, \texttt{e1ê}, \texttt{e1í}, \texttt{e1ó}, \texttt{e1ô}, \texttt{e1ú}, \texttt{é1o}, \texttt{i1á}, \texttt{i1ã}, \texttt{i1é}, \texttt{i1í}, \texttt{i1ó}, \texttt{i1u}, \texttt{i1ú}, \texttt{í1a}, \texttt{o1á}, \texttt{o1ã}, \texttt{o1é}, \texttt{o1ê}, \texttt{o1í}, \texttt{o1ó}, \texttt{u1á}, \texttt{u1ã}, \texttt{u1é}, \texttt{u1ê}, \texttt{u1í}, \texttt{ú1o} --  abraâmico, abraão, aéreo, país, caótico, faraônico, saúde, balneário, oceânico, campeã, feérico, veêm, veículo, teórico, napoleônico, conteúdo, néon, diário, região, soviético, iídiche, periódico, feiura, viúva, maníaco, razoável, joão, poético, boêmia, heroísmo, alcoólico, usuário, itapuã, suécia, cauê, suíça, flúor \\
+%exceção: \texttt{1gu2é}, \texttt{1gu2ê}, \texttt{1gu2í}, \texttt{1qu2á}, \texttt{1qu2é}, \texttt{1qu2ê}, \texttt{1qu2í} -- alguém, português, linguística, aquático, inquérito, sequência, química
+%% the inclusion of rules e1é, é1o, i1í and í1a cause problem and if exceptions are necessary
+%
+%\item\label{rulegrp_gua} regra: \texttt{1gu4á}, \texttt{1gu4ã}, \texttt{1qu4ã} -- jaraguá, saguão, quão
+%
+%\item\label{rulegrp_air} regra: \texttt{a1ir.}, \texttt{u1ir.} -- sair, diminuir
+%
+%\item\label{rulegrp_aiz} regra: \texttt{u1iz.}, \texttt{a1iz.} -- juiz, raiz
+%
+%\item\label{rulegrp_ia} regra: \texttt{í1a} -- baía
+%
+%\item\label{rulegrp_ain} regra: \texttt{a1ind}, \texttt{a1i1nh} -- ainda, rainha
+%
+%\item\label{rulegrp_oin} regra: \texttt{o1i1nh} -- moinho
+%
+%\item\label{rulegrp_aui} regra: \texttt{au1i1c}, \texttt{du1i1c}, \texttt{u1i1ç}, \texttt{u1i1d}, \texttt{cu2i}, \texttt{dru2i}, \texttt{flu2id}, \texttt{bu1i1n}, \texttt{cu1i1n}, \texttt{fu1i1n}, \texttt{nu1i1n}, \texttt{ru1i1na}, \texttt{ru1i1no}, \texttt{su1i1ti}, \texttt{tu1i1ti}, \texttt{u1iz} -- cacauicultor, sanduicheira, constituição, continuidade, cuidador, druida, fluido, tabuinha, picuinha, fuinha, genuinamente, arruinado, arruinou, jesuitismo, intuitivo, juizado \\ 
+%exceção: \texttt{cu3i1da1de}, \texttt{bu1i2n1d}, \texttt{bu1i2n1t}  -- acuidade, contribuindo, contribuinte
+%
+%\item\label{rulegrp_iur} regra: \texttt{i1ur} -- diurno
+%
+%\item\label{rulegrp_io} regra: \texttt{í1o} -- íon
+%
+%\item\label{rulegrp_uo} regra: \texttt{ú1o} -- flúor
+%
+%\item\label{rulegrp_proi} regra: \texttt{pro1i1b} -- proibição
+%
+%\item\label{rulegrp_iun} regra: \texttt{i1un} -- triunfar
+%
+%\item\label{rulegrp_quo} regra: \texttt{1qu4ó}, \texttt{1qu4â} -- quórum, equânime
+%
+%\item\label{rulegrp_eo} regra: \texttt{é3o} -- alvéolo
+%
+%\item\label{rulegrp_ia} \st{regra: \texttt{i4a.}, \texttt{i4e.}, \texttt{i4o.}, \texttt{o4a.}, \texttt{u4a.} -- economia, espécie, vazio, destoa, institua}
+%
+%%\item\label{rulegrp_lo} regra: \texttt{1lô} -- camelô
+%
+%%\item\label{rulegrp_co} regra: \texttt{1cô} -- recôncavo
+%
+%\item\label{rulegrp_bo} regra: \texttt{1bô}, \texttt{1cô}, \texttt{1dô}, \texttt{1fô}, \texttt{1gô}, \texttt{1lô}, \texttt{1pô}, \texttt{1mô}, \texttt{1nô}, \texttt{1rô}, \texttt{1tô}, \texttt{1vô}, \texttt{1xô}, \texttt{1zô} -- robô, recôncavo, judô, telefônica, xangô, camelô, capô, sumô, econômico, tarô, chatô, vovô, saxônia, amazônia
+%
+%\item\label{rulegrp_cco} regra: \texttt{1çô} -- maçônico
+%
+%% As sequências gráficas ia, ie, io, oa, ua quando em posição
+%% final átona, que são normalmente pronunciadas como ditongos
+%% crescentes, mas que podem corresponder foneticamente a duas
+%% vogais (hiato), sobretudo quando pronunciadas pausadamente:
+%% vitó-ria, espé-cie, exercí-cio, nó-doa, lé-gua, tê-nue, ambí-guo.
+%    \setcounter{numberRulesGroups}{\value{enumi}}
+%\end{rules}
+%
+%The \NumberOfNewRules{} rules were grouped above in a list of
+%\arabic{numberRulesGroups} types of rules. They may be further organized into four
+%large groups. The first, which comprises rules \ref{rulegrp_psi} to
+%\ref{rulegrp_zz}, includes consonant clusters such as \emph{czar}, \emph{ptose}
+%and \emph{gnomo}. They, unlike the examples that will be exposed in section
+%\ref{secxxx} (exceptions - item 9 currently), present a set of derived words,
+%which makes their marking advantageous in view of the number of cases that are
+%included in this marking rule. The second group, comprising rules
+%\ref{rulegrp_sub} to \ref{rulegrp_eim}, delimits the morphological boundary
+%between prefixes and radicals. As noted, although phonological issues guide the
+%separation of numerous words in Portuguese, there are also those that are
+%guided by morphology. This is the case of words that have the prefixes
+%\emph{sub-} and \emph{re-}, such as \emph{sublunar} and \emph{reinserção}. The
+%third group, comprising rules \ref{rulegrp_aa} to \ref{rulegrp_ia}, seeks to
+%understand a set of words that have vowel combinations that do not follow the
+%general rules. This is because the Portuguese language has vowel encounters
+%with the second vowel graphically marked that can be separated, forming
+%hiatuses, such as \emph{caótico}, \emph{balneário} and \emph{razoável}, while
+%there are also words with a similar structure that constitute a diphthong, such
+%as \emph{português}, \emph{alguém} and \emph{linguística}. It is remarkable, of
+%course, that the latter are formed by the digraphs \emph{qu-} and \emph{gu-},
+%while the former by vowels other than \emph{i} and \emph{u}. The fourth and
+%last group, in turn, which comprises rules \ref{rulegrp_lo} to
+%\ref{rulegrp_cco}, which are counterparts of rules that were already in the
+%default rules, but did not contemplate the cases with certain accents. They
+%were then added to encompass words such as \emph{camelô}, \emph{recôncavo},
+%\emph{amazônia}, and \emph{maçônico}.
+%
+%It is important to highlight that the words included in these rules are, in general, of low frequency and were incorporated into the Portuguese language without a phonotactic adaptation, which causes these idiosyncrasies and exceptions to the language. They are characterized as marked cases, since it is not possible to defend that they reproduce a phonological pattern of the language because they are not productive, that is, they are not taken as an example and/or derive new words.
+%
+%
+%O conjunto de \NumberOfNewRules{} regras é apresentado a seguir:
+%\begin{multicols}{6}
+%    \footnotesize
+%    \verbatiminput{../data/patch.TeX.pt-br.patterns}
+%\end{multicols}
+%
+%A Tabela \ref{tab-resultados} apresenta os erros cometidos no conjunto das
+%37798 palavras analisadas. As palavras omitidas são aquelas que foram
+%hifenizadas corretamente pelos dois conjuntos de regra. Utilizamos aqui a
+%marcação adotada pelo \emph{Patgen}: \texttt{*} para indicar pontos de
+%hifenização corretamente marcados, \texttt{.} para indicar pontos de hifenização
+%marcados erroneamente e \texttt{-} para indicar pontos de hifenização não
+%encontrados. Os pontos marcados erroneamente e aqueles não encontrados são
+%considerados erros. Quando ocorre algum erro de hifenização, marcaremos a
+%palavra com \xmark. Quando não houver erro algum, marcaremos a palavra com
+%\cmark. Ao final, podemos verificar que as regras padrão apresentaram 1368 erros
+%(3,62\%) e as novas regras 132 erros (0,35\%).
+%
+%\begin{longtable}{l l l}
+%\caption{Comparativo dos erros cometidos pelos dois conjuntos de regras de
+%hifenização.}\label{tab-resultados}\\
+%    \hline
+%    palavra & regras padrão & regras adicionais \\
+%    \hline
+%    \endhead
+%    \input{comparedresults.tex}
+%\end{longtable}
+%
 
 \printbibliography
+
+\appendix
+\section{Hyphenation results}
+\input{appendix-table.tex}
 
 \end{document}

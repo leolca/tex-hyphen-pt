@@ -40,16 +40,16 @@ We might automatize this process using a script. The \Cref{lst-patgentest} prese
 responsible for passing these parameters to \emph{patgen}.
 \lstinputlisting[language={bash}, linerange={76-83}, basicstyle=\small\ttfamily, breaklines=true, caption={Portuguese translation file.}, label={lst-patgentest}]{../scripts/patgentest.sh}
 As an example of execution, when choosing \texttt{hyph\_start}=1, \texttt{hyph\_finish}=9, \texttt{pat\_start}=2, \texttt{pat\_finish}=5,
-\texttt{good weight}=1, \texttt{bad weight}=1, and \texttt{threshold}=1, we achieve 99.97\%(86799) correct 
-hyphenations, 0.01\%(12) incorrect hyphenations, and 0.03\%(25) missing hyphenations.
-It produced a set of 799 rules, where just 123 are present in the handcrafted set of rules.
+\texttt{good weight}=1, \texttt{bad weight}=1, and \texttt{threshold}=1, we achieve 99.97\% (86799) correct 
+hyphenations, 0.01\% (12) incorrect hyphenations, and 0.03\% (25) missing hyphenations.
+It produced a set of 799 rules, where just 123 are present in our handcrafted set of rules.
 
 We have also used the approach used by \textcite{sojka2019} in creating the script \texttt{make-full-pattern}.
 In this approach, the parameters are loaded from a file and might be distinct for each level.
 We start from an empty set and create progressive higher order rules, always using the rules from the previous
 step as the starting point at the next step.
 Using this approach with the 8 level parameters they used to create hyphenation rules to German,
-we achieved 99.98\%(86820) correct hyphenations, 0.01\%(9) incorrect hyphenations, and 0.00\%(4) missed hyphenations.
+we achieved 99.98\% (86820) correct hyphenations, 0.01\% (9) incorrect hyphenations, and 0.00\% (4) missed hyphenations.
 The result was a set of 593 rules, with only 69 in common with those handcrafted rules proposed earlier.
 
 
@@ -155,9 +155,10 @@ list of words where just three hyphenations were found in the dictionaries. We h
 with apparent proparoxytones, to be consistent in our approach.  
 In this new set, the number of correct, incorrect and missing hyphenations for each set of rules
 is given \Cref{tbl-comres-hy3}.
+
 \begin{table}[h]
 \centering
-\caption{Compared results between two use cases of \emph{patgen} and the handcrafted rule set.}\label{tbl-comres-hy3}
+\caption{Compared results between two use cases of \emph{patgen} and the handcrafted rule set when hyphenating the set of words from the dictionary built from those words with 3 agreements on the online dictionaries.}\label{tbl-comres-hy3}
 \begin{tabular}{llll}
 rule set          & correct & incorrect & missing \\
 \hline
@@ -166,6 +167,7 @@ make-full-pattern & 647     & 47        & 7089 \\
 handcrafted       & 7335    & 42        & 385 
 \end{tabular}
 \end{table}
+
 It is important to hightlight that, among those 385 missing hyphenations in the handcrafted rules,
 278 cases correspond to the last hyphen, leaving a single vowel as a final syllable.
 Comparing to the other set of rules, we have 7 (in 183, for fixed parameters case), and 257 (in 7089, 

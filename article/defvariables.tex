@@ -23,7 +23,7 @@
 %\immediate\write18{../scripts/manualcorrections.sh ../data/hyphenations5.dic}
 \captureshell*[\NumberOfFiveAgrees]{cat ../data/hyphenations5.dic | wc -l} %#{../scripts/gethyphenationagreements.sh 5}
 \captureshell*[\NumberOfSixFiveAgrees]{cat ../data/hyphenations6.dic ../data/hyphenations5.dic | wc -l}
-\captureshell*[\NumberOfFourAgrees]{../scripts/gethyphenationagreements.sh 4}
+\captureshell*[\NumberOfFourAgrees]{cat ../data/hyphenations4.dic | wc -l}
 \captureshell*[\NumberOfThreeAgrees]{../scripts/gethyphenationagreements.sh 3}
 \captureshell*[\NumberOfTwoAgrees]{../scripts/gethyphenationagreements.sh 2}
 \captureshell*[\NumberOfOneAgrees]{../scripts/gethyphenationagreements.sh 1}
@@ -90,6 +90,5 @@
 \captureshell*[\NumberOfMissingSum]{../scripts/resultfilemetrics.sh -m -f ../data/hyphenations6result-default-patterns.dic -f ../data/hyphenations5result-default-patterns.dic -f ../data/hyphenations4result-default-patterns.dic}
 \captureshell*[\NumberOfTotalSum]{wc -l ../data/hyphenations4result-default-patterns.dic ../data/hyphenations5result-default-patterns.dic ../data/hyphenations6result-default-patterns.dic | tail -n 1  | awk '{print $1}'}
 
-\newcounter{numberRulesGroups}
 
 

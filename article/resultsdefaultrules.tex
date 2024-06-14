@@ -4,7 +4,7 @@ In this section we will apprise the performance of default \TeX{} hyphenation
 rules on the list of hyphenated words, which creation was described in
 \Cref{sec-dictionay}. \Cref{tab-default-results} summaries the results, showing
 the number of words correctly hyphenated words by the default rules, the number
-of words wrongly hyphenated and the number of words where a hyphenation point
+of words incorrectly hyphenated and the number of words where a hyphenation point
 was missed.
 
 \begin{table}[htbp]
@@ -13,7 +13,7 @@ was missed.
 \label{tab-default-results}
 \begin{tabular}{lrrrr}
 \toprule
-word list 	& \# correct 		& \# wrong 		& \# missing 		& \# entries 		\\
+word list 	& \# correct 		& \# incorrect		& \# missing 		& \# entries 		\\
 \midrule
 hyphenations6 	& \NumberOfCorrectSix{}	& \NumberOfWrongSix{}	& \NumberOfMissingSix{}	& \NumberOfTotalSix{} 	\\
 hyphenations5 	& \NumberOfCorrectFive{}& \NumberOfWrongFive{}	& \NumberOfMissingFive{}& \NumberOfTotalFive{} 	\\
@@ -23,169 +23,9 @@ total		& \NumberOfCorrectSum{} & \NumberOfWrongSum{} 	& \NumberOfMissingSum{}	& 
 \end{tabular}
 \end{table}
 
-For the list comprised in \texttt{hyphenations6}, below is the complete list of
-\NumberOfWrongSix{} words that were incorrectly hyphenated:
-% wrong
-\begin{multicols}{3}
-\setlength{\columnsep}{0pt}
-\setlength{\parindent}{0pt}
-\emph{
-    \input{/tmp/hyphenations6result-default-patterns_wrong.dic}
-}
-\end{multicols}
-In each instance, an erroneous hyphenation point was placed at the beginning of
-a word, indicating a potential issue in recognizing certain prefixing morphemes
-in the language.  Among those, 20 occurred in words containing the \emph{psi}
-morpheme, where the algorithm erroneously hyphenated between the initial
-\emph{p} and the following \emph{s}. Additionally, 3 cases involved the
-starting \emph{gno} sequence, while the remaining errors were observed in the
-sequences \emph{pneu} (3), \emph{tch} (1), \emph{tme} (1), \emph{pto} (1), and
-\emph{sub} (1).
-
-Those erroneous hyphenation points might be corrected by the introduction of a few rules:
-\texttt{.p2si, .p2sí} (see \cref{rulegrp_psi}), \texttt{.g2no, .g2nó} (see \cref{rulegrp_gno}), 
-\texttt{p2neu} (see \cref{rulegrp_pneu}),
-\texttt{t2c} (see \cref{rulegrp_tc}), \texttt{.t2m} (see \cref{rulegrp_tm}), \texttt{.p2t} (see \cref{rulegrp_pt}) 
-and \texttt{su2b3r}, \texttt{su2b3l}  (see \cref{rulegrp_sub}). They are deeply 
-discussed in \Cref{sec-hyph-rpatches}.
-
-% $ ../scripts/resultfileexamples.sh -m -f ../data/hyphenations6result-default-patterns.dic | grep -o "[^-]-[^-]" | sort | uniq -c | sort -nr | column
-
-The first 20 examples of missing hyphenations are displayed in the following list:
-% missing
-\begin{multicols}{3}
-\setlength{\columnsep}{0pt}
-\setlength{\parindent}{0pt}
-\emph{
-\input{/tmp/hyphenations6result-default-patterns_missing.dic}
-...
-}
-\end{multicols}
-It is a long list with \NumberOfMissingSix{} entries, therefore it is
-unavoidable to analyse it through clusters of certain patterns. It is presented
-below the counts of immediate context in which those missing hyphenations were
-found:
-\begin{multicols}{5}
-\setlength{\columnsep}{0pt}
-\setlength{\parindent}{0pt}
-\emph{
-\input{/tmp/hyphenations6result-default-patterns_missing_context}
-}
-\end{multicols}
-
-% number of words correctly hyphenated using default TeX rules when analysing the words in hyphenations6.dic
-%\captureshell*[\NumberOfCorrectSix]{../scripts/resultfilemetrics.sh -f ../data/hyphenations6result-default-patterns.dic -c}
-
-% number of words with wrong hyphenations using default TeX rules when analysing the words in hyphenations6.dic
-%\captureshell*[\NumberOfWrongSix]{../scripts/resultfilemetrics.sh -f ../data/hyphenations6result-default-patterns.dic -w}
-
-% number of words with missing hyphenations using default TeX rules when analysing the words in hyphenations6.dic
-%\captureshell*[\NumberOfMissingSix]{../scripts/resultfilemetrics.sh -f ../data/hyphenations6result-default-patterns.dic -m}
-
-% tra-b.a*lho
-%    ^ ^ ^
-%    | | |
-%    | | + -- correct (*)
-%    | + ---- wrong   (.)  
-%    + ------ missed  (-)
-
-On the top of the list we see the missing hyphen in \emph{u-i}, accounting for
-38 cases. Among those, 34 were originated from the pattern \texttt{u-ir} in the
-end of word and 13 from \texttt{a-ir} in the end of word. 
-To fix them, We will include the rules \texttt{u1ir.} and \texttt{a1ir.} (see 
-\cref{rulegrp_air}). The cases that are not covered by this rule are:
-\emph{tu-im}, \emph{je*su-i*tis*mo}, \emph{ma*lau-i*a*no}, and
-\emph{con*tri*bu-in*te}. On \Cref{sec-hyph-rpatches} we see how to deal with
-them.
-
-The default rules already include 17 separating rules for vowel sequences:
-% vowel="[aeiouáãàâéêíóõôú]"; grep "$vowel[13579]$vowel" ../data/default.TeX.pt-br.patterns | sed ':a;N;$!ba;s/\n/ \\\\ /g'
-\begin{multicols}{5}
-\setlength{\columnsep}{0pt}
-\setlength{\parindent}{0pt}
-\texttt{a3a \\ a3e \\ a3o \\ e3a \\ e3e \\ e3o \\ i3a \\ i3e \\ i3i \\ i3o \\ i3â \\ i3ê \\ i3ô \\ o3a \\ o3e \\ o3o \\ u3a \\ u3e \\ u3o \\ u3u}
-\end{multicols}
-but there are just 3 rules to hyphenate between vowels when one has a diacritic: \texttt{i3â}, \texttt{i3ê}, \texttt{i3ô}.
-We could then add more 29 rules to account for the missing hyphenations between vowels with diacritics and also the
-missing rule \texttt{i1u}:
-% ../scripts/resultfileexamples.sh -m -f ../data/hyphenations6result-default-patterns.dic | ../scripts/filtersurrounding.sh -c '-' -n 1 | sort | uniq -c | sort -nr | grep "[áàâãéêíóôõú]" | awk '{print $2}' | sort | sed ':a;N;$!ba;s/\n/ \\\\ /g'
-\begin{multicols}{5}
-\setlength{\columnsep}{0pt}
-\setlength{\parindent}{0pt}
-\texttt{
-% complete set of 37 rules
-%a1â \\ a1ã \\ a1é \\ a1í \\ a1ó \\ a1ô \\ a1ú \\ 
-%e1á \\ e1â \\ e1ã \\ e1é \\ e1ê \\ e1í \\ e1ó \\ e1ô \\ e1ú \\ é1o \\ 
-%i1á \\ i1ã \\ i1ã \\ i1é \\ i1í \\ i1ó \\ i1u \\ i1ú \\ í1a \\ 
-%o1á \\ o1ã \\ o1é \\ o1ê \\ o1í \\ o1ó \\ 
-%u1á \\ u1ã \\ u1é \\ u1ê \\ u1í \\ ú1o
-%
-% 29 rules necessary for hyphenations6 dic
-a1é \\ a1í \\ a1ó \\ a1ú \\ 
-e1á \\ e1â \\ e1ã \\ e1é \\ e1ê \\ e1í \\ e1ó \\ é1o \\ e1ú \\ 
-i1á \\ i1ã \\ í1a \\ i1é \\ i1í \\ i1ó \\ í1o \\ i1u \\ i1ú \\ 
-o1á \\ o1é \\ o1í \\ o1ó \\ 
-u1á \\ u1ã \\ u1í \\ ú1o
-}
-%\emph{a-é \\ a-í \\ a-ó \\ a-ú \\ e-á \\ e-â \\ e-ã \\ e-é \\ e-ê \\ e-í \\ e-ó \\ é-o \\ e-ú \\ i-á \\ i-ã \\ í-a \\ i-é \\ i-í \\ i-ó \\ í-o \\ i-ú \\ o-á \\ o-é \\ o-í \\ o-ó \\ u-á \\ u-ã \\ u-í \\ ú-o}
-\end{multicols}
-See more about this on \cref{rulegrp_aa}. These rules will require exceptions for sequences with \emph{[qg]uV'} 
-(where we used \emph{V'} to represent a vowel with a diacritic). See more on \cref{rulegrp_aa,rulegrp_gua}.
-
-From the list of missing hyphenations above, we find another recurring pattern, a missing hyphen preceding \emph{q}: 
-% ../scripts/resultfileexamples.sh -m -f ../data/hyphenations6result-default-patterns.dic | ../scripts/filtersurrounding.sh -c '-' -n 1 | sort | uniq -c | sort -nr | awk '{print $2}' | sort | grep "q$" | sort | sed ':a;N;$!ba;s/\n/ \\\\ /g'
-\begin{multicols}{5}
-\setlength{\columnsep}{0pt}
-\setlength{\parindent}{0pt}
-\emph{a-q \\ e-q \\ i-q \\ o-q \\ r-q \\ s-q \\ u-q}
-\end{multicols}
-That issue might be easily solved by adding a hyphenation rule: \texttt{1qu}, but as the \emph{q} is always followed by 
-a sequence \emph{uV}, and there are already four hyphenation rules involving this sort of sequence in the default rules
-(\texttt{1qu4a}, \texttt{1qu4e}, \texttt{1qu4i} and \texttt{1qu4o}), the rules 
-% $ grep "q" ../data/patch.TeX.pt-br.patterns | awk '{print "\\texttt{" $1 "}"}' | sed ':a;N;$!ba;s/\n/, /g'
-\texttt{1qu2á}, \texttt{1qu2é}, \texttt{1qu2ê}, \texttt{1qu2í}, \texttt{que2i}, \texttt{1qu4ã}, \texttt{1qu4ó}, \texttt{1qu4â}
-could be added (see \cref{rulegrp_aa,rulegrp_gua,rulegrp_quo}) but they have not proven to be necessary.
-%%% XXX check if they are not really necessary
-
-The missing hyphens in \emph{a-v} and \emph{i-v} might be easily solved by introducing the rule \texttt{1vô} (see \cref{rulegrp_bo}) which 
-complements the rule \texttt{1vo} already included in the default set of rules.
-% pi-vô, a-vô, bi*sa-vô ...
-Similarly, the missing hyphens \emph{e-l}, \emph{u-l}, \emph{o-l}, and \emph{a-l} are corrected by the introduction of the rule \texttt{1lô} rule (see \cref{rulegrp_bo}),
-complementing the already included rule \texttt{1lo}.
-In the same way, the rules \texttt{1cô}, \texttt{1gô}, \texttt{1bô}, \texttt{1tô}, \texttt{1rô}, and \texttt{1pô} (see \cref{rulegrp_bo}) 
-should be added to fix the missing hyphens \emph{e-c}, \emph{i-c}, \emph{o-g}, \emph{o-b}, \emph{a-t}, \emph{a-r},
-and \emph{a-p}, respectively.
-% ca*me-lô, gi*go-lô, ..., bi*be-lô, su.b-lu*nar
-%                                       rule 1b2l causes wrong hyphen
-%
-%    .   s   u   b   l   u   n   a   r   .
-%     1   0   0   |   |   |   |   |   |    1su
-%     |   |   1   2   0   |   |   |   |    1b2l
-%     |   |   |   1   0   0   |   |   |    1lu
-%     |   |   |   |   |   1   0   0   |    1na
-%max: 1   0   1   2   0   1   0   0   0
-%final: s   u - b   l   u - n   a   r
-The missing hyphen \emph{b-l} happened in \emph{su.b-lu*nar}, which also has a wrong hyphenation.
-Those errors were caused by the default rule \texttt{1b2l}. The introduction of rule \texttt{su2b3l} 
-will help solve this matter (see details in \cref{rulegrp_sub}).
-
-% e-c, i-c: missing rule 1cô
-% o-g: missing rule 1gô
-% o-b: missing rule 1bô
-% a-t: missing rule 1tô
-% a-r: missing rule 1rô
-% a-p: missing rule 1pô
-
-The remaining missing hyphen is \emph{o-w}, which comes from the foreign \emph{kilowatt}.
-Those cases of words borrowed from other languages are dealt in the \ref{foreignness} topic ahead.
-% o-w: qui*lo-watt
-
-
-% number of words with missing hyphenations using default TeX rules when analysing the words in hyphenations6.dic
-
-
-
-
-
+Each word in the list is hyphenated using the set of default rules using the \texttt{gohyphen} script
+(the \texttt{gohyphenfull} script is used to see in the interplay among all rules that apply to a given word) \parencite{gundlach2021}.
+The hyphenation resulted from the given rules is compared to the hyphenation in our dictionary, so
+we may check if there were erros (incorrect or missing hyphenation points).
 
 

@@ -1,0 +1,29 @@
+\section{Concluding Remarks and Future Directions}\label{sec-conclusion}
+
+In this study, we explored the default TeX hyphenation rules and proposed
+additional rules to improve hyphenation performance in Portuguese. By
+addressing the limitations of the old rules and existing approaches within the
+TeX typesetting system, and by incorporating morphological and phonological
+considerations, we significantly reduced the number of hyphenation errors.
+
+However, the patched set of rules is still not enough to achieve perfect
+accuracy, and it is not even desired since our dataset is noisy and there are
+many dubious hyphenation cases. We have opted to create a concise set of rules
+that could better generalize and, therefore, align more closely with the
+underlying hyphenation rules in the language.
+
+We also tested rules created by patgen, which generated an extensive set of
+rules that were unable to generalize effectively. In contrast, our handcrafted
+rules performed superiorly in a validation set.
+
+In conclusion, while our enhanced rule set demonstrates significant
+improvements in hyphenation accuracy, there could remains room for further
+refinement.
+
+Wide character support and universal syllabic segmentation, as considered by
+\cite{sojka2023roadmap}, are additional points for consideration. Incorporating
+regular expressions, creating classes of characters, and supporting word stress
+positions might further enhance the efficiency and generality of the
+hyphenation system.
+
+

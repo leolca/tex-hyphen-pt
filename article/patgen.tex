@@ -20,7 +20,10 @@ representation of a character or symbol, which can be the entire symbol or a
 distinct visual element within it.} indices rather than character codes. Each
 glyph is represented by a single byte. That amount to 256 indices, where 13 of
 them are reserved for the digits 0-9 and the characters `.', `-', and `*'. The
-remaining 243 are used to represent symbols of a given language.  To run
+remaining 243 are used to represent symbols of a given language.  
+The digits 0-9 are reserved to express hyphenation rule levels, and the characters
+`.', `-', and `*' are reserved to express an incorrect hyphenation point, a missing 
+hyphenation point, and a correct hyphenation point, respectively. To run
 \emph{patgen}, a translation file is necessary. This file defines the values of
 certain language-specific parameters (in the first line) and enumerates the
 various forms in which language symbols may appear (all subsequent lines).  In
