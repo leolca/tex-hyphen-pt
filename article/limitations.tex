@@ -51,13 +51,15 @@ rule structure:
 	\end{tabular}
 	\end{table}
 
-    \item [Foreignness\label{foreignness}] There is a group of words %20 words 
-	in the corpus that are terminologies or words incorporated into the 
-	Portuguese language without full phonological adaptation, such as 
-	\emph{darwinismo}, \emph{quilowatt}, and \emph{esfiha}. The lack of
-	adaptation makes the phonological pattern very specific to the word,
-	making it impossible to incorporate their cases \TeX{}'s rules alongside the
-	other rules. The solution is to add them to the exception word list.
+    \item [Foreignness\label{foreignness}] There is a group of words in the
+      corpus that are terminologies or words incorporated into the Portuguese
+      language without full phonological adaptation, such as \emph{darwinismo},
+      \emph{quilowatt}, and \emph{esfiha}. This lack of adaptation results in
+      phonological patterns that are highly specific to each word, making it
+      impractical to integrate their cases into \TeX{}'s rules alongside other
+      rules. Especially for words like \emph{farquhar} and \emph{qubit}, which
+      are not only foreign but also rarely used in the language, the solution
+      is to add them to the exception word list.
 
     \item [Word-initial consonant clusters\label{word-init-cc}] Portuguese has few cases of
 	consonant clusters at the beginning of a word. They are, in general, 
