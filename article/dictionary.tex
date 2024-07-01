@@ -25,27 +25,29 @@ hyphenations from various online sources. The resulting data is stored in a CSV\
 \subsection{Establishing a gold standard}
 
 To establish our gold standard for hyphenation, we will compare the
-hyphenations offered by all six dictionaries. First, we will determine the total count
-of unique hyphenations across these dictionaries using the script
-\texttt{hyphenation\-agreements.sh}.
-It's worth noting that certain dictionaries annotate words with a colon (`:') to
-indicate potential variations in pronunciation or production.
-Particularly, `apparent proparoxytones' might appear marked by this colon sign, indicating 
-the possibility of a diphthongs or hiatuses in the word ending.
-In Portuguese, words ending in \emph{ea}, \emph{eo}, \emph{ia}, \emph{ie},
-\emph{io}, \emph{ua}, \emph{ue}, or \emph{uo}, with the stressed syllable
-before these endings, can be considered either paroxytones ending in a rising
-diphthong or proparoxytones ending in a hiatus. For instance, words like \emph{his-tó-ri:a}
+hyphenations offered by all six dictionaries. First, we will determine the
+total count of unique hyphenations across these dictionaries using the script
+\texttt{hyphenation\-agreements.sh}. It's worth noting that certain
+dictionaries annotate words with a colon (`:') to indicate potential variations
+in pronunciation or production. Particularly, `apparent proparoxytones' might
+appear marked by this colon sign, indicating the possibility of a diphthongs or
+hiatuses in the word ending. In Portuguese, words ending in \emph{-ea},
+\emph{-eo}, \emph{-ia}, \emph{-ie}, \emph{-io}, \emph{-ua}, \emph{-ue}, or
+\emph{-uo}, with the stressed syllable preceding these endings, are
+grammatically considered paroxytones, though they can sometimes be produced as
+proparoxytones ending in a hiatus. For instance, words like \emph{his-tó-ri:a}
 and \emph{on-du-la-tó-ri:o} are examples of words marked as apparent
-proparoxytones, suggesting they could be regarded as paroxytones (\emph{his-tó-ria}
-and \emph{on-du-la-tó-rio}) or proparoxytones (\emph{his-tó-ri-a} and
-\emph{on-du-la-tó-ri-o}). The script \texttt{hyphenationagreements.sh} 
-offers four potential approaches to handle these apparent proparoxytones:
-retaining the hyphenations with the colon mark to indicate an apparent proparoxytone; 
-selecting only the paroxytone or only the proparoxytone counterpart; or counting both paroxytones and proparoxytones. 
-Given the lack of consensus in the literature, our initial approach involves 
-counting both hyphenations, and we will detail below how we resolve this issue. 
-In our hyphenation dictionary, we have identified \NumberOfAppProp{} words marked as apparent proparoxytones.
+proparoxytones, suggesting they could be regarded as paroxytones
+(\emph{his-tó-ria} and \emph{on-du-la-tó-rio}) or proparoxytones
+(\emph{his-tó-ri-a} and \emph{on-du-la-tó-ri-o}). The script
+\texttt{hyphenationagreements.sh} offers four potential approaches to handle
+these apparent proparoxytones: retaining the hyphenations with the colon mark
+to indicate an apparent proparoxytone; selecting only the paroxytone or only
+the proparoxytone counterpart; or counting both paroxytones and proparoxytones.
+Given the lack of consensus in the literature, our initial approach involves
+counting both hyphenations, and we will detail below how we resolve this issue.
+In our hyphenation dictionary, we have identified \NumberOfAppProp{} words
+marked as apparent proparoxytones.
 
 As our initial hyphenation reference, we will consider those cases where all
 six dictionaries are in agreement. This comprehensive list comprises
